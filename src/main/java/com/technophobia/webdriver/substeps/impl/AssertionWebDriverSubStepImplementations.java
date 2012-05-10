@@ -371,10 +371,23 @@ public class AssertionWebDriverSubStepImplementations extends
         Assert.assertNotNull("expecting an element", elem);
         Assert.assertTrue("unexpected tag", elem.getTagName() != null
                 && elem.getTagName().compareToIgnoreCase(tag) == 0);
-        Assert.assertTrue("unexpected type", elem.getAttribute("type") != null
-                && elem.getAttribute("type").compareToIgnoreCase(type) == 0);
+        
+        if (type != null){
+	        Assert.assertTrue("unexpected type", elem.getAttribute("type") != null
+	                && elem.getAttribute("type").compareToIgnoreCase(type) == 0);
+        }
     }
 
+    /**
+     * Utility method to check that an element is of a particular tag
+     * 
+     * @param elem
+     * @param tag
+     * @param type
+     */
+    public static void assertElementIs(final WebElement elem, final String tag) {
+    	assertElementIs(elem, tag, null);
+    }
 
     /**
      * Grab the text of an element (identified by id) and save it for the

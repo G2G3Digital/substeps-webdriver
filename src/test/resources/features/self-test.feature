@@ -23,7 +23,6 @@ Scenario: a scenario
 	And the field located beneath the heading has the text 'some child text'
 	And I can click the link "a text link" and see "clicked a link"  
 
-	# wip
 	Given radio button with text "radio - option 1" is checked
 	Given radio button with text "radio - option 2" is not checked
 	Then I can check radio button with text "radio - option 3"
@@ -33,7 +32,8 @@ Scenario: a scenario
 	Then I can check checkbox with text "a checkbox label"
 	And checkbox with text "a checkbox label" is checked
 	
-	
+	# table
+	And the table row 1, column 2 contains "Mrs Evil Headtecher"   	
 	
 	
 
