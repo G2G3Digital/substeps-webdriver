@@ -3,8 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.technophobia.substeps</groupId>
 	<artifactId>webdriver-substeps</artifactId>
-	<version>0.0.1</version>
-
+	<version>0.0.2-SNAPSHOT</version>
 
 	<packaging>jar</packaging>
 	<name>Webdriver Substeps</name>
@@ -91,7 +90,31 @@
 
 		<jacoco.maven.plugin.version>0.5.3.201107060350</jacoco.maven.plugin.version>
 
+		<!-- THESE PROPERTIES NEED TO BE DEFINED IN AN ACTIVE PROFILE IN SETTINGS.XML 
+		EG.
+        <nexus.snapshot.artifacts>snapshots</nexus.snapshot.artifacts>
+        <nexus.release.artifacts>releases</nexus.release.artifacts>
+        <nexus.snapshot.url>http://someserver.com/${nexus.snapshot.artifacts}/</nexus.snapshot.url>
+        <nexus.releases.url>http://someserver.com/${nexus.release.artifacts}/</nexus.releases.url>
+		<webdriver-substeps.scm>scm:git:git://github.com/${your username}/webdriver-substeps.git</webdriver-substeps.scm>
+		-->
+
 	</properties>
+
+	<distributionManagement>
+		 <snapshotRepository>
+	            <id>${nexus.snapshot.artifacts}</id>
+	            <name>${nexus.snapshot.artifacts}</name>
+	            <url>${nexus.snapshot.url}</url>
+	            <uniqueVersion>false</uniqueVersion>
+	        </snapshotRepository>
+	        <repository>
+	            <id>${nexus.release.artifacts}</id>
+	            <name>${nexus.release.artifacts}</name>
+	            <url>${nexus.releases.url}</url>
+	        </repository>
+	    </distributionManagement>
+	
 
 
 	<dependencies>
@@ -430,6 +453,6 @@
 	</reporting>
 
 	<scm>
-		<connection>scm:git:git://github.com/technophobia/substeps-webdriver.git</connection>
+		<connection>${webdriver-substeps.scm}</connection>
 	</scm>
 </project>
