@@ -5,7 +5,6 @@
 	<artifactId>webdriver-substeps</artifactId>
 	<version>0.0.2-SNAPSHOT</version>
 
-
 	<packaging>jar</packaging>
 	<name>Webdriver Substeps</name>
 	<description>Webdriver specific implementations of SubSteps</description>
@@ -97,24 +96,25 @@
         <nexus.release.artifacts>releases</nexus.release.artifacts>
         <nexus.snapshot.url>http://someserver.com/${nexus.snapshot.artifacts}/</nexus.snapshot.url>
         <nexus.releases.url>http://someserver.com/${nexus.release.artifacts}/</nexus.releases.url>
-		<webdriver-substeps.scm>scm:git:git://github.com/${your username}/substeps-core.git</webdriver-substeps.scm>
+		<webdriver-substeps.scm>scm:git:git://github.com/${your username}/webdriver-substeps.git</webdriver-substeps.scm>
 		-->
 
 	</properties>
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>${nexus.snapshot.artifacts}</id>
-            <name>${nexus.snapshot.artifacts}</name>
-            <url>${nexus.snapshot.url}</url>
-            <uniqueVersion>false</uniqueVersion>
-        </snapshotRepository>
-        <repository>
-            <id>${nexus.release.artifacts}</id>
-            <name>${nexus.release.artifacts}</name>
-            <url>${nexus.releases.url}</url>
-        </repository>
-    </distributionManagement>
+	<distributionManagement>
+		 <snapshotRepository>
+	            <id>${nexus.snapshot.artifacts}</id>
+	            <name>${nexus.snapshot.artifacts}</name>
+	            <url>${nexus.snapshot.url}</url>
+	            <uniqueVersion>false</uniqueVersion>
+	        </snapshotRepository>
+	        <repository>
+	            <id>${nexus.release.artifacts}</id>
+	            <name>${nexus.release.artifacts}</name>
+	            <url>${nexus.releases.url}</url>
+	        </repository>
+	    </distributionManagement>
+	
 
 
 	<dependencies>
