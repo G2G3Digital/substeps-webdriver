@@ -9,18 +9,18 @@
 	<name>Webdriver Substeps</name>
 	<description>Webdriver specific implementations of SubSteps</description>
 
-    <organization>
-        <name>Technophobia Ltd</name>
-        <url>www.technophobia.com/</url>
-    </organization>
+	<organization>
+		<name>Technophobia Ltd</name>
+		<url>www.technophobia.com/</url>
+	</organization>
 
-    <licenses>
-        <license>
-            <name>LGPL 3.0 license</name>
-            <url>http://www.opensource.org/licenses/lgpl-3.0.html</url>
-            <distribution>manual</distribution>
-      </license>
-    </licenses>
+	<licenses>
+		<license>
+		    <name>LGPL 3.0 license</name>
+		    <url>http://www.opensource.org/licenses/lgpl-3.0.html</url>
+		    <distribution>manual</distribution>
+		</license>
+	</licenses>
     
     <developers>
    
