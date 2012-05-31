@@ -73,8 +73,8 @@
 		<hamcrest.version>1.3.RC2</hamcrest.version>
 		<junit.version>4.10</junit.version>
         
-		<substeps.version>0.0.1</substeps.version>
-		<substeps.runner.version>0.0.2</substeps.runner.version>
+		<substeps.version>0.0.2-SNAPSHOT</substeps.version>
+		<substeps.runner.version>0.0.3-SNAPSHOT</substeps.runner.version>
         
 		<guava.version>10.0</guava.version>
 		<mockito.version>1.9.0-rc1</mockito.version>
@@ -301,9 +301,12 @@
                                         <param>com.technophobia.webdriver.substeps.runner.DefaultExecutionSetupTearDown</param>
                                     </initialisationClass>
                                 </executionConfig>
-
-
                             </executionConfigs>
+							
+							  <executionReportBuilder implementation="com.technophobia.substeps.report.DefaultExecutionReportBuilder">
+							    <outputDirectory>${project.build.directory}</outputDirectory>
+							  </executionReportBuilder>
+							
 
                         </configuration>
                         <dependencies>
