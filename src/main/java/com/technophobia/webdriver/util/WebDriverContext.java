@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.technophobia.webdriver.substeps.runner.Condition;
-import com.technophobia.webdriver.substeps.runner.Configuration;
+import com.technophobia.webdriver.substeps.runner.WebdriverSubstepsConfiguration;
 import com.technophobia.webdriver.substeps.runner.DriverType;
 
 /**
@@ -114,7 +114,7 @@ public class WebDriverContext {
 	}
 
 	public WebElement waitForElement(final By by) {
-		return ElementLocators.waitForElement(by, Configuration.defaultTimeout(), webDriver);
+		return ElementLocators.waitForElement(by, WebdriverSubstepsConfiguration.defaultTimeout(), webDriver);
 	}
 
 	public WebElement waitForElement(final By by, final long timeOutSeconds) {

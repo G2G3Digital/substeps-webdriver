@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.technophobia.webdriver.substeps.runner.Condition;
-import com.technophobia.webdriver.substeps.runner.Configuration;
+import com.technophobia.webdriver.substeps.runner.WebdriverSubstepsConfiguration;
 
 public class ElementLocators {
 
@@ -40,7 +40,7 @@ public class ElementLocators {
 
 
     public static WebElement waitForElement(final By by, WebDriver webDriver) {
-        return waitForElement(by, Configuration.defaultTimeout(), webDriver);
+        return waitForElement(by, WebdriverSubstepsConfiguration.defaultTimeout(), webDriver);
     }
 
 

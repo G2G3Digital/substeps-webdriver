@@ -39,9 +39,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.technophobia.substeps.model.Scope;
 import com.technophobia.substeps.model.SubSteps.Step;
 import com.technophobia.substeps.runner.ExecutionContext;
-import com.technophobia.substeps.runner.Scope;
 import com.technophobia.webdriver.util.WebDriverContext;
 
 public class AssertionWebDriverSubStepImplementations extends

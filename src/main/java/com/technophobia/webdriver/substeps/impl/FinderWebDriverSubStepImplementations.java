@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Supplier;
 import com.technophobia.substeps.model.SubSteps.Step;
-import com.technophobia.webdriver.substeps.runner.Configuration;
+import com.technophobia.webdriver.substeps.runner.WebdriverSubstepsConfiguration;
 import com.technophobia.webdriver.util.ByTagAndAttributesFunction;
 import com.technophobia.webdriver.util.ElementLocators;
 import com.technophobia.webdriver.util.WebDriverContext;
@@ -221,7 +221,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
                 attributeString);
 
         final WebDriverWait wait = new WebDriverWait(getThreadLocalWebDriver(),
-                Configuration.defaultTimeout());
+                WebdriverSubstepsConfiguration.defaultTimeout());
 
         final WebElement elem = ElementLocators.waitUntil(wait, condition,
                 getThreadLocalWebDriver());
