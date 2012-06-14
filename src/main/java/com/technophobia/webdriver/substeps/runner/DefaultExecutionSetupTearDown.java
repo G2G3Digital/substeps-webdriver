@@ -27,13 +27,13 @@ import org.springframework.util.ReflectionUtils;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.google.common.base.Supplier;
+import com.technophobia.substeps.model.Scope;
 import com.technophobia.substeps.runner.ExecutionContext;
 import com.technophobia.substeps.runner.INotifier;
-import com.technophobia.substeps.runner.JunitFeatureRunner.AfterEveryScenario;
-import com.technophobia.substeps.runner.JunitFeatureRunner.BeforeAllFeatures;
-import com.technophobia.substeps.runner.JunitFeatureRunner.BeforeEveryScenario;
 import com.technophobia.substeps.runner.JunitNotifier;
-import com.technophobia.substeps.runner.Scope;
+import com.technophobia.substeps.runner.setupteardown.Annotations.AfterEveryScenario;
+import com.technophobia.substeps.runner.setupteardown.Annotations.BeforeAllFeatures;
+import com.technophobia.substeps.runner.setupteardown.Annotations.BeforeEveryScenario;
 import com.technophobia.webdriver.util.WebDriverContext;
 
 public class DefaultExecutionSetupTearDown {
@@ -105,11 +105,11 @@ public class DefaultExecutionSetupTearDown {
         // reasons *NOT* to shutdown
 
         // this overrides everything else
-        if (!Configuration.shutDownWebdriver()) {
+        if (!WebdriverSubstepsConfiguration.shutDownWebdriver()) {
             doShutdown = false;
         } else if (webDriverContextSupplier.get() != null
                 && webDriverContextSupplier.get().hasFailed()
-                && (!Configuration.closeVisualWebDriveronFail() && driverType().isVisual())) {
+                && (!WebdriverSubstepsConfiguration.closeVisualWebDriveronFail() && driverType().isVisual())) {
             doShutdown = false;
         }
 
@@ -132,7 +132,7 @@ public class DefaultExecutionSetupTearDown {
 
 
     protected DriverType driverType() {
-        return Configuration.driverType();
+        return WebdriverSubstepsConfiguration.driverType();
     }
 
 

@@ -18,8 +18,8 @@
  */
 package com.technophobia.webdriver.substeps.runner;
 
+import com.technophobia.substeps.model.Scope;
 import com.technophobia.substeps.runner.ExecutionContext;
-import com.technophobia.substeps.runner.Scope;
 
 public class ExecutionContextSupplier<T> implements MutableSupplier<T> {
 
