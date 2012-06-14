@@ -32,6 +32,10 @@
   <appender-ref ref="console" />
 </logger>
 
+<logger name="com.technophobia.substeps" additivity="false">
+  <level value="debug"/>
+  <appender-ref ref="console" />
+</logger>
 
   <root>
     <priority value ="info" />

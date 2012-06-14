@@ -35,7 +35,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.technophobia.substeps.model.SubSteps.Step;
 import com.technophobia.webdriver.substeps.runner.Condition;
-import com.technophobia.webdriver.substeps.runner.Configuration;
+import com.technophobia.webdriver.substeps.runner.WebdriverSubstepsConfiguration;
 import com.technophobia.webdriver.util.WebDriverContext;
 
 public class ActionWebDriverSubStepImplementations extends AbstractWebDriverSubStepImplementations {
@@ -287,7 +287,7 @@ public class ActionWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
 
     private String normaliseURL(final String relativeURL) {
-        return normalise(Configuration.baseURL() + relativeURL);
+        return normalise(WebdriverSubstepsConfiguration.baseURL() + relativeURL);
     }
 
 

@@ -19,8 +19,9 @@
 package com.technophobia.webdriver.substeps.runner;
 
 import org.junit.runner.Description;
+import org.junit.runner.notification.RunNotifier;
 
-import com.technophobia.substeps.runner.EmptyNotifier;
+import com.technophobia.substeps.execution.ExecutionNode;
 import com.technophobia.substeps.runner.INotifier;
 import com.technophobia.webdriver.util.WebDriverContext;
 
@@ -29,7 +30,7 @@ import com.technophobia.webdriver.util.WebDriverContext;
  * @author imoore
  * 
  */
-public class TestFailureListener extends EmptyNotifier implements INotifier {
+public class TestFailureListener implements INotifier {
 
     private final MutableSupplier<WebDriverContext> webDriverContextSupplier;
 
@@ -40,7 +41,6 @@ public class TestFailureListener extends EmptyNotifier implements INotifier {
     }
 
 
-    @Override
     public void notifyTestFailed(final Description junitDescription, final Throwable cause) {
         final WebDriverContext webDriverContext = webDriverContextSupplier.get();
         // possible to have a failure before the webdrivercontext has been
@@ -50,4 +50,85 @@ public class TestFailureListener extends EmptyNotifier implements INotifier {
             webDriverContext.setFailed();
         }
     }
+
+
+	/* (non-Javadoc)
+	 * @see com.technophobia.substeps.runner.INotifier#addListener(com.technophobia.substeps.runner.INotifier)
+	 */
+	public void addListener(final INotifier arg0)
+	{
+		// no op
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.technophobia.substeps.runner.INotifier#notifyTestFailed(com.technophobia.substeps.execution.ExecutionNode, java.lang.Throwable)
+	 */
+	public void notifyTestFailed(final ExecutionNode arg0, final Throwable arg1)
+	{
+		// no op
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.technophobia.substeps.runner.INotifier#notifyTestFinished(org.junit.runner.Description)
+	 */
+	public void notifyTestFinished(final Description arg0)
+	{
+		// no op
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.technophobia.substeps.runner.INotifier#notifyTestFinished(com.technophobia.substeps.execution.ExecutionNode)
+	 */
+	public void notifyTestFinished(final ExecutionNode arg0)
+	{
+		// no op
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.technophobia.substeps.runner.INotifier#notifyTestIgnored(org.junit.runner.Description)
+	 */
+	public void notifyTestIgnored(final Description arg0)
+	{
+		// no op
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.technophobia.substeps.runner.INotifier#notifyTestStarted(org.junit.runner.Description)
+	 */
+	public void notifyTestStarted(final Description arg0)
+	{
+		// no op
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.technophobia.substeps.runner.INotifier#notifyTestStarted(com.technophobia.substeps.execution.ExecutionNode)
+	 */
+	public void notifyTestStarted(final ExecutionNode arg0)
+	{
+		// no op
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.technophobia.substeps.runner.INotifier#pleaseStop()
+	 */
+	public void pleaseStop()
+	{
+		// no op
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.technophobia.substeps.runner.INotifier#setJunitRunNotifier(org.junit.runner.notification.RunNotifier)
+	 */
+	public void setJunitRunNotifier(final RunNotifier arg0)
+	{
+		// no op
+	}
 }
