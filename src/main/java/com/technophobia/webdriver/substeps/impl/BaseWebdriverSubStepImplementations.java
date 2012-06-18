@@ -33,6 +33,6 @@ import com.technophobia.substeps.model.SubSteps.StepImplementations;
 @AdditionalStepImplementations({ ActionWebDriverSubStepImplementations.class,
         AssertionWebDriverSubStepImplementations.class, EmailWebDriverSubStepImplementations.class,
         FinderWebDriverSubStepImplementations.class, FormWebDriverSubStepImplementations.class,
-        StartupWebDriverSubStepImplementations.class })
+        StartupWebDriverSubStepImplementations.class, TableSubStepImplementations.class })
 public class BaseWebdriverSubStepImplementations {
 }

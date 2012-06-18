@@ -84,3 +84,7 @@ Define: And I can click the link "<link_text>" and see "<txt>"
 	ClickLink "<link_text>"
 	FindById show-text-on-link-click-text-div-id
 	AssertCurrentElement text="<txt>"   
+	
+Define: And the table row <row>, column <col> contains "<txt>"
+	FindById table_id
+	AssertTableValue column <col>, row <row> contains text "<txt>"	
