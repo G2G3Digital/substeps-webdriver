@@ -5,14 +5,9 @@ target/
 logs/
 *.log*
 .tomcatplugin
-gwtui/
-checkavailabilityui/
-gwtcardropdown/
-gwtroutedebugger/
-OSM_all.backup
 *.dump
 classes/
-.gwt-log
 *.class
 *jacoco.exec
 *~
+itmoore.properties
