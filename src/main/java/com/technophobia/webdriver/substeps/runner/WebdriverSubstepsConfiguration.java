@@ -20,21 +20,18 @@ package com.technophobia.webdriver.substeps.runner;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Properties;
 
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.technophobia.substeps.model.Configuration;
-import com.technophobia.substeps.model.SubStepConfigurationException;
 
 public enum WebdriverSubstepsConfiguration {
 
     ; // uninstantiable
     private static final Logger logger = LoggerFactory
             .getLogger(WebdriverSubstepsConfiguration.class);
-    // private static final Properties props;
 
     private static final int TIMEOUT_IN_SECONDS;
     private static final String BASE_URL;
@@ -42,12 +39,6 @@ public enum WebdriverSubstepsConfiguration {
     private static final String DRIVER_LOCALE;
     private static final boolean SHUTDOWN_WEBDRIVER;
     private static final boolean VISUAL_WEBDRIVER_CLOSE_ON_FAIL;
-
-    // private static final String DATABASE_URL;
-    // private static final String DATABASE_USERNAME;
-    // private static final String DATABASE_PASSWORD;
-
-    // private static int smtpServerPort = 7191;
     private static long defaultWebDriverTimeoutSecs = 10;
 
     static {
@@ -58,7 +49,6 @@ public enum WebdriverSubstepsConfiguration {
 
         Configuration.INSTANCE.addDefaultProperties(defaultURL, "default-webdriver");
 
-        // props = initTestProperties();
         TIMEOUT_IN_SECONDS = Configuration.INSTANCE.getInt("wait.seconds");
 
         BASE_URL = determineBaseURL(Configuration.INSTANCE.getString("base.url"));
@@ -71,16 +61,6 @@ public enum WebdriverSubstepsConfiguration {
         SHUTDOWN_WEBDRIVER = Configuration.INSTANCE.getBoolean("webdriver.shutdown");
         VISUAL_WEBDRIVER_CLOSE_ON_FAIL = Configuration.INSTANCE
                 .getBoolean("visual.webdriver.close.on.fail");
-
-        // DATABASE_URL = getRequiredProperty("database.url");
-        // DATABASE_USERNAME = getRequiredProperty("database.username");
-        // DATABASE_PASSWORD = getRequiredProperty("database.password");
-
-        // final String smptpPortString =
-        // Configuration.INSTANCE.getString("smtp.port");
-        // if (smptpPortString != null) {
-        // smtpServerPort = Integer.parseInt(smptpPortString);
-        // }
 
         defaultWebDriverTimeoutSecs = Configuration.INSTANCE
                 .getInt("default.webdriver.timeout.secs");
@@ -148,62 +128,6 @@ public enum WebdriverSubstepsConfiguration {
         return VISUAL_WEBDRIVER_CLOSE_ON_FAIL;
     }
 
-
-    // public static String databaseUrl() {
-    // return DATABASE_URL;
-    // }
-    //
-    //
-    // public static String databaseUsername() {
-    // return DATABASE_USERNAME;
-    // }
-    //
-    //
-    // public static String databasePassword() {
-    // return DATABASE_PASSWORD;
-    // }
-    //
-    //
-    // public static int smtpPort() {
-    // return smtpServerPort;
-    // }
-
-    // public static Properties asProperties() {
-    // return (Properties) props.clone();
-    // }
-
-    private static Properties initTestProperties() {
-        final Properties tempProps = new Properties();
-        final String resourceBundleName = resourceBundleName();
-        try {
-            tempProps.load(WebdriverSubstepsConfiguration.class
-                    .getResourceAsStream(resourceBundleName));
-        } catch (final Exception ex) {
-            logger.error("Failed to load test configuration from " + resourceBundleName, ex);
-
-            throw new SubStepConfigurationException(ex);
-        }
-
-        return tempProps;
-    }
-
-
-    private static String resourceBundleName() {
-        return "/" + System.getProperty("environment", "localhost") + ".properties";
-    }
-
-
-    // private static String getRequiredProperty(final String key) {
-    // if (!props.containsKey(key)) {
-    // final String message = key +
-    // " is a required property, but has not been found.";
-    //
-    // logger.error(message);
-    // throw new IllegalStateException(message);
-    // }
-    //
-    // return props.getProperty(key);
-    // }
 
     /**
      * @return

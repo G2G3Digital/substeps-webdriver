@@ -30,11 +30,10 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.technophobia.webdriver.substeps.runner.Condition;
-import com.technophobia.webdriver.substeps.runner.WebdriverSubstepsConfiguration;
 import com.technophobia.webdriver.substeps.runner.DriverType;
+import com.technophobia.webdriver.substeps.runner.WebdriverSubstepsConfiguration;
 
 /**
  * A container used to hold the webdriver instance and the current element used
@@ -44,84 +43,96 @@ import com.technophobia.webdriver.substeps.runner.DriverType;
  * 
  */
 public class WebDriverContext {
-	private static final Logger logger = LoggerFactory.getLogger(WebDriverContext.class);
+    private static final Logger logger = LoggerFactory.getLogger(WebDriverContext.class);
 
-	public static final String EXECUTION_CONTEXT_KEY = "_webdriver_context_key";
+    public static final String EXECUTION_CONTEXT_KEY = "_webdriver_context_key";
 
-	private final WebDriver webDriver;
-	private WebElement currentElement = null;
-	private boolean failed = false;
+    private final WebDriver webDriver;
+    private WebElement currentElement = null;
+    private boolean failed = false;
 
-	// may need to expand the params, javascript enabled, profile paths etc
-	public WebDriverContext(final DriverType driverType) {
-		// TODO - make this nicer by having a factory interface which the enum
-		// implements, each instance will overide the method
-		// focussing on overall functionality at present
 
-		switch (driverType) {
-		case FIREFOX: {
-			webDriver = new FirefoxDriver();
-			break;
-		}
-		case HTMLUNIT: {
-			final HtmlUnitDriver htmlUnitDriver = new HtmlUnitDriver(BrowserVersion.FIREFOX_3_6);
-			htmlUnitDriver.setJavascriptEnabled(true);
-			webDriver = htmlUnitDriver;
-			break;
+    // may need to expand the params, javascript enabled, profile paths etc
+    public WebDriverContext(final DriverType driverType) {
+        // TODO - make this nicer by having a factory interface which the enum
+        // implements, each instance will overide the method
+        // focussing on overall functionality at present
 
-		}
-		case CHROME: {
-			webDriver = new ChromeDriver();
-			break;
+        switch (driverType) {
+        case FIREFOX: {
+            webDriver = new FirefoxDriver();
+            break;
+        }
+        case HTMLUNIT: {
+            final HtmlUnitDriver htmlUnitDriver = new HtmlUnitDriver(BrowserVersion.FIREFOX_3_6);
+            htmlUnitDriver.setJavascriptEnabled(true);
+            webDriver = htmlUnitDriver;
+            break;
 
-		}
-		case IE: {
-			throw new NotImplementedException("Sorry no IE support yet");
-		}
-		default: {
-			throw new IllegalArgumentException("unknown driver type");
-		}
-		}
-	}
+        }
+        case CHROME: {
 
-	public WebElement getCurrentElement() {
-		Assert.assertNotNull("expecting current element not to be null", currentElement);
-		return currentElement;
-	}
+            webDriver = new ChromeDriver();
+            break;
 
-	public void setCurrentElement(final WebElement currentElement) {
-		this.currentElement = currentElement;
-	}
+        }
+        case IE: {
+            throw new NotImplementedException("Sorry no IE support yet");
+        }
+        default: {
+            throw new IllegalArgumentException("unknown driver type");
+        }
+        }
+    }
 
-	public WebDriver getWebDriver() {
-		return webDriver;
-	}
 
-	public void shutdownWebDriver() {
-		logger.debug("Shutting WebDriver down");
-		if (webDriver != null) {
-			webDriver.manage().deleteAllCookies();
-			webDriver.quit();
-		}
-	}
+    public WebElement getCurrentElement() {
+        Assert.assertNotNull("expecting current element not to be null", currentElement);
+        return currentElement;
+    }
 
-	public boolean hasFailed() {
-		return failed;
-	}
 
-	public void setFailed() {
-		this.failed = true;
-	}
+    public void setCurrentElement(final WebElement currentElement) {
+        this.currentElement = currentElement;
+    }
 
-	public WebElement waitForElement(final By by) {
-		return ElementLocators.waitForElement(by, WebdriverSubstepsConfiguration.defaultTimeout(), webDriver);
-	}
 
-	public WebElement waitForElement(final By by, final long timeOutSeconds) {
-		return ElementLocators.waitForElement(by, timeOutSeconds, webDriver);
-	}
+    public WebDriver getWebDriver() {
+        return webDriver;
+    }
 
-	public boolean waitForCondition(final Condition condition) {
-		return ElementLocators.waitForCondition(condition, webDriver);
-	}
+
+    public void shutdownWebDriver() {
+        logger.debug("Shutting WebDriver down");
+        if (webDriver != null) {
+            webDriver.manage().deleteAllCookies();
+            webDriver.quit();
+        }
+    }
+
+
+    public boolean hasFailed() {
+        return failed;
+    }
+
+
+    public void setFailed() {
+        failed = true;
+    }
+
+
+    public WebElement waitForElement(final By by) {
+        return ElementLocators.waitForElement(by, WebdriverSubstepsConfiguration.defaultTimeout(),
+                webDriver);
+    }
+
+
+    public WebElement waitForElement(final By by, final long timeOutSeconds) {
+        return ElementLocators.waitForElement(by, timeOutSeconds, webDriver);
+    }
+
+
+    public boolean waitForCondition(final Condition condition) {
+        return ElementLocators.waitForCondition(condition, webDriver);
+    }
 }
