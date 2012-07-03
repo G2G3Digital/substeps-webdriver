@@ -20,10 +20,10 @@ package com.technophobia.webdriver.substeps.runner;
 
 import java.lang.reflect.Field;
 
+import org.junit.Assert;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.ReflectionUtils;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.google.common.base.Supplier;
@@ -109,7 +109,8 @@ public class DefaultExecutionSetupTearDown {
             doShutdown = false;
         } else if (webDriverContextSupplier.get() != null
                 && webDriverContextSupplier.get().hasFailed()
-                && (!WebdriverSubstepsConfiguration.closeVisualWebDriveronFail() && driverType().isVisual())) {
+                && (!WebdriverSubstepsConfiguration.closeVisualWebDriveronFail() && driverType()
+                        .isVisual())) {
             doShutdown = false;
         }
 
@@ -143,16 +144,29 @@ public class DefaultExecutionSetupTearDown {
     private void setDriverLocale(final WebDriver driver) {
 
         try {
-            final Field field = ReflectionUtils.findField(driver.getClass(), "webClient");
-            ReflectionUtils.makeAccessible(field);
+            final Field field = driver.getClass().getDeclaredField("webClient");
+            if (field != null) {
+                final boolean original = field.isAccessible();
+                field.setAccessible(true);
 
-            final WebClient webClient = (WebClient) field.get(driver);
-            if (webClient != null) {
-                webClient.addRequestHeader("Accept-Language", "en-gb");
+                final WebClient webClient = (WebClient) field.get(driver);
+                if (webClient != null) {
+                    webClient.addRequestHeader("Accept-Language", "en-gb");
+                }
+                field.setAccessible(original);
+            } else {
+                Assert.fail("Failed to get webclient field to set accept language");
             }
-
         } catch (final IllegalAccessException ex) {
+
             logger.warn(ex.getMessage());
+
+        } catch (final SecurityException e) {
+
+            logger.warn(e.getMessage());
+        } catch (final NoSuchFieldException e) {
+
+            logger.warn(e.getMessage());
         }
     }
 }
