@@ -33,7 +33,7 @@ public enum WebdriverSubstepsConfiguration {
     private static final Logger logger = LoggerFactory
             .getLogger(WebdriverSubstepsConfiguration.class);
 
-    private static final int TIMEOUT_IN_SECONDS;
+    // private static final int TIMEOUT_IN_SECONDS;
     private static final String BASE_URL;
     private static final DriverType DRIVER_TYPE;
     private static final String DRIVER_LOCALE;
@@ -49,7 +49,7 @@ public enum WebdriverSubstepsConfiguration {
 
         Configuration.INSTANCE.addDefaultProperties(defaultURL, "default-webdriver");
 
-        TIMEOUT_IN_SECONDS = Configuration.INSTANCE.getInt("wait.seconds");
+        // TIMEOUT_IN_SECONDS = Configuration.INSTANCE.getInt("wait.seconds");
 
         BASE_URL = determineBaseURL(Configuration.INSTANCE.getString("base.url"));
 
@@ -65,16 +65,15 @@ public enum WebdriverSubstepsConfiguration {
         defaultWebDriverTimeoutSecs = Configuration.INSTANCE
                 .getInt("default.webdriver.timeout.secs");
 
-        logger.info("Using properties:\n" + "TIMEOUT_IN_SECONDS: " + TIMEOUT_IN_SECONDS + "\n"
-                + "BASE_URL: " + BASE_URL);
+        logger.info("Using properties:\n" + "TIMEOUT_IN_SECONDS: " + defaultWebDriverTimeoutSecs
+                + "\n" + "BASE_URL: " + BASE_URL);
 
     }
 
 
-    public static int timeoutInSeconds() {
-        return TIMEOUT_IN_SECONDS;
-    }
-
+    // public static int timeoutInSeconds() {
+    // return TIMEOUT_IN_SECONDS;
+    // }
 
     /**
      * @param string

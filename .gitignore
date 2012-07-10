@@ -11,3 +11,4 @@ classes/
 *jacoco.exec
 *~
 itmoore.properties
+_build/
