@@ -1,0 +1,7 @@
+_build/
+docs/
+.project
+_sources/
+*~
+.classpath
+.settings
