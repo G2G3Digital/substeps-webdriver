@@ -1,9 +1,12 @@
-Step impls
-==========
-   
+Webdriver Substep implementations
+=================================
+
+- The tables below provide information and examples of the various webdriver step implementations that are available for use.   
    
 Assertions
 ----------
+
+- Step implementations that perform various checks on web pages, values, page titles, selections etc.
    
 .. raw:: html
    
@@ -29,6 +32,9 @@ Assertions
 
 Clicks
 ------
+
+- Step implementations that are concerned with mouse clicks on links, submit buttons etc
+
 .. raw:: html
 
    <div style="width:100%; margin:auto">
@@ -44,24 +50,11 @@ Clicks
    </table>
    </div>
 
-Email related
--------------
-.. raw:: html
-
-   <div style="width:100%; margin:auto">
-   <table border="1">
-   <tr><th>Expression</th> <th>Example</th> <th>Description</th></tr>
-   
-   <tr><td>AssertEmailReceived to &quot;&lt;recipient&gt;&quot; with subject &quot;&lt;subject&gt;&quot;</td><td>AssertEmailReceived to "mickey@disney.com" with subject
-             "You've won!"</td><td>Check that an email was received to ... with a subject line of ...</td></tr>
-   <tr><td>StartEmail</td><td>StartEmail</td><td>Start an email server. NB the application will need to be configured to  use the host(and port) where these tests are being run.</td></tr>
-   <tr><td>StopEmail</td><td>StopEmail</td><td>Stop the test email server.</td></tr>
-   
-   </table>
-      </div>
-   
 Forms
 -----
+
+- Step implementations concerned with populating form fields
+
 .. raw:: html
 
    <div style="width:100%; margin:auto">
@@ -85,6 +78,11 @@ Forms
 
 Location
 --------
+
+- Step implementations that attempt to locate particular elements on the page. Typically, the methods will retry finding the field until the default timeout period is reached. If the element has not been located within that time, the step will fail.
+- These step implementations will set the ‘currentElement’ and allow the current element to be used in a subsequent step, for selecting a value, for example.
+
+
 .. raw:: html   
 
    <div style="width:100%; margin:auto">
@@ -109,6 +107,9 @@ Location
 
 Miscellaneous
 -------------
+
+- Step implementations which are currently uncategorized (although they should be!)
+
 .. raw:: html
   
    <div style="width:100%; margin:auto">
@@ -133,6 +134,9 @@ Miscellaneous
 
 Startup / Shutdown
 ------------------
+
+- Step implementations that can reset the current webdriver session and restart it.
+
 .. raw:: html
 
    <div style="width:100%; margin:auto">
@@ -146,6 +150,9 @@ Startup / Shutdown
 
 Table
 -----
+
+- Step implementations for navigating and retrieving values from a table.
+
 .. raw:: html
 
    <div style="width:100%; margin:auto">
@@ -156,3 +163,29 @@ Table
    <tr><td>FindTableBodyRow row &lt;row&gt;</td><td>FindTableBodyRow row 3</td><td>Locates the table body row, assuming that the table has already been located  Row 1 is the first &lt;tr&gt; beneath a &lt;tbody&gt;</td></tr>
    </table>   </div>
 
+
+.. Note::
+   - Email related substeps are currently included in webdriver-susbteps, however this is an area of active development and will move to a seperate library in due course.  
+     Additionally there are threading issues around the underlying SMTP server which may cause your CI server to occasionally hang.
+   
+   - This section will be  removed from the github docs!
+
+Email related
+-------------
+
+
+
+.. raw:: html
+
+   <div style="width:100%; margin:auto">
+   <table border="1">
+   <tr><th>Expression</th> <th>Example</th> <th>Description</th></tr>
+   
+   <tr><td>AssertEmailReceived to &quot;&lt;recipient&gt;&quot; with subject &quot;&lt;subject&gt;&quot;</td><td>AssertEmailReceived to "mickey@disney.com" with subject
+             "You've won!"</td><td>Check that an email was received to ... with a subject line of ...</td></tr>
+   <tr><td>StartEmail</td><td>StartEmail</td><td>Start an email server. NB the application will need to be configured to  use the host(and port) where these tests are being run.</td></tr>
+   <tr><td>StopEmail</td><td>StopEmail</td><td>Stop the test email server.</td></tr>
+   
+   </table>
+      </div>
+   
