@@ -20,13 +20,14 @@ package com.technophobia.webdriver.util;
 
 import junit.framework.Assert;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,7 +78,18 @@ public class WebDriverContext {
 
         }
         case IE: {
-            throw new NotImplementedException("Sorry no IE support yet");
+
+            // apparently this is required to get around some IE security
+            // restriction.
+
+            final DesiredCapabilities ieCapabilities = DesiredCapabilities.internetExplorer();
+            ieCapabilities.setCapability(
+                    InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
+
+            logger.warn("Using IE Webdriver with IGNORING SECURITY DOMAIN");
+
+            webDriver = new InternetExplorerDriver(ieCapabilities);
+            break;
         }
         default: {
             throw new IllegalArgumentException("unknown driver type");

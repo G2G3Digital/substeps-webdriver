@@ -35,6 +35,16 @@ import org.junit.Test;
 public class WebdriverSubstepsConfigurationTest {
 
     @Test
+    public void checkOverrides() {
+
+        System.setProperty("environment", "localhost");
+
+        Assert.assertFalse(WebdriverSubstepsConfiguration.closeVisualWebDriveronFail());
+
+    }
+
+
+    @Test
     public void testRelativeURLResolvesToFileProtocol() throws SecurityException,
             NoSuchMethodException, IllegalArgumentException, IllegalAccessException,
             InvocationTargetException {
@@ -47,14 +57,15 @@ public class WebdriverSubstepsConfigurationTest {
         final String baseUrl = (String) determineBaseURLMethod.invoke(
                 WebdriverSubstepsConfiguration.class, "src/web");
 
-        Assert.assertThat(baseUrl, startsWith("file://"));
+        Assert.assertThat(baseUrl, startsWith("file:/"));
 
         final String baseUrl2 = (String) determineBaseURLMethod.invoke(
                 WebdriverSubstepsConfiguration.class, "./src/web");
 
         final File current = new File(".");
 
-        Assert.assertThat(baseUrl2, is("file://" + current.getAbsolutePath() + "/src/web"));
+        
+        Assert.assertThat(baseUrl2, is( current.toURI().toString() + "src/web"));
 
         final String baseUrl3 = (String) determineBaseURLMethod.invoke(
                 WebdriverSubstepsConfiguration.class, "http://blah-blah.com/src/web");
@@ -62,9 +73,9 @@ public class WebdriverSubstepsConfigurationTest {
         Assert.assertThat(baseUrl3, startsWith("http://"));
 
         final String baseUrl4 = (String) determineBaseURLMethod.invoke(
-                WebdriverSubstepsConfiguration.class, "file:///some-path/whatever");
+                WebdriverSubstepsConfiguration.class, "file://some-path/whatever");
 
-        Assert.assertThat(baseUrl4, is("file:///some-path/whatever"));
+        Assert.assertThat(baseUrl4, is("file://some-path/whatever"));
 
     }
 }

@@ -19,6 +19,7 @@
 package com.technophobia.webdriver.substeps.runner;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.junit.Assert;
@@ -65,9 +66,11 @@ public enum WebdriverSubstepsConfiguration {
         defaultWebDriverTimeoutSecs = Configuration.INSTANCE
                 .getInt("default.webdriver.timeout.secs");
 
-        logger.info("Using properties:\n" + "TIMEOUT_IN_SECONDS: " + TIMEOUT_IN_SECONDS + "\n"
-                + "BASE_URL: " + BASE_URL);
+        // logger.info("Using properties:\n" + "TIMEOUT_IN_SECONDS: " +
+        // TIMEOUT_IN_SECONDS + "\n"
+        // + "BASE_URL: " + BASE_URL);
 
+        logger.info("Using properties:\n" + Configuration.INSTANCE.getConfigurationInfo());
     }
 
 
@@ -87,7 +90,9 @@ public enum WebdriverSubstepsConfiguration {
 
         if (!property.startsWith("http") && !property.startsWith("file://")) {
 
-            resolvedBaseUrl = "file://" + new File(property).getAbsolutePath();
+            resolvedBaseUrl = removeTrailingSlash(new File(property).toURI().toString());// "file://" +
+                                                                  // new
+            // File(property).getAbsolutePath();
         } else {
             resolvedBaseUrl = property;
         }

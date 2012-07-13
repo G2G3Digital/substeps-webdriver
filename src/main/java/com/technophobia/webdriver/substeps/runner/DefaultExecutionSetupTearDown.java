@@ -29,8 +29,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.google.common.base.Supplier;
 import com.technophobia.substeps.model.Scope;
 import com.technophobia.substeps.runner.ExecutionContext;
-import com.technophobia.substeps.runner.INotifier;
-import com.technophobia.substeps.runner.JunitNotifier;
+import com.technophobia.substeps.runner.INotificationDistributor;
 import com.technophobia.substeps.runner.setupteardown.Annotations.AfterEveryScenario;
 import com.technophobia.substeps.runner.setupteardown.Annotations.BeforeAllFeatures;
 import com.technophobia.substeps.runner.setupteardown.Annotations.BeforeEveryScenario;
@@ -64,8 +63,9 @@ public class DefaultExecutionSetupTearDown {
     @BeforeAllFeatures
     public final void beforeAllFeaturesSetup() {
 
-        final INotifier notifier = (INotifier) ExecutionContext.get(Scope.SUITE,
-                JunitNotifier.NOTIFIER_EXECUTION_KEY);
+        final INotificationDistributor notifier = (INotificationDistributor) ExecutionContext.get(
+                Scope.SUITE, INotificationDistributor.NOTIFIER_DISTRIBUTOR_KEY);
+
         notifier.addListener(new TestFailureListener(webDriverContextSupplier));
 
         logger.info("beforeAllTestsSetup");
@@ -106,15 +106,34 @@ public class DefaultExecutionSetupTearDown {
 
         // this overrides everything else
         if (!WebdriverSubstepsConfiguration.shutDownWebdriver()) {
+
+            System.out.println("global don't shutdown");
+
             doShutdown = false;
         } else if (webDriverContextSupplier.get() != null
                 && webDriverContextSupplier.get().hasFailed()
                 && (!WebdriverSubstepsConfiguration.closeVisualWebDriveronFail() && driverType()
                         .isVisual())) {
+
+            System.out.println("failed and visual shutdown");
+
             doShutdown = false;
         }
 
         if (doShutdown) {
+
+            if (webDriverContextSupplier.get() != null) {
+                System.out.println("webDriverContextSupplier.get().hasFailed(): "
+                        + webDriverContextSupplier.get().hasFailed());
+            }
+
+            System.out.println("WebdriverSubstepsConfiguration.closeVisualWebDriveronFail(): "
+                    + WebdriverSubstepsConfiguration.closeVisualWebDriveronFail());
+
+            System.out.println("driverType().isVisual(): " + driverType().isVisual());
+
+            System.out.println("doing shutdown");
+
             if (webDriverContextSupplier.get() != null) {
                 webDriverContextSupplier.get().shutdownWebDriver();
             }
