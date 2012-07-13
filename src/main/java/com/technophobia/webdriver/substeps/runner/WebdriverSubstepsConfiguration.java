@@ -19,7 +19,6 @@
 package com.technophobia.webdriver.substeps.runner;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.junit.Assert;
@@ -34,7 +33,6 @@ public enum WebdriverSubstepsConfiguration {
     private static final Logger logger = LoggerFactory
             .getLogger(WebdriverSubstepsConfiguration.class);
 
-    private static final int TIMEOUT_IN_SECONDS;
     private static final String BASE_URL;
     private static final DriverType DRIVER_TYPE;
     private static final String DRIVER_LOCALE;
@@ -50,8 +48,6 @@ public enum WebdriverSubstepsConfiguration {
 
         Configuration.INSTANCE.addDefaultProperties(defaultURL, "default-webdriver");
 
-        TIMEOUT_IN_SECONDS = Configuration.INSTANCE.getInt("wait.seconds");
-
         BASE_URL = determineBaseURL(Configuration.INSTANCE.getString("base.url"));
 
         DRIVER_TYPE = DriverType.valueOf(Configuration.INSTANCE.getString("driver.type")
@@ -66,16 +62,7 @@ public enum WebdriverSubstepsConfiguration {
         defaultWebDriverTimeoutSecs = Configuration.INSTANCE
                 .getInt("default.webdriver.timeout.secs");
 
-        // logger.info("Using properties:\n" + "TIMEOUT_IN_SECONDS: " +
-        // TIMEOUT_IN_SECONDS + "\n"
-        // + "BASE_URL: " + BASE_URL);
-
         logger.info("Using properties:\n" + Configuration.INSTANCE.getConfigurationInfo());
-    }
-
-
-    public static int timeoutInSeconds() {
-        return TIMEOUT_IN_SECONDS;
     }
 
 
@@ -90,9 +77,7 @@ public enum WebdriverSubstepsConfiguration {
 
         if (!property.startsWith("http") && !property.startsWith("file://")) {
 
-            resolvedBaseUrl = removeTrailingSlash(new File(property).toURI().toString());// "file://" +
-                                                                  // new
-            // File(property).getAbsolutePath();
+            resolvedBaseUrl = removeTrailingSlash(new File(property).toURI().toString());
         } else {
             resolvedBaseUrl = property;
         }
