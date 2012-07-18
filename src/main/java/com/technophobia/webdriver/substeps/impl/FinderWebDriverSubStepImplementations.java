@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Supplier;
 import com.technophobia.substeps.model.SubSteps.Step;
 import com.technophobia.webdriver.substeps.runner.WebdriverSubstepsConfiguration;
-import com.technophobia.webdriver.util.ByTagAndAttributesFunction;
+import com.technophobia.webdriver.util.ByChildTagAndAttributesFunction;
 import com.technophobia.webdriver.util.ElementLocators;
 import com.technophobia.webdriver.util.WebDriverContext;
 import com.technophobia.webdriver.util.WebElementPredicate;
@@ -217,8 +217,12 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
         logger.debug("Looking for child with tag " + tag + " and attributes " + attributeString);
         Assert.assertNotNull("expecting a current element", webDriverContext().getCurrentElement());
 
-        final ByTagAndAttributesFunction condition = new ByTagAndAttributesFunction(tag,
-                attributeString);
+        final WebElement currentElement = webDriverContext().getCurrentElement();
+
+        // currentElement.findElements(by)
+
+        final ByChildTagAndAttributesFunction condition = new ByChildTagAndAttributesFunction(tag,
+                attributeString, currentElement);
 
         final WebDriverWait wait = new WebDriverWait(getThreadLocalWebDriver(),
                 WebdriverSubstepsConfiguration.defaultTimeout());
