@@ -322,7 +322,7 @@
                                 <phase>process-classes</phase>
                                 <goals>
                                     <goal>generate-docs</goal>
-                                </goals>l
+                                </goals>
                             </execution>
                         </executions>
                        
