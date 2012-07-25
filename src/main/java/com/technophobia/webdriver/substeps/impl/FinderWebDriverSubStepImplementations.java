@@ -238,7 +238,26 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
     }
 
 
-    // todo variant that also has attributes for the tag
+    /**
+     * Finds a checkbox that is a child of the specified tag, that contains the
+     * specified text; eg.
+     * 
+     * <pre>
+     * <label>
+     *  <input type="checkbox" name="checkbox_name" value="yeah"/>a checkbox <span>label</span>
+     * </label>
+     * </pre>
+     * 
+     * @example FindCheckbox inside tag="label" with label="a checkbox label>"
+     * 
+     * @section Location
+     * 
+     * @param tag
+     *            the tag
+     * @param label
+     *            the checkbox label
+     * @return the web element
+     */
     @Step("FindCheckbox inside tag=\"?([^\"]*)\"? with label=\"([^\"]*)\"")
     public WebElement findCheckBox(final String tag, final String label) {
 
@@ -248,6 +267,27 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
 
     // todo variant that also has attributes for the tag
+
+    /**
+     * Finds a radiobutton that is a child of the specified tag, that contains
+     * the specified text; eg.
+     * 
+     * <pre>
+     * <label>
+     *  <input type="radio" name="radio_name" value="yeah"/>a radio <span>label</span>
+     * </label>
+     * </pre>
+     * 
+     * @example FindRadioButton inside tag="label" with label="a radio label>"
+     * 
+     * @section Location
+     * 
+     * @param tag
+     *            the tag
+     * @param label
+     *            the radio button label
+     * @return the web element
+     */
     @Step("FindRadioButton inside tag=\"?([^\"]*)\"? with label=\"([^\"]*)\"")
     public WebElement findRadioButton(final String tag, final String label) {
 

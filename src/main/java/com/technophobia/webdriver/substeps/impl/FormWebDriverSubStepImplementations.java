@@ -231,7 +231,11 @@ public class FormWebDriverSubStepImplementations extends AbstractWebDriverSubSte
 
 
     /**
-     * Sets the value of a radio button to...
+     * Use: FindRadioButton inside tag="label" with label="<radio_button_text>"
+     * + SetRadioButton checked=<true> in preference as this will locate the
+     * radio button by visible text rather than the underlying value.
+     * 
+     * Locates a radio button with a specific value and checks the radio button.
      * 
      * @example SetRadioButton name=opt_in, value=OFF, checked=true
      * @section Forms
@@ -242,6 +246,7 @@ public class FormWebDriverSubStepImplementations extends AbstractWebDriverSubSte
      * @param checked
      *            the checked
      */
+    @Deprecated
     @Step("SetRadioButton name =([^\"]*), value =([^\"]*), checked =([^\"]*)")
     public void setRadioButtonValue(final String name, final String value, final String checked) {
         logger.debug("Setting radio button with name " + name + " to value " + value

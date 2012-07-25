@@ -51,6 +51,15 @@ public class WebDriverContext {
     private final WebDriver webDriver;
     private WebElement currentElement = null;
     private boolean failed = false;
+    private final DriverType driverType;
+
+
+    /**
+     * @return the driverType
+     */
+    public DriverType getDriverType() {
+        return driverType;
+    }
 
 
     // may need to expand the params, javascript enabled, profile paths etc
@@ -58,6 +67,8 @@ public class WebDriverContext {
         // TODO - make this nicer by having a factory interface which the enum
         // implements, each instance will overide the method
         // focussing on overall functionality at present
+
+        this.driverType = driverType;
 
         switch (driverType) {
         case FIREFOX: {

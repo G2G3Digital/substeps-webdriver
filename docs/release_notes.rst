@@ -11,3 +11,5 @@ Webdriver Substeps - Release Notes
 - removed unused config property.
 - BUG: fix around FindChildByTagAndAttributes - wasn't actually finding children, siblings were also being reported.
 - inclusion of step implementation glossary info
+- exposed the DriverType from WebDriverContext
+- improved some of the step implementation docs
