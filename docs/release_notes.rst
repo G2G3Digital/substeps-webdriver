@@ -13,3 +13,4 @@ Webdriver Substeps - Release Notes
 - inclusion of step implementation glossary info
 - exposed the DriverType from WebDriverContext
 - improved some of the step implementation docs
+- BUG: NavigateTo now uses base.url property unless the url begins with file or http

@@ -164,28 +164,4 @@ Table
    </table>   </div>
 
 
-.. Note::
-   - Email related substeps are currently included in webdriver-susbteps, however this is an area of active development and will move to a seperate library in due course.  
-     Additionally there are threading issues around the underlying SMTP server which may cause your CI server to occasionally hang.
-   
-   - This section will be  removed from the github docs!
-
-Email related
--------------
-
-
-
-.. raw:: html
-
-   <div style="width:100%; margin:auto">
-   <table border="1">
-   <tr><th>Expression</th> <th>Example</th> <th>Description</th></tr>
-   
-   <tr><td>AssertEmailReceived to &quot;&lt;recipient&gt;&quot; with subject &quot;&lt;subject&gt;&quot;</td><td>AssertEmailReceived to "mickey@disney.com" with subject
-             "You've won!"</td><td>Check that an email was received to ... with a subject line of ...</td></tr>
-   <tr><td>StartEmail</td><td>StartEmail</td><td>Start an email server. NB the application will need to be configured to  use the host(and port) where these tests are being run.</td></tr>
-   <tr><td>StopEmail</td><td>StopEmail</td><td>Stop the test email server.</td></tr>
-   
-   </table>
-      </div>
    

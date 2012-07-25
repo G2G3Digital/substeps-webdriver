@@ -88,3 +88,9 @@ Define: And I can click the link "<link_text>" and see "<txt>"
 Define: And the table row <row>, column <col> contains "<txt>"
 	FindById table_id
 	AssertTableValue column <col>, row <row> contains text "<txt>"	
+	
+Define: Given I go to an external page such as Google
+    NavigateTo http://www.google.co.uk
+
+Define: Then the page title is "<page_title>"
+	AssertPageTitle is "<page_title>"

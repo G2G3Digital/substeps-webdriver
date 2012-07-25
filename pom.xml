@@ -302,61 +302,62 @@
                 
             </build>
         </profile>
-        
-        <profile>
-            <id>generate-glossary</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-                <build>
-                    <plugins>
 
-                    <plugin>
-                        <groupId>com.technophobia.substeps</groupId>
-                        <artifactId>substeps-glossary-builder</artifactId>
-                        <version>0.0.1-SNAPSHOT</version>
+    <profile>
+        <id>generate-glossary</id>
+        <activation>
+            <activeByDefault>true</activeByDefault>
+        </activation>
+        <build>
+            <plugins>
 
-                        <executions>
-                            <execution>
-                                <id>Build SubSteps Glossary</id>
-                                <phase>process-classes</phase>
-                                <goals>
-                                    <goal>generate-docs</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                       
-                        <configuration>
-                            <stepImplementationClassNames>
-                                <param>com.technophobia.webdriver.substeps.impl.AssertionWebDriverSubStepImplementations</param>
-                                <param>com.technophobia.webdriver.substeps.impl.ActionWebDriverSubStepImplementations</param>
-                               
-                                <param>com.technophobia.webdriver.substeps.impl.FinderWebDriverSubStepImplementations</param>
-                                <param>com.technophobia.webdriver.substeps.impl.FormWebDriverSubStepImplementations</param>
-                                <param>com.technophobia.webdriver.substeps.impl.StartupWebDriverSubStepImplementations</param>
-                                <param>com.technophobia.webdriver.substeps.impl.TableSubStepImplementations</param>
-                            </stepImplementationClassNames>
+                <plugin>
+                    <groupId>com.technophobia.substeps</groupId>
+                    <artifactId>substeps-glossary-builder</artifactId>
+                    <version>0.0.1-SNAPSHOT</version>
 
-                            <glossaryPublisher implementation="com.technophobia.substeps.glossary.HTMLSubstepsPublisher">
-                                <outputFile>./docs/stepimplementations.html</outputFile>
-                            </glossaryPublisher>
+                    <executions>
+                        <execution>
+                            <id>Build SubSteps Glossary</id>
+                            <phase>process-classes</phase>
+                            <goals>
+                                <goal>generate-docs</goal>
+                            </goals>
+                        </execution>
+                    </executions>
 
-                        </configuration>
-                       
-                       
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.slf4j</groupId>
-                                <artifactId>slf4j-log4j12</artifactId>
-                                <version>1.6.4</version>
-                            </dependency>
+                    <configuration>
+                        <stepImplementationClassNames>
+                            <param>com.technophobia.webdriver.substeps.impl.AssertionWebDriverSubStepImplementations</param>
+                            <param>com.technophobia.webdriver.substeps.impl.ActionWebDriverSubStepImplementations</param>
 
-                        </dependencies>
+                            <param>com.technophobia.webdriver.substeps.impl.FinderWebDriverSubStepImplementations</param>
+                            <param>com.technophobia.webdriver.substeps.impl.FormWebDriverSubStepImplementations</param>
+                            <param>com.technophobia.webdriver.substeps.impl.StartupWebDriverSubStepImplementations</param>
+                            <param>com.technophobia.webdriver.substeps.impl.TableSubStepImplementations</param>
+                        </stepImplementationClassNames>
 
-                    </plugin>
+                        <glossaryPublisher
+                            implementation="com.technophobia.substeps.glossary.HTMLSubstepsPublisher">
+                            <outputFile>./docs/stepimplementations.html</outputFile>
+                        </glossaryPublisher>
+
+                    </configuration>
+
+
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.slf4j</groupId>
+                            <artifactId>slf4j-log4j12</artifactId>
+                            <version>1.6.4</version>
+                        </dependency>
+
+                    </dependencies>
+
+                </plugin>
             </plugins>
-    </build>
-        </profile>    
+        </build>
+    </profile>    
         
     </profiles>
 

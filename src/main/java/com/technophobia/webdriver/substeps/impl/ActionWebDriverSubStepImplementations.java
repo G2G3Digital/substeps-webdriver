@@ -60,7 +60,9 @@ public class ActionWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
 
     /**
-     * Navigate to a url using the base url specified in the properties
+     * Navigate to a url, if the url begins with http or file, the url will be
+     * used as is, if a relative url is specified then it will be prepended with
+     * the base url property
      * 
      * @example NavigateTo /myApp (will navigate to http://localhost/myApp if
      *          base.url is set to http://localhost)
@@ -72,7 +74,12 @@ public class ActionWebDriverSubStepImplementations extends AbstractWebDriverSubS
     @Step("NavigateTo ([^\"]*)")
     public void navigateTo(final String url) {
         logger.debug("About to navigate to " + url);
-        webDriver().get(normaliseURL(url));
+
+        if (url.startsWith("file") || url.startsWith("http")) {
+            webDriver().get(url);
+        } else {
+            webDriver().get(normaliseURL(url));
+        }
     }
 
 

@@ -36,7 +36,9 @@ Scenario: a scenario
 	And the table row 1, column 2 contains "Mrs Evil Headtecher"   	
 	
 	
-
-#	Then I can select radio button "val2"	
-#	Then radio button "val1" is checked
 	
+	# these tests need to be last as they go off to google
+	Given I go to an external page such as Google
+	Then the page title is "Google"
+    
+    # Do not add more steps here

@@ -28,12 +28,7 @@ import com.technophobia.webdriver.substeps.runner.DefaultExecutionSetupTearDown;
  * 
  * @author imoore
  */
-// @Test
-@SubStepsConfiguration(featureFile = "./target/test-classes/features", 
-subStepsFile = "./target/test-classes/substeps", 
-stepImplementations = { BaseWebdriverSubStepImplementations.class },
-beforeAndAfterImplementations = { DefaultExecutionSetupTearDown.class })
-
+@SubStepsConfiguration(featureFile = "./target/test-classes/features", subStepsFile = "./target/test-classes/substeps", stepImplementations = { BaseWebdriverSubStepImplementations.class }, beforeAndAfterImplementations = { DefaultExecutionSetupTearDown.class })
 @RunWith(JunitFeatureRunner.class)
 public class SelfTests {
     // no op
