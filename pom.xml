@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.technophobia.substeps</groupId>
 	<artifactId>webdriver-substeps</artifactId>
-	<version>0.0.4-SNAPSHOT</version>
+	<version>0.0.4</version>
 
 	<packaging>jar</packaging>
 	<name>Webdriver Substeps</name>
@@ -341,8 +341,7 @@
                             <param>com.technophobia.webdriver.substeps.impl.TableSubStepImplementations</param>
                         </stepImplementationClassNames>
 
-                        <glossaryPublisher
-                            implementation="com.technophobia.substeps.glossary.HTMLSubstepsPublisher">
+                        <glossaryPublisher implementation="com.technophobia.substeps.glossary.HTMLSubstepsPublisher">
                             <outputFile>./docs/stepimplementations.html</outputFile>
                         </glossaryPublisher>
 
