@@ -80,6 +80,8 @@
         
 		<substeps.version>0.0.6</substeps.version>
 		<substeps.runner.version>0.0.5</substeps.runner.version>
+        <substeps.glossary.version>0.0.1</substeps.glossary.version>
+        
         
 		<guava.version>10.0</guava.version>
 		<mockito.version>1.9.0-rc1</mockito.version>
@@ -311,10 +313,12 @@
         <build>
             <plugins>
 
+
+
                 <plugin>
                     <groupId>com.technophobia.substeps</groupId>
                     <artifactId>substeps-glossary-builder</artifactId>
-                    <version>0.0.1-SNAPSHOT</version>
+                    <version>${substeps.glossary.version}</version>
 
                     <executions>
                         <execution>
