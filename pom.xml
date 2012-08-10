@@ -323,7 +323,7 @@
                     <executions>
                         <execution>
                             <id>Build SubSteps Glossary</id>
-                            <phase>validate</phase>
+                            <phase> process-test-resources</phase>
                             <goals>
                                 <goal>generate-docs</goal>
                             </goals>
