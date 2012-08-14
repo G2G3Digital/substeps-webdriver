@@ -33,13 +33,17 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Supplier;
 import com.technophobia.substeps.model.SubSteps.Step;
+import com.technophobia.substeps.model.SubSteps.StepImplementations;
+import com.technophobia.webdriver.substeps.runner.DefaultExecutionSetupTearDown;
 import com.technophobia.webdriver.substeps.runner.WebdriverSubstepsConfiguration;
 import com.technophobia.webdriver.util.ByChildTagAndAttributesFunction;
 import com.technophobia.webdriver.util.ElementLocators;
 import com.technophobia.webdriver.util.WebDriverContext;
 import com.technophobia.webdriver.util.WebElementPredicate;
 
-public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubStepImplementations {
+@StepImplementations(requiredInitialisationClasses = DefaultExecutionSetupTearDown.class)
+public class FinderWebDriverSubStepImplementations extends
+        AbstractWebDriverSubStepImplementations {
 
     private static final Logger logger = LoggerFactory
             .getLogger(FinderWebDriverSubStepImplementations.class);
@@ -94,7 +98,8 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
      */
     @Step("FindByIdTimeout ([^\"]*) timeout = ([^\"]*) secs")
     public WebElement findById(final String id, final String timeout) {
-        logger.debug("Looking for item with id " + id + "within " + timeout + " seconds");
+        logger.debug("Looking for item with id " + id + "within " + timeout
+                + " seconds");
         final long t = Long.parseLong(timeout);
 
         webDriverContext().setCurrentElement(null);
@@ -138,7 +143,8 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
     public WebElement findByName(final String name) {
         logger.debug("Looking for item with name " + name);
         webDriverContext().setCurrentElement(null);
-        final WebElement elem = webDriverContext().waitForElement(By.name(name));
+        final WebElement elem = webDriverContext()
+                .waitForElement(By.name(name));
         Assert.assertNotNull("expecting an element with name " + name, elem);
         webDriverContext().setCurrentElement(elem);
         return elem;
@@ -157,7 +163,8 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
         logger.debug("About to find element by predicate " + predicate);
         WebElement rtn = null;
 
-        final List<WebElement> elems = webDriver().findElements(By.tagName(predicate.getTagname()));
+        final List<WebElement> elems = webDriver().findElements(
+                By.tagName(predicate.getTagname()));
 
         for (final WebElement e : elems) {
 
@@ -167,8 +174,9 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
             }
         }
         if (rtn == null) {
-            throw new IllegalStateException("Failed to find element by predicate: "
-                    + predicate.getDescription());
+            throw new IllegalStateException(
+                    "Failed to find element by predicate: "
+                            + predicate.getDescription());
         }
 
         return rtn;
@@ -189,8 +197,10 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
     @Step("FindChild ByName name=\"?([^\"]*)\"?")
     public WebElement findChildByName(final String name) {
         logger.debug("Looking for child with name " + name);
-        Assert.assertNotNull("expecting a current element", webDriverContext().getCurrentElement());
-        final WebElement elem = webDriverContext().getCurrentElement().findElement(By.name(name));
+        Assert.assertNotNull("expecting a current element", webDriverContext()
+                .getCurrentElement());
+        final WebElement elem = webDriverContext().getCurrentElement()
+                .findElement(By.name(name));
 
         Assert.assertNotNull("expecting an element with name " + name, elem);
         webDriverContext().setCurrentElement(elem);
@@ -213,16 +223,20 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
      * @return the web element
      */
     @Step("FindChild ByTagAndAttributes tag=\"?([^\"]*)\"? attributes=\\[(.*)\\]")
-    public WebElement findChildByTagAndAttributes(final String tag, final String attributeString) {
-        logger.debug("Looking for child with tag " + tag + " and attributes " + attributeString);
-        Assert.assertNotNull("expecting a current element", webDriverContext().getCurrentElement());
+    public WebElement findChildByTagAndAttributes(final String tag,
+            final String attributeString) {
+        logger.debug("Looking for child with tag " + tag + " and attributes "
+                + attributeString);
+        Assert.assertNotNull("expecting a current element", webDriverContext()
+                .getCurrentElement());
 
-        final WebElement currentElement = webDriverContext().getCurrentElement();
+        final WebElement currentElement = webDriverContext()
+                .getCurrentElement();
 
         // currentElement.findElements(by)
 
-        final ByChildTagAndAttributesFunction condition = new ByChildTagAndAttributesFunction(tag,
-                attributeString, currentElement);
+        final ByChildTagAndAttributesFunction condition = new ByChildTagAndAttributesFunction(
+                tag, attributeString, currentElement);
 
         final WebDriverWait wait = new WebDriverWait(getThreadLocalWebDriver(),
                 WebdriverSubstepsConfiguration.defaultTimeout());
@@ -230,8 +244,8 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
         final WebElement elem = ElementLocators.waitUntil(wait, condition,
                 getThreadLocalWebDriver());
 
-        Assert.assertNotNull("expecting a child element with tag [" + tag + "] and attributes ["
-                + attributeString + "]", elem);
+        Assert.assertNotNull("expecting a child element with tag [" + tag
+                + "] and attributes [" + attributeString + "]", elem);
         webDriverContext().setCurrentElement(elem);
 
         return elem;
@@ -309,7 +323,8 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
         // TODO - turn this into a function
 
         // look for elems with the right tag
-        final List<WebElement> tagElems = getThreadLocalWebDriver().findElements(By.tagName(tag));
+        final List<WebElement> tagElems = getThreadLocalWebDriver()
+                .findElements(By.tagName(tag));
 
         checkElements("expecting some elements of tag: " + tag, tagElems);
 
@@ -322,7 +337,8 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
                 // yes
                 // is there a radio button inside ?
 
-                final List<WebElement> inputElements = tagElem.findElements(By.tagName("input"));
+                final List<WebElement> inputElements = tagElem.findElements(By
+                        .tagName("input"));
 
                 if (inputElements != null && !inputElements.isEmpty()) {
                     // are they radio buttons ?
@@ -330,7 +346,8 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
                     for (final WebElement inputElement : inputElements) {
                         final String type = inputElement.getAttribute("type");
 
-                        if (type != null && type.compareToIgnoreCase(inputType) == 0) {
+                        if (type != null
+                                && type.compareToIgnoreCase(inputType) == 0) {
                             // bingo
                             if (matchingElems == null) {
                                 matchingElems = new ArrayList<WebElement>();
@@ -342,8 +359,9 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
             }
         }
 
-        elem = checkForMatchingElement("expecting an input of type " + inputType + " inside tag ["
-                + tag + "] with label [" + label + "]", matchingElems);
+        elem = checkForMatchingElement("expecting an input of type "
+                + inputType + " inside tag [" + tag + "] with label [" + label
+                + "]", matchingElems);
 
         webDriverContext().setCurrentElement(elem);
         return elem;
@@ -374,8 +392,10 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
      * @section Location
      */
     @Step("FindByTagAndAttributes tag=\"?([^\"]*)\"? attributes=\\[(.*)\\]")
-    public WebElement findByTagAndAttributes(final String tag, final String attributeString) {
-        logger.debug("Looking for item with tag " + tag + " and attributes " + attributeString);
+    public WebElement findByTagAndAttributes(final String tag,
+            final String attributeString) {
+        logger.debug("Looking for item with tag " + tag + " and attributes "
+                + attributeString);
         webDriverContext().setCurrentElement(null);
         final Map<String, String> expectedAttributes = convertToMap(attributeString);
 
@@ -383,10 +403,12 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
         // TODO - in progress, turn this into a wait function
 
-        final List<WebElement> elems = webDriver().findElements(By.tagName(tag));
+        final List<WebElement> elems = webDriver()
+                .findElements(By.tagName(tag));
 
         Assert.assertNotNull("expecting some elements for tag: " + tag, elems);
-        Assert.assertTrue("expecting some elements for tag: " + tag, !elems.isEmpty());
+        Assert.assertTrue("expecting some elements for tag: " + tag,
+                !elems.isEmpty());
 
         List<WebElement> matchingElems = null;
         for (final WebElement e : elems) {
@@ -400,8 +422,8 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
             }
         }
 
-        rtn = checkForMatchingElement("failed to locate an element with tag: " + tag
-                + " and attributes: " + attributeString, matchingElems);
+        rtn = checkForMatchingElement("failed to locate an element with tag: "
+                + tag + " and attributes: " + attributeString, matchingElems);
 
         webDriverContext().setCurrentElement(rtn);
 
@@ -416,7 +438,8 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
      * @param matchingElems
      * @return
      */
-    public WebElement checkForMatchingElement(final String msg, final List<WebElement> matchingElems) {
+    public WebElement checkForMatchingElement(final String msg,
+            final List<WebElement> matchingElems) {
         WebElement rtn = null;
         if (matchingElems != null && matchingElems.size() > 1) {
             // ambiguous
@@ -444,7 +467,8 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
      */
     public WebElement findElementWithText(final String type, final String text) {
         WebElement elem = null;
-        final List<WebElement> elems = webDriver().findElements(By.tagName(type));
+        final List<WebElement> elems = webDriver().findElements(
+                By.tagName(type));
         if (elems != null) {
             for (final WebElement e : elems) {
 

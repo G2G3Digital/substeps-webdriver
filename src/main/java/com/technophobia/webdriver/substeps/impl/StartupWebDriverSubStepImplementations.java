@@ -20,9 +20,13 @@ package com.technophobia.webdriver.substeps.impl;
 
 import com.google.common.base.Supplier;
 import com.technophobia.substeps.model.SubSteps.Step;
+import com.technophobia.substeps.model.SubSteps.StepImplementations;
+import com.technophobia.webdriver.substeps.runner.DefaultExecutionSetupTearDown;
 import com.technophobia.webdriver.util.WebDriverContext;
 
-public class StartupWebDriverSubStepImplementations extends AbstractWebDriverSubStepImplementations {
+@StepImplementations(requiredInitialisationClasses = DefaultExecutionSetupTearDown.class)
+public class StartupWebDriverSubStepImplementations extends
+        AbstractWebDriverSubStepImplementations {
 
     public StartupWebDriverSubStepImplementations() {
         super();

@@ -32,13 +32,17 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Supplier;
 import com.technophobia.substeps.model.SubSteps.Step;
+import com.technophobia.substeps.model.SubSteps.StepImplementations;
 import com.technophobia.substeps.model.SubSteps.StepParameter;
 import com.technophobia.substeps.model.parameter.BooleanConverter;
+import com.technophobia.webdriver.substeps.runner.DefaultExecutionSetupTearDown;
 import com.technophobia.webdriver.util.CheckBoxPredicate;
 import com.technophobia.webdriver.util.RadioButtonPredicate;
 import com.technophobia.webdriver.util.WebDriverContext;
 
-public class FormWebDriverSubStepImplementations extends AbstractWebDriverSubStepImplementations {
+@StepImplementations(requiredInitialisationClasses = DefaultExecutionSetupTearDown.class)
+public class FormWebDriverSubStepImplementations extends
+        AbstractWebDriverSubStepImplementations {
 
     private static final Logger logger = LoggerFactory
             .getLogger(FormWebDriverSubStepImplementations.class);
@@ -55,7 +59,8 @@ public class FormWebDriverSubStepImplementations extends AbstractWebDriverSubSte
     }
 
 
-    public FormWebDriverSubStepImplementations(final ActionWebDriverSubStepImplementations actions,
+    public FormWebDriverSubStepImplementations(
+            final ActionWebDriverSubStepImplementations actions,
             final FinderWebDriverSubStepImplementations locator,
             final Supplier<WebDriverContext> driverContextSupplier) {
         super(driverContextSupplier);
@@ -123,7 +128,8 @@ public class FormWebDriverSubStepImplementations extends AbstractWebDriverSubSte
      */
     @Step("ClearAndSendKeys \"([^\"]*)\"")
     public void clearAndSendKeys(final String value) {
-        logger.debug("About to clear the current element and send the keys " + value);
+        logger.debug("About to clear the current element and send the keys "
+                + value);
         webDriverContext().getCurrentElement().clear();
         webDriverContext().getCurrentElement().sendKeys(value);
     }
@@ -141,7 +147,8 @@ public class FormWebDriverSubStepImplementations extends AbstractWebDriverSubSte
      */
     @Step("ChooseOption \"([^\"]*)\" in id ([^\"]*)")
     public void selectValueInId(final String value, final String id) {
-        logger.debug("About to choose option " + value + " in select box with id " + id);
+        logger.debug("About to choose option " + value
+                + " in select box with id " + id);
 
         final WebElement selectElement = locator.findById(id);
 
@@ -154,11 +161,12 @@ public class FormWebDriverSubStepImplementations extends AbstractWebDriverSubSte
      * @param value
      * @param selectElement
      */
-    public void chooseOptionByTextInSelect(final String value, final WebElement selectElement) {
+    public void chooseOptionByTextInSelect(final String value,
+            final WebElement selectElement) {
         final Select select = new Select(selectElement);
         select.selectByVisibleText(value);
-        Assert.assertTrue("expected value is not selected", select.getFirstSelectedOption()
-                .isSelected());
+        Assert.assertTrue("expected value is not selected", select
+                .getFirstSelectedOption().isSelected());
         Assert.assertThat("expected value is not selected", value, is(select
                 .getFirstSelectedOption().getText()));
     }
@@ -181,8 +189,8 @@ public class FormWebDriverSubStepImplementations extends AbstractWebDriverSubSte
         actions.click();
         boolean found = false;
 
-        final List<WebElement> options = webDriverContext().getCurrentElement().findElements(
-                By.tagName("option"));
+        final List<WebElement> options = webDriverContext().getCurrentElement()
+                .findElements(By.tagName("option"));
         for (final WebElement e : options) {
             if (e.getText().equalsIgnoreCase(value)) {
                 e.click();
@@ -199,14 +207,16 @@ public class FormWebDriverSubStepImplementations extends AbstractWebDriverSubSte
 
     @Step("AssertSelect id=\"([^\"]*)\" text=\"([^\"]*)\" is currently selected")
     public void assertOptionIsSelected(final String id, final String value) {
-        logger.debug("Asserting select box with id " + id + " has option " + value + " selected");
+        logger.debug("Asserting select box with id " + id + " has option "
+                + value + " selected");
         final WebElement select = locator.findById(id);
 
         final List<WebElement> options = getOptions(select);
         for (final WebElement option : options) {
 
             if (option.getText().equals(value)) {
-                Assert.assertTrue("option text: " + value + "is not selected", option.isSelected());
+                Assert.assertTrue("option text: " + value + "is not selected",
+                        option.isSelected());
                 break;
             }
         }
@@ -215,8 +225,8 @@ public class FormWebDriverSubStepImplementations extends AbstractWebDriverSubSte
 
     @Step("AssertSelect id=\"([^\"]*)\" text=\"([^\"]*)\" is not currently selected")
     public void assertOptionIsNotSelected(final String id, final String value) {
-        logger.debug("Asserting select box with id " + id + " has option " + value
-                + " not selected");
+        logger.debug("Asserting select box with id " + id + " has option "
+                + value + " not selected");
         final WebElement select = locator.findById(id);
 
         final List<WebElement> options = getOptions(select);
@@ -248,14 +258,17 @@ public class FormWebDriverSubStepImplementations extends AbstractWebDriverSubSte
      */
     @Deprecated
     @Step("SetRadioButton name =([^\"]*), value =([^\"]*), checked =([^\"]*)")
-    public void setRadioButtonValue(final String name, final String value, final String checked) {
-        logger.debug("Setting radio button with name " + name + " to value " + value
-                + " with checked status " + checked);
+    public void setRadioButtonValue(final String name, final String value,
+            final String checked) {
+        logger.debug("Setting radio button with name " + name + " to value "
+                + value + " with checked status " + checked);
         webDriverContext().setCurrentElement(null);
-        final WebElement elem = locator.findElementByPredicate(new RadioButtonPredicate(
-                name.trim(), value.trim()));
+        final WebElement elem = locator
+                .findElementByPredicate(new RadioButtonPredicate(name.trim(),
+                        value.trim()));
 
-        Assert.assertNotNull("expecting a radio buttin element with value" + value, elem);
+        Assert.assertNotNull("expecting a radio buttin element with value"
+                + value, elem);
 
         webDriverContext().setCurrentElement(elem);
 
@@ -276,9 +289,11 @@ public class FormWebDriverSubStepImplementations extends AbstractWebDriverSubSte
     public void setRadioButtonChecked(final String checked) {
 
         // assumes current element is not null and a radio button
-        final WebElement currentElem = getThreadLocalWebDriverContext().getCurrentElement();
+        final WebElement currentElem = getThreadLocalWebDriverContext()
+                .getCurrentElement();
 
-        AssertionWebDriverSubStepImplementations.assertElementIs(currentElem, "input", "radio");
+        AssertionWebDriverSubStepImplementations.assertElementIs(currentElem,
+                "input", "radio");
 
         final boolean val = Boolean.parseBoolean(checked.trim());
         setCheckboxValue(currentElem, val);
@@ -297,9 +312,11 @@ public class FormWebDriverSubStepImplementations extends AbstractWebDriverSubSte
     public void setSetCheckedBoxChecked(final String checked) {
 
         // assumes current element is not null and a radio button
-        final WebElement currentElem = getThreadLocalWebDriverContext().getCurrentElement();
+        final WebElement currentElem = getThreadLocalWebDriverContext()
+                .getCurrentElement();
 
-        AssertionWebDriverSubStepImplementations.assertElementIs(currentElem, "input", "checkbox");
+        AssertionWebDriverSubStepImplementations.assertElementIs(currentElem,
+                "input", "checkbox");
 
         final boolean val = Boolean.parseBoolean(checked.trim());
         setCheckboxValue(currentElem, val);
@@ -318,7 +335,8 @@ public class FormWebDriverSubStepImplementations extends AbstractWebDriverSubSte
      */
     @Step("SetRadioButton name=\"([^\"]*)\", text=\"([^\"]*)\"")
     public void setRadioButton(final String name, final String text) {
-        logger.debug("About to set radio button with name " + name + " to text " + text);
+        logger.debug("About to set radio button with name " + name
+                + " to text " + text);
         final WebElement elem = getRadioButtonByNameAndText(name, text);
 
         elem.click();
@@ -340,10 +358,12 @@ public class FormWebDriverSubStepImplementations extends AbstractWebDriverSubSte
      *            not
      */
     @Step("AssertRadioButton name=\"([^\"]*)\", text=\"([^\"]*)\", checked=\"([^\"]*)\"")
-    public void assertRadioButton(final String name, final String text,
+    public void assertRadioButton(
+            final String name,
+            final String text,
             @StepParameter(converter = BooleanConverter.class) final Boolean checked) {
-        logger.debug("Asserting radio button " + name + ", option " + text + " is "
-                + (checked ? "" : "not") + "checked");
+        logger.debug("Asserting radio button " + name + ", option " + text
+                + " is " + (checked ? "" : "not") + "checked");
         final WebElement elem = getRadioButtonByNameAndText(name, text);
 
         final String checkedAttr = elem.getAttribute("checked");
@@ -360,8 +380,10 @@ public class FormWebDriverSubStepImplementations extends AbstractWebDriverSubSte
      * @param text
      * @return
      */
-    public WebElement getRadioButtonByNameAndText(final String name, final String text) {
-        logger.debug("About to get radio button with name " + name + " and text " + text);
+    public WebElement getRadioButtonByNameAndText(final String name,
+            final String text) {
+        logger.debug("About to get radio button with name " + name
+                + " and text " + text);
         webDriverContext().setCurrentElement(null);
 
         final RadioButtonPredicate predicate = new RadioButtonPredicate();
@@ -370,8 +392,8 @@ public class FormWebDriverSubStepImplementations extends AbstractWebDriverSubSte
 
         final WebElement elem = locator.findElementByPredicate(predicate);
 
-        Assert.assertNotNull(
-                "expecting a radio buttin element with name:text " + name + ":" + text, elem);
+        Assert.assertNotNull("expecting a radio buttin element with name:text "
+                + name + ":" + text, elem);
 
         webDriverContext().setCurrentElement(elem);
         return elem;
@@ -393,9 +415,11 @@ public class FormWebDriverSubStepImplementations extends AbstractWebDriverSubSte
     public void setSetCheckBox(final String name, final String checked) {
         logger.debug("About to set checkbox " + name + "to " + checked);
         webDriverContext().setCurrentElement(null);
-        final WebElement elem = locator.findElementByPredicate(new CheckBoxPredicate(name.trim()));
+        final WebElement elem = locator
+                .findElementByPredicate(new CheckBoxPredicate(name.trim()));
 
-        Assert.assertNotNull("expecting a radio buttin element with value" + name);
+        Assert.assertNotNull("expecting a radio buttin element with value"
+                + name);
         webDriverContext().setCurrentElement(elem);
         final boolean val = Boolean.parseBoolean(checked.trim());
         setCheckboxValue(elem, val);
@@ -411,7 +435,8 @@ public class FormWebDriverSubStepImplementations extends AbstractWebDriverSubSte
      * @param value
      *            the value
      */
-    protected void setCheckboxValue(final WebElement checkboxField, final boolean value) {
+    protected void setCheckboxValue(final WebElement checkboxField,
+            final boolean value) {
         logger.debug("About to set checkbox " + checkboxField + "to "
                 + (value ? "checked" : "not checked"));
         if (checkboxField.isSelected() && !value) {

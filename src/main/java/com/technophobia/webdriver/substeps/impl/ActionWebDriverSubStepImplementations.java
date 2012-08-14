@@ -34,11 +34,15 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.technophobia.substeps.model.SubSteps.Step;
+import com.technophobia.substeps.model.SubSteps.StepImplementations;
 import com.technophobia.webdriver.substeps.runner.Condition;
+import com.technophobia.webdriver.substeps.runner.DefaultExecutionSetupTearDown;
 import com.technophobia.webdriver.substeps.runner.WebdriverSubstepsConfiguration;
 import com.technophobia.webdriver.util.WebDriverContext;
 
-public class ActionWebDriverSubStepImplementations extends AbstractWebDriverSubStepImplementations {
+@StepImplementations(requiredInitialisationClasses = DefaultExecutionSetupTearDown.class)
+public class ActionWebDriverSubStepImplementations extends
+        AbstractWebDriverSubStepImplementations {
 
     private static final Logger logger = LoggerFactory
             .getLogger(ActionWebDriverSubStepImplementations.class);
@@ -144,7 +148,8 @@ public class ActionWebDriverSubStepImplementations extends AbstractWebDriverSubS
     public void clickButton(final String buttonText) {
         logger.debug("About to click button with text " + buttonText);
         webDriverContext().setCurrentElement(null);
-        final WebElement elem = locator.findElementWithText("button", buttonText.trim());
+        final WebElement elem = locator.findElementWithText("button",
+                buttonText.trim());
         Assert.assertNotNull("expecting to find a button: " + buttonText, elem);
         webDriverContext().setCurrentElement(elem);
         elem.click();
@@ -155,7 +160,8 @@ public class ActionWebDriverSubStepImplementations extends AbstractWebDriverSubS
     public void clickInput(final String buttonText) {
         logger.debug("About to click submit button with text " + buttonText);
         webDriverContext().setCurrentElement(null);
-        final List<WebElement> elems = webDriver().findElements(By.tagName("input"));
+        final List<WebElement> elems = webDriver().findElements(
+                By.tagName("input"));
 
         List<WebElement> matchingElems = null;
         for (final WebElement e : elems) {
@@ -218,13 +224,13 @@ public class ActionWebDriverSubStepImplementations extends AbstractWebDriverSubS
      *            the value
      * @return the web element
      */
-    public WebElement waitForElementWithAttribute(final By by, final String attribute,
-            final String value) {
-        logger.debug("Waiting for element " + by + " with attribute " + attribute + " with value "
-                + value);
+    public WebElement waitForElementWithAttribute(final By by,
+            final String attribute, final String value) {
+        logger.debug("Waiting for element " + by + " with attribute "
+                + attribute + " with value " + value);
         final WebDriverWait wait = new WebDriverWait(webDriver(), 10);
-        final Function<WebDriver, WebElement> condition2 = new AttributeEndsWithFunction(by,
-                attribute, value);
+        final Function<WebDriver, WebElement> condition2 = new AttributeEndsWithFunction(
+                by, attribute, value);
 
         // Implementations should wait until the condition evaluates to a value
         // that is neither null nor false.
@@ -232,14 +238,16 @@ public class ActionWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
     }
 
-    private static class AttributeEndsWithFunction implements Function<WebDriver, WebElement> {
+    private static class AttributeEndsWithFunction implements
+            Function<WebDriver, WebElement> {
 
         private final By by;
         private final String attribute;
         private final String value;
 
 
-        public AttributeEndsWithFunction(final By by, final String attribute, final String value) {
+        public AttributeEndsWithFunction(final By by, final String attribute,
+                final String value) {
             this.by = by;
             this.attribute = attribute;
             this.value = value;
@@ -274,15 +282,17 @@ public class ActionWebDriverSubStepImplementations extends AbstractWebDriverSubS
     public void waitForPageTitle(final String expectedTitle) {
         logger.debug("Waiting for " + expectedTitle + " page");
 
-        final boolean conditionMet = webDriverContext().waitForCondition(new Condition() {
-            public boolean conditionMet() {
-                final String pageTitle = webDriver().getTitle();
-                logger.debug(String.format("wait for page. Expected='%s', actual='%s'",
-                        expectedTitle, pageTitle));
-                return pageTitle.equals(expectedTitle);
-            }
+        final boolean conditionMet = webDriverContext().waitForCondition(
+                new Condition() {
+                    public boolean conditionMet() {
+                        final String pageTitle = webDriver().getTitle();
+                        logger.debug(String.format(
+                                "wait for page. Expected='%s', actual='%s'",
+                                expectedTitle, pageTitle));
+                        return pageTitle.equals(expectedTitle);
+                    }
 
-        });
+                });
 
         if (!conditionMet) {
             logger.debug(expectedTitle + " page not found");
@@ -302,7 +312,8 @@ public class ActionWebDriverSubStepImplementations extends AbstractWebDriverSubS
         try {
             return new URI(urlToNormalise).toString();
         } catch (final URISyntaxException ex) {
-            throw new IllegalStateException("The url " + urlToNormalise + " is invalid.", ex);
+            throw new IllegalStateException("The url " + urlToNormalise
+                    + " is invalid.", ex);
         }
     }
 }

@@ -20,6 +20,7 @@ package com.technophobia.webdriver.substeps.impl;
 
 import com.technophobia.substeps.model.SubSteps.AdditionalStepImplementations;
 import com.technophobia.substeps.model.SubSteps.StepImplementations;
+import com.technophobia.webdriver.substeps.runner.DefaultExecutionSetupTearDown;
 
 /**
  * Class containing the base set of substep impls. This class will be generic
@@ -29,10 +30,13 @@ import com.technophobia.substeps.model.SubSteps.StepImplementations;
  * @author imoore
  * 
  */
-@StepImplementations
+@StepImplementations(requiredInitialisationClasses = DefaultExecutionSetupTearDown.class)
 @AdditionalStepImplementations({ ActionWebDriverSubStepImplementations.class,
-        AssertionWebDriverSubStepImplementations.class, EmailWebDriverSubStepImplementations.class,
-        FinderWebDriverSubStepImplementations.class, FormWebDriverSubStepImplementations.class,
-        StartupWebDriverSubStepImplementations.class, TableSubStepImplementations.class })
+        AssertionWebDriverSubStepImplementations.class,
+        EmailWebDriverSubStepImplementations.class,
+        FinderWebDriverSubStepImplementations.class,
+        FormWebDriverSubStepImplementations.class,
+        StartupWebDriverSubStepImplementations.class,
+        TableSubStepImplementations.class })
 public class BaseWebdriverSubStepImplementations {
 }
