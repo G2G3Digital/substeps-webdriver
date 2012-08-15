@@ -5,7 +5,8 @@ Webdriver Substeps - Release Notes
 
 0.0.5
 -----
-
+- Modified StepImplementation classes to specify the required initialisation classes
+- Changed the dependency on activation.jar to an available version
 
  
 0.0.4

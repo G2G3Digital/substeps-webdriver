@@ -9,7 +9,7 @@ Webdriver Substeps - Compatibility
 +---------------------------+----------+-+
 | Substeps Library          | Versions | |
 +===========================+==========+=+
-| susbteps-core             | 0.0.6/7  | |
+| susbteps-core             | 0.0.7    | |
 +---------------------------+----------+-+
 | substeps-glossary-builder | 0.0.1    | |
 +---------------------------+----------+-+

@@ -19,12 +19,18 @@ Generally speaking, webdriver step implementations work on the basis of first lo
 
 Any attempt to use the current element will first check that the element is not null, any attempt to locate a new current element should also set the field to null first and fail if the desired element is not found.
 
+If you wish to extend the webdriver-substeps classes, your new StepImplementations class will also need to include the initialisation class ``DefaultExecutionSetupTearDown``
+
 New step implementations can make use of and aggregate existing functions, simply instantiate the implementation class and invoke the appropriate method accordingly. For example:
 
 .. code-block:: java
 
-   @Step("DoSomething with parameter \"([^\"]*)\"")
-   public void exampleOne(final String param)  {
-      final FinderWebDriverSubStepImplementations finder = new FinderWebDriverSubStepImplementations();
-      finder.findById("some_id");
-      ...
+   @StepImplementations (requiredInitialisationClasses=DefaultExecutionSetupTearDown.class)
+   public MyWebDriverStepImplementations {
+
+      @Step("DoSomething with parameter \"([^\"]*)\"")
+      public void exampleOne(final String param)  {
+         final FinderWebDriverSubStepImplementations finder = new FinderWebDriverSubStepImplementations();
+         finder.findById("some_id");
+         ...
+      
