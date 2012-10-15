@@ -3,6 +3,15 @@ Webdriver Substeps - Release Notes
 
 - A list of changes per release 
 
+1.0.0
+-----
+- Added a property to disable js with HTMLUnit.
+- move to 1.0.0 versions of other substeps libraries
+
+0.0.6
+-----
+- Increased version of substeps-core and substeps-runner for enhanced reporting
+
 0.0.5
 -----
 - Modified StepImplementation classes to specify the required initialisation classes

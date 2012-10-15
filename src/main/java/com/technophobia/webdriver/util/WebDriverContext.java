@@ -44,7 +44,8 @@ import com.technophobia.webdriver.substeps.runner.WebdriverSubstepsConfiguration
  * 
  */
 public class WebDriverContext {
-    private static final Logger logger = LoggerFactory.getLogger(WebDriverContext.class);
+    private static final Logger logger = LoggerFactory
+            .getLogger(WebDriverContext.class);
 
     public static final String EXECUTION_CONTEXT_KEY = "_webdriver_context_key";
 
@@ -76,8 +77,10 @@ public class WebDriverContext {
             break;
         }
         case HTMLUNIT: {
-            final HtmlUnitDriver htmlUnitDriver = new HtmlUnitDriver(BrowserVersion.FIREFOX_3_6);
-            htmlUnitDriver.setJavascriptEnabled(true);
+            final HtmlUnitDriver htmlUnitDriver = new HtmlUnitDriver(
+                    BrowserVersion.FIREFOX_3_6);
+            htmlUnitDriver.setJavascriptEnabled(!WebdriverSubstepsConfiguration
+                    .isJavascriptDisabledWithHTMLUnit());
             webDriver = htmlUnitDriver;
             break;
 
@@ -93,9 +96,12 @@ public class WebDriverContext {
             // apparently this is required to get around some IE security
             // restriction.
 
-            final DesiredCapabilities ieCapabilities = DesiredCapabilities.internetExplorer();
-            ieCapabilities.setCapability(
-                    InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
+            final DesiredCapabilities ieCapabilities = DesiredCapabilities
+                    .internetExplorer();
+            ieCapabilities
+                    .setCapability(
+                            InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS,
+                            true);
 
             logger.warn("Using IE Webdriver with IGNORING SECURITY DOMAIN");
 
@@ -110,7 +116,8 @@ public class WebDriverContext {
 
 
     public WebElement getCurrentElement() {
-        Assert.assertNotNull("expecting current element not to be null", currentElement);
+        Assert.assertNotNull("expecting current element not to be null",
+                currentElement);
         return currentElement;
     }
 
@@ -145,8 +152,8 @@ public class WebDriverContext {
 
 
     public WebElement waitForElement(final By by) {
-        return ElementLocators.waitForElement(by, WebdriverSubstepsConfiguration.defaultTimeout(),
-                webDriver);
+        return ElementLocators.waitForElement(by,
+                WebdriverSubstepsConfiguration.defaultTimeout(), webDriver);
     }
 
 
