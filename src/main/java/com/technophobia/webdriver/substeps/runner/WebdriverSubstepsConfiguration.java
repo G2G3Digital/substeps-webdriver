@@ -39,6 +39,7 @@ public enum WebdriverSubstepsConfiguration {
     private static final boolean SHUTDOWN_WEBDRIVER;
     private static final boolean VISUAL_WEBDRIVER_CLOSE_ON_FAIL;
     private static long defaultWebDriverTimeoutSecs = 10;
+    private static final boolean HTMLUNIT_DISABLE_JS;
 
     static {
 
@@ -46,23 +47,30 @@ public enum WebdriverSubstepsConfiguration {
                 .getResource("/default-webdriver-substeps.properties");
         Assert.assertNotNull(defaultURL);
 
-        Configuration.INSTANCE.addDefaultProperties(defaultURL, "default-webdriver");
+        Configuration.INSTANCE.addDefaultProperties(defaultURL,
+                "default-webdriver");
 
-        BASE_URL = determineBaseURL(Configuration.INSTANCE.getString("base.url"));
+        BASE_URL = determineBaseURL(Configuration.INSTANCE
+                .getString("base.url"));
 
-        DRIVER_TYPE = DriverType.valueOf(Configuration.INSTANCE.getString("driver.type")
-                .toUpperCase());
+        DRIVER_TYPE = DriverType.valueOf(Configuration.INSTANCE.getString(
+                "driver.type").toUpperCase());
 
         DRIVER_LOCALE = Configuration.INSTANCE.getString("webdriver.locale");
 
-        SHUTDOWN_WEBDRIVER = Configuration.INSTANCE.getBoolean("webdriver.shutdown");
+        SHUTDOWN_WEBDRIVER = Configuration.INSTANCE
+                .getBoolean("webdriver.shutdown");
         VISUAL_WEBDRIVER_CLOSE_ON_FAIL = Configuration.INSTANCE
                 .getBoolean("visual.webdriver.close.on.fail");
 
         defaultWebDriverTimeoutSecs = Configuration.INSTANCE
                 .getInt("default.webdriver.timeout.secs");
 
-        logger.info("Using properties:\n" + Configuration.INSTANCE.getConfigurationInfo());
+        HTMLUNIT_DISABLE_JS = Configuration.INSTANCE
+                .getBoolean("htmlunit.disable.javascript");
+
+        logger.info("Using properties:\n"
+                + Configuration.INSTANCE.getConfigurationInfo());
     }
 
 
@@ -77,7 +85,8 @@ public enum WebdriverSubstepsConfiguration {
 
         if (!property.startsWith("http") && !property.startsWith("file://")) {
 
-            resolvedBaseUrl = removeTrailingSlash(new File(property).toURI().toString());
+            resolvedBaseUrl = removeTrailingSlash(new File(property).toURI()
+                    .toString());
         } else {
             resolvedBaseUrl = property;
         }
@@ -111,6 +120,11 @@ public enum WebdriverSubstepsConfiguration {
 
     public static boolean shutDownWebdriver() {
         return SHUTDOWN_WEBDRIVER;
+    }
+
+
+    public static boolean isJavascriptDisabledWithHTMLUnit() {
+        return HTMLUNIT_DISABLE_JS;
     }
 
 
