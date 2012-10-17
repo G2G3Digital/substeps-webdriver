@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.technophobia.substeps</groupId>
 	<artifactId>webdriver-substeps</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.1-SNAPSHOT</version>
 
 	<packaging>jar</packaging>
 	<name>Webdriver Substeps</name>
@@ -485,5 +485,6 @@
 		<connection>${webdriver-substeps.scm}</connection>
         <developerConnection>${webdriver-substeps.scm}</developerConnection>
         <url>${webdriver-substeps.scm.url}</url>
-	</scm>
+	  <tag>HEAD</tag>
+  </scm>
 </project>
