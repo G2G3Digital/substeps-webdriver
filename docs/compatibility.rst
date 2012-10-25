@@ -3,6 +3,10 @@ Webdriver Substeps - Compatibility
 
 - A list of compatible substep libraries and versions 
 
+1.0.1
+-----
+Other Substep libraries at 1.0.1 
+
 0.0.5
 -----
 

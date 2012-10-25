@@ -8,6 +8,8 @@
           attributes=[type="submit",value="Search"]</td><td>Check that the current element has the specified attributes</td></tr>
 <tr><td>AssertCurrentElement text contains &quot;&lt;expected&gt;&quot;</td><td>AssertCurrentElement text contains "Hello world"</td><td>Check that the current element contains the specified text</td></tr>
 <tr><td>AssertCurrentElement text=&quot;&lt;expected&gt;&quot;</td><td>AssertCurrentElement text="Hello World!"</td><td>Check that the current element has the expected text value</td></tr>
+<tr><td>AssertEventuallyContains &lt;elementId&gt; &quot;&lt;text&gt;&quot;</td><td>AssertEventuallyContains mySpanId "text I eventually expect"</td><td>Asserts that an element (identified by ID) eventually gets some specific  text inserted into it (by JavaScript, probably)</td></tr>
+<tr><td>AssertNotPresent text=&quot;&lt;text&gt;&quot;</td><td>AssertNotPresent text="undesirable text"</td><td>Assert that the specified text is not found within the page</td></tr>
 <tr><td>AssertPageTitle is &quot;&lt;expectedTitle&gt;&quot;</td><td>AssertPageTitle is "My Home Page"</td><td>Check that the page title is ....</td></tr>
 <tr><td>AssertRadioButton checked=&quot;&lt;checkedString&gt;&quot;</td><td>AssertRadioButton checked=true/false</td><td>Check that the current element, a radio button, is checked or not</td></tr>
 <tr><td>AssertTagElementContainsAttribute tag=&quot;&lt;tag&gt;&quot; attributeName=&quot;&lt;attributeName&gt;&quot; attributeValue=&quot;&lt;attributeValue&gt;&quot;</td><td>AssertTagElementContainsText tag="ul" attributeName="class"
@@ -19,6 +21,8 @@
 <tr><td>ClickButton &lt;buttonText&gt;</td><td>ClickButton submit</td><td>Click a button that has the text...</td></tr>
 <tr><td>ClickById &lt;id&gt;</td><td>ClickById login</td><td>Find an element by id, then click it.</td></tr>
 <tr><td>ClickLink &quot;&lt;linkText&gt;&quot;</td><td>ClickLink "Contracts"</td><td>Click the link &quot;(....)&quot; as it appears on the page</td></tr>
+<tr><td>PerformContextClick</td><td>PerformContextClick</td><td>Performs a context click (typically right click, unless this has been  changed by the user) on the current element.</td></tr>
+<tr><td>PerformDoubleClick</td><td>PerformDoubleClick</td><td>Performs a double click on the current element (set with a previous Find  method).</td></tr>
 <tr><td>Submit</td><td>Submit</td><td>Submit the form of the current element. NB using click is preferable as  javascript may be executed on click, which this method would bypass</td></tr>
 <tr><td colspan="3"><strong>Forms</strong></td></tr>
 <tr><td>AssertRadioButton name=&quot;&lt;name&gt;&quot;, text=&quot;&lt;text&gt;&quot;, checked=&quot;&lt;checked&gt;&quot;</td><td>AssertRadioButton name="radio_btn_name", text="text",
@@ -47,14 +51,13 @@
 <tr><td>FindRadioButton inside tag=&quot;&lt;tag&gt;&quot; with label=&quot;&lt;label&gt;&quot;</td><td>FindRadioButton inside tag="label" with label="a radio label>"</td><td>Finds a radiobutton that is a child of the specified tag, that contains  the specified text; eg.    &lt;pre&gt;  &lt;label&gt;   &lt;input type=&quot;radio&quot; name=&quot;radio_name&quot; value=&quot;yeah&quot;/&gt;a radio &lt;span&gt;label&lt;/span&gt;  &lt;/label&gt;  &lt;/pre&gt;</td></tr>
 <tr><td>NavigateTo &lt;url&gt;</td><td>NavigateTo /myApp (will navigate to http://localhost/myApp if
           base.url is set to http://localhost)</td><td>Navigate to a url, if the url begins with http or file, the url will be  used as is, if a relative url is specified then it will be prepended with  the base url property</td></tr>
+<tr><td>SwitchFrameToCurrentElement</td><td>SwitchFrameToCurrentElement</td><td>Transfer the focus into the current element (set with a previous Find  method) which should be a frame or iframe</td></tr>
 <tr><td>WaitFor &lt;value&gt;</td><td>WaitFor 10</td><td>Wait for the specified number of milliseconds</td></tr>
 <tr><td>WaitForPageTitle &quot;&lt;expectedTitle&gt;&quot;</td><td>WaitForPageTitle "My Home Page"</td><td>Wait for the page title to change to the specified value</td></tr>
 <tr><td colspan="3"><strong>Miscellaneous</strong></td></tr>
 <tr><td>AssertDifferent rememberedValue &quot;&lt;rememberedValueName&gt;&quot; compareToElement &quot;&lt;elementId&gt;&quot;</td><td>AssertDifferent rememberedValue "savedProjectName"
           compareToElement "projectName"</td><td>Compare the text of an element (identified by ID) to a value previously  remembered</td></tr>
-<tr><td>AssertEventuallyContains &lt;elementId&gt; &quot;&lt;text&gt;&quot;</td><td>AssertEventuallyContains mySpan</td><td>Asserts that an element (identified by ID) eventually gets some specific  text inserted into it (by JavaScript, probably)</td></tr>
 <tr><td>AssertEventuallyNotEmpty id=&quot;&lt;elementId&gt;&quot;</td><td>AssertEventuallyNotEmpty mySpan</td><td>Asserts that an element (identified by ID) eventually gets some text  inserted into it (by JavaScript, probably)</td></tr>
-<tr><td>AssertNotPresent text=&quot;&lt;text&gt;&quot;</td><td></td><td>Assert that the specified text is not found within the page</td></tr>
 <tr><td>AssertPageSourceContains &quot;&lt;expected&gt;&quot;</td><td>AssertPageSourceContains "foobar"</td><td>Simple text search on page source</td></tr>
 <tr><td>AssertSame rememberedValue &quot;&lt;rememberedValueName&gt;&quot; compareToElement &quot;&lt;elementId&gt;&quot;</td><td>AssertSame rememberedValue "savedProjectName" compareToElement
           "projectName"</td><td>Compare the text of an element (identified by ID) to a value previously  remembered - assert they're the same</td></tr>
