@@ -26,7 +26,9 @@ import java.util.List;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriver.TargetLocator;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -315,5 +317,65 @@ public class ActionWebDriverSubStepImplementations extends
             throw new IllegalStateException("The url " + urlToNormalise
                     + " is invalid.", ex);
         }
+    }
+
+
+    /**
+     * Transfer the focus into the current element (set with a previous Find
+     * method) which should be a frame or iframe
+     * 
+     * @example SwitchFrameToCurrentElement
+     * @section Location
+     * 
+     */
+    @Step("SwitchFrameToCurrentElement")
+    public void switchFrameToCurrentElement() {
+
+        final TargetLocator targetLocator = webDriver().switchTo();
+        final WebDriver refocusedWebDriver = targetLocator
+                .frame(webDriverContext().getCurrentElement());
+
+        // yes I actually want to check these objects are the same!
+        Assert.assertTrue(
+                "Webdriver target locator has returned a different webdriver instance, some webdriver-substeps changes will be required to support this",
+                refocusedWebDriver == webDriver());
+    }
+
+
+    /**
+     * Performs a double click on the current element (set with a previous Find
+     * method).
+     * 
+     * @example PerformDoubleClick
+     * @section Clicks
+     * 
+     */
+    @Step("PerformDoubleClick")
+    public void doDoubleClick() {
+
+        final Actions actions = new Actions(webDriver());
+
+        actions.doubleClick(webDriverContext().getCurrentElement());
+
+        actions.perform();
+    }
+
+
+    /**
+     * Performs a context click (typically right click, unless this has been
+     * changed by the user) on the current element.
+     * 
+     * @example PerformContextClick
+     * @section Clicks
+     * 
+     */
+    @Step("PerformContextClick")
+    public void performContextClick() {
+
+        final Actions actions = new Actions(webDriver());
+
+        actions.contextClick(webDriverContext().getCurrentElement());
+
+        actions.perform();
     }
 }

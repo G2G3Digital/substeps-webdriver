@@ -528,9 +528,12 @@ public class AssertionWebDriverSubStepImplementations extends
      * Asserts that an element (identified by ID) eventually gets some specific
      * text inserted into it (by JavaScript, probably)
      * 
-     * @example AssertEventuallyContains mySpan
+     * @example AssertEventuallyContains mySpanId "text I eventually expect"
+     * @section Assertions
      * @param elementId
      *            HTML ID of element
+     * @param text
+     *            the expected text
      */
     @Step("AssertEventuallyContains ([^\"]*) \"([^\"]*)\"")
     public void assertEventuallyContains(final String elementId,
@@ -542,7 +545,9 @@ public class AssertionWebDriverSubStepImplementations extends
     /**
      * Assert that the specified text is not found within the page
      * 
-     * @param id
+     * @example AssertNotPresent text="undesirable text"
+     * @section Assertions
+     * @param text
      */
     @Step("AssertNotPresent text=\"([^\"]*)\"")
     public void assertNotPresent(final String text) {

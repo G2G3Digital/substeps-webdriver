@@ -3,6 +3,11 @@ Webdriver Substeps - Release Notes
 
 - A list of changes per release 
 
+1.0.2
+-----
+- Refactored some of the Webdriver locating code into new By classes
+- DoubleClick and Context click support
+
 1.0.0
 -----
 - Added a property to disable js with HTMLUnit.

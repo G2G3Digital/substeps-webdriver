@@ -27,7 +27,7 @@ import java.util.Map;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.pagefactory.ByChained;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,10 +35,8 @@ import com.google.common.base.Supplier;
 import com.technophobia.substeps.model.SubSteps.Step;
 import com.technophobia.substeps.model.SubSteps.StepImplementations;
 import com.technophobia.webdriver.substeps.runner.DefaultExecutionSetupTearDown;
-import com.technophobia.webdriver.substeps.runner.WebdriverSubstepsConfiguration;
-import com.technophobia.webdriver.util.ByChildTagAndAttributesFunction;
-import com.technophobia.webdriver.util.ElementLocators;
 import com.technophobia.webdriver.util.WebDriverContext;
+import com.technophobia.webdriver.util.WebDriverSubstepsBy;
 import com.technophobia.webdriver.util.WebElementPredicate;
 
 @StepImplementations(requiredInitialisationClasses = DefaultExecutionSetupTearDown.class)
@@ -233,19 +231,21 @@ public class FinderWebDriverSubStepImplementations extends
         final WebElement currentElement = webDriverContext()
                 .getCurrentElement();
 
-        // currentElement.findElements(by)
+        final Map<String, String> expectedAttributes = convertToMap(attributeString);
 
-        final ByChildTagAndAttributesFunction condition = new ByChildTagAndAttributesFunction(
-                tag, attributeString, currentElement);
+        final By byTagAndAttributes = new WebDriverSubstepsBy.ByTagAndAttributes(
+                tag, expectedAttributes);
 
-        final WebDriverWait wait = new WebDriverWait(getThreadLocalWebDriver(),
-                WebdriverSubstepsConfiguration.defaultTimeout());
+        final By byCurrentElement = new WebDriverSubstepsBy.ByCurrentWebElement(
+                currentElement);
 
-        final WebElement elem = ElementLocators.waitUntil(wait, condition,
-                getThreadLocalWebDriver());
+        final By chained = new ByChained(byCurrentElement, byTagAndAttributes);
 
-        Assert.assertNotNull("expecting a child element with tag [" + tag
-                + "] and attributes [" + attributeString + "]", elem);
+        final String msg = "failed to locate a child element with tag: " + tag
+                + " and attributes: " + attributeString;
+
+        final WebElement elem = lookForManyWaitForOne(chained, msg);
+
         webDriverContext().setCurrentElement(elem);
 
         return elem;
@@ -359,7 +359,7 @@ public class FinderWebDriverSubStepImplementations extends
             }
         }
 
-        elem = checkForMatchingElement("expecting an input of type "
+        elem = checkForOneMatchingElement("expecting an input of type "
                 + inputType + " inside tag [" + tag + "] with label [" + label
                 + "]", matchingElems);
 
@@ -401,29 +401,13 @@ public class FinderWebDriverSubStepImplementations extends
 
         WebElement rtn = null;
 
-        // TODO - in progress, turn this into a wait function
+        final By by = new WebDriverSubstepsBy.ByTagAndAttributes(tag,
+                expectedAttributes);
 
-        final List<WebElement> elems = webDriver()
-                .findElements(By.tagName(tag));
+        final String msg = "failed to locate an element with tag: " + tag
+                + " and attributes: " + attributeString;
 
-        Assert.assertNotNull("expecting some elements for tag: " + tag, elems);
-        Assert.assertTrue("expecting some elements for tag: " + tag,
-                !elems.isEmpty());
-
-        List<WebElement> matchingElems = null;
-        for (final WebElement e : elems) {
-            // does this WebElement have the attributes that we need!
-
-            if (elementHasExpectedAttributes(e, expectedAttributes)) {
-                if (matchingElems == null) {
-                    matchingElems = new ArrayList<WebElement>();
-                }
-                matchingElems.add(e);
-            }
-        }
-
-        rtn = checkForMatchingElement("failed to locate an element with tag: "
-                + tag + " and attributes: " + attributeString, matchingElems);
+        rtn = lookForManyWaitForOne(by, msg);
 
         webDriverContext().setCurrentElement(rtn);
 
@@ -432,13 +416,47 @@ public class FinderWebDriverSubStepImplementations extends
 
 
     /**
-     * @param tag
-     * @param attributeString
-     * @param rtn
+     * This method will attempt to find many elements using the supplied By, if
+     * no elements are found, it will wait until one matching element is found.
+     * finding multiple elements will result in failure
+     * 
+     * @param by
+     * @param matchingElems
+     * @param msg
+     * @return
+     */
+    private WebElement lookForManyWaitForOne(final By by, final String msg) {
+
+        WebElement rtn = null;
+
+        List<WebElement> matchingElems = webDriverContext().getWebDriver()
+                .findElements(by);
+
+        if (matchingElems == null || matchingElems.isEmpty()) {
+
+            // wait for at least one - if we need to wait, we will only find one
+            final WebElement elementWaitedFor = webDriverContext()
+                    .waitForElement(by);
+            if (matchingElems == null) {
+                matchingElems = new ArrayList<WebElement>();
+            }
+            matchingElems.add(elementWaitedFor);
+        }
+
+        rtn = checkForOneMatchingElement(msg, matchingElems);
+        return rtn;
+    }
+
+
+    /**
+     * Checks that a list of WebElements only contains one (not empty and not
+     * too many).
+     * 
+     * @param msg
      * @param matchingElems
      * @return
      */
-    public WebElement checkForMatchingElement(final String msg,
+    public WebElement checkForOneMatchingElement(final String msg,
             final List<WebElement> matchingElems) {
         WebElement rtn = null;
         if (matchingElems != null && matchingElems.size() > 1) {
