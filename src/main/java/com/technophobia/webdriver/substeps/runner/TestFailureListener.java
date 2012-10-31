@@ -33,22 +33,12 @@ public class TestFailureListener implements INotifier {
     private final MutableSupplier<WebDriverContext> webDriverContextSupplier;
 
 
-    public TestFailureListener(final MutableSupplier<WebDriverContext> webDriverContextSupplier) {
+    public TestFailureListener(
+            final MutableSupplier<WebDriverContext> webDriverContextSupplier) {
         super();
         this.webDriverContextSupplier = webDriverContextSupplier;
     }
 
-
-    // public void notifyTestFailed(final Description junitDescription, final
-    // Throwable cause) {
-    // final WebDriverContext webDriverContext = webDriverContextSupplier.get();
-    // // possible to have a failure before the webdrivercontext has been
-    // // initialised - missing ' default.webdriver.timeout.secs' property for
-    // // example
-    // if (webDriverContext != null) {
-    // webDriverContext.setFailed();
-    // }
-    // }
 
     /*
      * (non-Javadoc)
@@ -59,7 +49,8 @@ public class TestFailureListener implements INotifier {
      */
     public void notifyNodeFailed(final ExecutionNode arg0, final Throwable arg1) {
 
-        final WebDriverContext webDriverContext = webDriverContextSupplier.get();
+        final WebDriverContext webDriverContext = this.webDriverContextSupplier
+                .get();
         // possible to have a failure before the webdrivercontext has been
         // initialised - missing ' default.webdriver.timeout.secs' property for
         // example
@@ -69,17 +60,6 @@ public class TestFailureListener implements INotifier {
 
     }
 
-
-    // /*
-    // * (non-Javadoc)
-    // *
-    // * @see
-    // * com.technophobia.substeps.runner.INotifier#notifyTestFinished(org.junit
-    // * .runner.Description)
-    // */
-    // public void notifyTestFinished(final Description arg0) {
-    // // no op
-    // }
 
     /*
      * (non-Javadoc)
@@ -91,29 +71,6 @@ public class TestFailureListener implements INotifier {
         // no op
     }
 
-
-    // /*
-    // * (non-Javadoc)
-    // *
-    // * @see
-    // * com.technophobia.substeps.runner.INotifier#notifyTestIgnored(org.junit
-    // * .runner.Description)
-    // */
-    // public void notifyTestIgnored(final Description arg0) {
-    // // no op
-    // }
-    //
-    //
-    // /*
-    // * (non-Javadoc)
-    // *
-    // * @see
-    // * com.technophobia.substeps.runner.INotifier#notifyTestStarted(org.junit
-    // * .runner.Description)
-    // */
-    // public void notifyTestStarted(final Description arg0) {
-    // // no op
-    // }
 
     /*
      * (non-Javadoc)

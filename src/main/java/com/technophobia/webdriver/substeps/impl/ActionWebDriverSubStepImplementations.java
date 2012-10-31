@@ -29,11 +29,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.TargetLocator;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.technophobia.substeps.model.SubSteps.Step;
 import com.technophobia.substeps.model.SubSteps.StepImplementations;
@@ -53,7 +51,7 @@ public class ActionWebDriverSubStepImplementations extends
 
 
     public ActionWebDriverSubStepImplementations() {
-        locator = new FinderWebDriverSubStepImplementations();
+        this.locator = new FinderWebDriverSubStepImplementations();
     }
 
 
@@ -101,7 +99,7 @@ public class ActionWebDriverSubStepImplementations extends
     @Step("ClickById ([^\"]*)")
     public void clickById(final String id) {
         logger.debug("About to click item with id " + id);
-        locator.findById(id);
+        this.locator.findById(id);
         click();
     }
 
@@ -150,7 +148,7 @@ public class ActionWebDriverSubStepImplementations extends
     public void clickButton(final String buttonText) {
         logger.debug("About to click button with text " + buttonText);
         webDriverContext().setCurrentElement(null);
-        final WebElement elem = locator.findElementWithText("button",
+        final WebElement elem = this.locator.findElementWithText("button",
                 buttonText.trim());
         Assert.assertNotNull("expecting to find a button: " + buttonText, elem);
         webDriverContext().setCurrentElement(elem);
@@ -210,64 +208,6 @@ public class ActionWebDriverSubStepImplementations extends
             logger.debug("interupt ex");
             // do we care?
         }
-    }
-
-
-    // could use a pattern TODO - just use ends with for now
-    /**
-     * Wait for element with attribute.
-     * 
-     * @example
-     * @param by
-     *            the by
-     * @param attribute
-     *            the attribute
-     * @param value
-     *            the value
-     * @return the web element
-     */
-    public WebElement waitForElementWithAttribute(final By by,
-            final String attribute, final String value) {
-        logger.debug("Waiting for element " + by + " with attribute "
-                + attribute + " with value " + value);
-        final WebDriverWait wait = new WebDriverWait(webDriver(), 10);
-        final Function<WebDriver, WebElement> condition2 = new AttributeEndsWithFunction(
-                by, attribute, value);
-
-        // Implementations should wait until the condition evaluates to a value
-        // that is neither null nor false.
-        return wait.until(condition2);
-
-    }
-
-    private static class AttributeEndsWithFunction implements
-            Function<WebDriver, WebElement> {
-
-        private final By by;
-        private final String attribute;
-        private final String value;
-
-
-        public AttributeEndsWithFunction(final By by, final String attribute,
-                final String value) {
-            this.by = by;
-            this.attribute = attribute;
-            this.value = value;
-        }
-
-
-        public WebElement apply(final WebDriver driver) {
-            final WebElement rtn = driver.findElement(by);
-
-            final String potentialVal = rtn.getAttribute(attribute);
-
-            if (potentialVal != null && potentialVal.endsWith(value)) {
-                return rtn;
-            }
-
-            return null;
-        }
-
     }
 
 

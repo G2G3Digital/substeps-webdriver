@@ -233,11 +233,11 @@ public class FinderWebDriverSubStepImplementations extends
 
         final Map<String, String> expectedAttributes = convertToMap(attributeString);
 
-        final By byTagAndAttributes = new WebDriverSubstepsBy.ByTagAndAttributes(
+        final By byTagAndAttributes = WebDriverSubstepsBy.ByTagAndAttributes(
                 tag, expectedAttributes);
 
-        final By byCurrentElement = new WebDriverSubstepsBy.ByCurrentWebElement(
-                currentElement);
+        final By byCurrentElement = WebDriverSubstepsBy
+                .ByCurrentWebElement(currentElement);
 
         final By chained = new ByChained(byCurrentElement, byTagAndAttributes);
 
@@ -401,7 +401,7 @@ public class FinderWebDriverSubStepImplementations extends
 
         WebElement rtn = null;
 
-        final By by = new WebDriverSubstepsBy.ByTagAndAttributes(tag,
+        final By by = WebDriverSubstepsBy.ByTagAndAttributes(tag,
                 expectedAttributes);
 
         final String msg = "failed to locate an element with tag: " + tag

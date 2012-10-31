@@ -20,6 +20,40 @@ import com.google.common.collect.Maps;
  */
 public abstract class WebDriverSubstepsBy {
 
+    public static ByIdAndText ByIdAndText(final String id, final String text) {
+        return new ByIdAndText(id, text);
+    }
+
+
+    public static ByIdAndText ByIdAndCaseSensitiveText(final String id,
+            final String text) {
+        return new ByIdAndText(id, text, true);
+    }
+
+
+    public static ByTagAndAttributes ByTagAndAttributes(final String tagName,
+            final Map<String, String> requiredAttributes) {
+        return new ByTagAndAttributes(tagName, requiredAttributes);
+    }
+
+
+    public static ByCurrentWebElement ByCurrentWebElement(final WebElement elem) {
+        return new ByCurrentWebElement(elem);
+    }
+
+
+    public static ByTagAndWithText ByTagAndWithText(final String tag,
+            final String text) {
+        return new ByTagAndWithText(tag, text);
+    }
+
+
+    public static ByIdContainingText ByIdContainingText(final String id,
+            final String text) {
+        return new ByIdContainingText(id, text);
+    }
+
+
     protected static boolean elementHasExpectedAttributes(final WebElement e,
             final Map<String, String> expectedAttributes) {
         final Map<String, String> actualValues = new HashMap<String, String>();
@@ -38,7 +72,7 @@ public abstract class WebDriverSubstepsBy {
         return difference.areEqual();
     }
 
-    public static abstract class BaseBy extends By {
+    static abstract class BaseBy extends By {
 
         @Override
         public final List<WebElement> findElements(final SearchContext context) {
@@ -56,13 +90,13 @@ public abstract class WebDriverSubstepsBy {
                 final SearchContext context);
     }
 
-    public static class ByTagAndAttributes extends BaseBy {
+    static class ByTagAndAttributes extends BaseBy {
 
         private final String tagName;
         private final Map<String, String> requiredAttributes;
 
 
-        public ByTagAndAttributes(final String tagName,
+        ByTagAndAttributes(final String tagName,
                 final Map<String, String> requiredAttributes) {
             this.tagName = tagName;
             this.requiredAttributes = requiredAttributes;
@@ -75,12 +109,12 @@ public abstract class WebDriverSubstepsBy {
             List<WebElement> matchingElems = null;
 
             final List<WebElement> tagElements = context.findElements(By
-                    .tagName(tagName));
+                    .tagName(this.tagName));
 
             for (final WebElement e : tagElements) {
                 // does this WebElement have the attributes that we need!
 
-                if (elementHasExpectedAttributes(e, requiredAttributes)) {
+                if (elementHasExpectedAttributes(e, this.requiredAttributes)) {
 
                     if (matchingElems == null) {
                         matchingElems = new ArrayList<WebElement>();
@@ -97,13 +131,13 @@ public abstract class WebDriverSubstepsBy {
      * A By for use with the current web element, to be chained with other Bys
      * 
      */
-    public static class ByCurrentWebElement extends BaseBy {
+    static class ByCurrentWebElement extends BaseBy {
 
         private final WebElement currentElement;
 
 
         public ByCurrentWebElement(final WebElement elem) {
-            currentElement = elem;
+            this.currentElement = elem;
         }
 
 
@@ -111,7 +145,7 @@ public abstract class WebDriverSubstepsBy {
         public List<WebElement> findElementsBy(final SearchContext context) {
 
             final List<WebElement> matchingElems = new ArrayList<WebElement>();
-            matchingElems.add(currentElement);
+            matchingElems.add(this.currentElement);
 
             return matchingElems;
         }
@@ -123,7 +157,7 @@ public abstract class WebDriverSubstepsBy {
         private final String text;
 
 
-        public ByTagAndWithText(final String tag, final String text) {
+        ByTagAndWithText(final String tag, final String text) {
 
             this.tag = tag;
             this.text = text;
@@ -142,12 +176,12 @@ public abstract class WebDriverSubstepsBy {
 
             List<WebElement> matchingElems = null;
 
-            final List<WebElement> elems = context
-                    .findElements(By.tagName(tag));
+            final List<WebElement> elems = context.findElements(By
+                    .tagName(this.tag));
             if (elems != null) {
                 for (final WebElement e : elems) {
 
-                    if (text.equalsIgnoreCase(e.getText())) {
+                    if (this.text.equalsIgnoreCase(e.getText())) {
 
                         if (matchingElems == null) {
                             matchingElems = new ArrayList<WebElement>();
@@ -160,5 +194,99 @@ public abstract class WebDriverSubstepsBy {
             return matchingElems;
         }
 
+    }
+
+    public static class ByIdContainingText extends BaseBy {
+
+        protected final String text;
+        protected final String id;
+
+
+        ByIdContainingText(final String id, final String text) {
+            this.id = id;
+            this.text = text;
+        }
+
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see
+         * org.openqa.selenium.By#findElements(org.openqa.selenium.SearchContext
+         * )
+         */
+        @Override
+        public List<WebElement> findElementsBy(final SearchContext context) {
+
+            List<WebElement> matchingElems = null;
+
+            final List<WebElement> elems = context.findElements(By.id(this.id));
+            if (elems != null) {
+                for (final WebElement e : elems) {
+
+                    if (e.getText() != null && e.getText().contains(this.text)) {
+
+                        if (matchingElems == null) {
+                            matchingElems = new ArrayList<WebElement>();
+                        }
+                        matchingElems.add(e);
+                    }
+                }
+            }
+
+            return matchingElems;
+        }
+    }
+
+    public static class ByIdAndText extends BaseBy {
+
+        protected final String text;
+        protected final String id;
+        protected final boolean caseSensitive;
+
+
+        ByIdAndText(final String id, final String text) {
+            this(id, text, false);
+        }
+
+
+        ByIdAndText(final String id, final String text,
+                final boolean caseSensitive) {
+            this.id = id;
+            this.text = text;
+            this.caseSensitive = caseSensitive;
+        }
+
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see
+         * org.openqa.selenium.By#findElements(org.openqa.selenium.SearchContext
+         * )
+         */
+        @Override
+        public List<WebElement> findElementsBy(final SearchContext context) {
+
+            List<WebElement> matchingElems = null;
+
+            final List<WebElement> elems = context.findElements(By.id(this.id));
+            if (elems != null) {
+                for (final WebElement e : elems) {
+
+                    if ((this.caseSensitive && this.text.equals(e.getText()))
+                            || (!this.caseSensitive && this.text
+                                    .equalsIgnoreCase(e.getText()))) {
+
+                        if (matchingElems == null) {
+                            matchingElems = new ArrayList<WebElement>();
+                        }
+                        matchingElems.add(e);
+                    }
+                }
+            }
+
+            return matchingElems;
+        }
     }
 }

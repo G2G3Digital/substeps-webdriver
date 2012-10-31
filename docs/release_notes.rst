@@ -5,8 +5,9 @@ Webdriver Substeps - Release Notes
 
 1.0.2
 -----
-- Refactored some of the Webdriver locating code into new By classes
+- Refactored some of the Webdriver locating code into new 'By' classes
 - DoubleClick and Context click support
+- removed Email steps from webdriver-susbteps - these were based on Dumbster and not reliable (caused deadlock)
 
 1.0.0
 -----
