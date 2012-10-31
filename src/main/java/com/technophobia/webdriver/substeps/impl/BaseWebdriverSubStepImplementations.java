@@ -33,7 +33,6 @@ import com.technophobia.webdriver.substeps.runner.DefaultExecutionSetupTearDown;
 @StepImplementations(requiredInitialisationClasses = DefaultExecutionSetupTearDown.class)
 @AdditionalStepImplementations({ ActionWebDriverSubStepImplementations.class,
         AssertionWebDriverSubStepImplementations.class,
-        EmailWebDriverSubStepImplementations.class,
         FinderWebDriverSubStepImplementations.class,
         FormWebDriverSubStepImplementations.class,
         StartupWebDriverSubStepImplementations.class,

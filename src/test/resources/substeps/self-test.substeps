@@ -94,3 +94,10 @@ Define: Given I go to an external page such as Google
 
 Define: Then the page title is "<page_title>"
 	AssertPageTitle is "<page_title>"
+	
+Define: And find by child works
+        FindByTagAndAttributes tag="div" attributes=[class="mini-profile"]
+        FindChild ByTagAndAttributes tag="a" attributes=[class="btn edit-button dialog-modal"]  
+        Click
+        AssertValue id mcshane-bug-div-id text = "mcshane"
+        AssertValue id mcshane-negative-bug-div-id text = "mcshane negative test"	

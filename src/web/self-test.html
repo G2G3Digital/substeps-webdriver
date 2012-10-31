@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html>
 <head >
 	<title>Hello Self Test page</title>
@@ -33,6 +33,13 @@ function showId(elemId)
 	
 }
 
+function hideId(elemId)
+{
+    var elem = document.getElementById(elemId);
+    elem.style.visibility="hidden";
+    return false;
+}
+
 function showDivDelayed()
 {
 	var elem = document.getElementById("show-text-on-deplayed-id-click-text-div-id");
@@ -50,9 +57,9 @@ function showDivDelayed()
 <p>
 	<input type="submit" value="click me" onclick="do_btn_click(); return false"/>
 </p>
-<p>
+
 	<div id="show-text-on-button-click-text-div-id" style="visibility:hidden">Wahoo</div>
-</p>
+
 
 <p>
 <select id="select_id">
@@ -69,20 +76,26 @@ function showDivDelayed()
 <input type="submit" id="click-id" value="click me by id" onclick="do_btn_click2(); return false"/>
 
 </p>
-<p>
+
 
 
 <div id="show-text-on-id-click-text-div-id" style="visibility:hidden">Wahoo Two</div>
-</p>
+
+<div id="mcshane-bug-div-id" style="visibility:hidden">mcshane</div>
+
+<div id="mcshane-negative-bug-div-id" >mcshane negative test</div>
+
+
+
 <p>
 
 <input type="submit" id="click-id3" value="delayed click" onclick="do_btn_click3(); return false"/>
 
 </p>
-<p>
+
 
 <div id="show-text-on-deplayed-id-click-text-div-id" style="visibility:hidden">Delayed text</div>
-</p>
+
 <p>
 
 <input type="text" name="named_text_field" maxlength="10" size="10"></input>
@@ -148,7 +161,7 @@ function showDivDelayed()
 <th>Date of last check</th>
 <th>Total checks</th>
 </tr>
-<thead>
+</thead>
 <tbody>
 <tr>
 <td>Acme corporation</td>
@@ -172,10 +185,54 @@ function showDivDelayed()
 <td>3</td>
 </tr> 
 </tbody>
-</thead>
-</thead>
+
 </table>
 </div>
+
+
+
+<div>
+
+		<div class="container">
+			<div class="row">
+				<div class="span12"></div>
+				<div class="span8">
+					<div class="mini-profile">
+						<div>
+							<div class="btn-group">
+								<a class="btn edit-button dialog-modal" data-toggle="modal"
+									href="#" onclick='showId("mcshane-bug-div-id");'>Edit</a>
+							</div>
+						</div>
+						<a href="#"> <img src="#" class="thumbnail avatar" alt="Edit My Group 1"/></a>
+						<h2>
+							Edit My Group 1 <i class="badge badge-amber area-tag">Group</i>
+						</h2>
+						<p class="profile-secondary">
+							<strong>Talking about:</strong>
+							<span>
+								<span>adding another one, </span> 
+								<span>and another, </span> 
+								<span>default,</span> 
+								<span>generic things, </span>
+								 <span>new topic </span>
+							</span>
+						</p>
+						<p class="profile-tertiary">Type : 1</p>
+					</div>
+				</div>
+				<!-- another a with the same class, but that's not a child -->
+				<div class="btn-group">
+					<a class="btn edit-button dialog-modal" data-toggle="modal"
+						href="#" onclick='hideId("mcshane-negative-bug-div-id");'>Edit</a>
+				</div>
+
+				<div class="span4 hidden-overflow" id="global-cta"></div>
+			</div>
+		</div>
+
+	</div>
+
 
 
 

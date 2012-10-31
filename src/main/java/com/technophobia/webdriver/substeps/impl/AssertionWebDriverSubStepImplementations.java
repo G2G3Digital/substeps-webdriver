@@ -45,6 +45,7 @@ import com.technophobia.substeps.model.SubSteps.StepImplementations;
 import com.technophobia.substeps.runner.ExecutionContext;
 import com.technophobia.webdriver.substeps.runner.DefaultExecutionSetupTearDown;
 import com.technophobia.webdriver.util.WebDriverContext;
+import com.technophobia.webdriver.util.WebDriverSubstepsBy;
 
 @StepImplementations(requiredInitialisationClasses = DefaultExecutionSetupTearDown.class)
 public class AssertionWebDriverSubStepImplementations extends
@@ -79,25 +80,16 @@ public class AssertionWebDriverSubStepImplementations extends
     public void assertElementText(final String id, final String expected) {
         logger.debug("Asserting element with id " + id + " has the text "
                 + expected);
-        final WebDriverWait wait = new WebDriverWait(webDriver(), 10);
 
-        final Function<WebDriver, WebElement> condition2 = new Function<WebDriver, WebElement>() {
-            public WebElement apply(final WebDriver driver) {
-                WebElement rtn = null;
-                final WebElement elem = driver.findElement(By.id(id));
-
-                if (elem != null && elem.getText().equalsIgnoreCase(expected)) {
-                    rtn = elem;
-                }
-                return rtn;
-            }
-        };
-
-        // Implementations should wait until the condition evaluates to a value
-        // that is neither null nor false.
         try {
             webDriverContext().setCurrentElement(null);
-            final WebElement elem = wait.until(condition2);
+
+            final By byIdAndText = WebDriverSubstepsBy
+                    .ByIdAndText(id, expected);
+
+            final WebElement elem = webDriverContext().waitForElement(
+                    byIdAndText);
+
             Assert.assertNotNull("expecting to find an element with id: " + id,
                     elem);
             webDriverContext().setCurrentElement(elem);
@@ -520,7 +512,7 @@ public class AssertionWebDriverSubStepImplementations extends
      */
     @Step("AssertEventuallyNotEmpty id=\"([^\"]*)\"")
     public void assertEventuallyNotEmpty(final String elementId) {
-        waitForElementToContainText(By.id(elementId));
+        waitForElementToContainSomeText(By.id(elementId));
     }
 
 
@@ -528,21 +520,29 @@ public class AssertionWebDriverSubStepImplementations extends
      * Asserts that an element (identified by ID) eventually gets some specific
      * text inserted into it (by JavaScript, probably)
      * 
-     * @example AssertEventuallyContains mySpan
+     * @example AssertEventuallyContains mySpanId "text I eventually expect"
+     * @section Assertions
      * @param elementId
      *            HTML ID of element
+     * @param text
+     *            the expected text
      */
     @Step("AssertEventuallyContains ([^\"]*) \"([^\"]*)\"")
     public void assertEventuallyContains(final String elementId,
             final String text) {
-        waitForElementToContain(By.id(elementId), text);
+
+        webDriverContext().waitForElement(
+                WebDriverSubstepsBy.ByIdContainingText(elementId, text));
+
     }
 
 
     /**
      * Assert that the specified text is not found within the page
      * 
-     * @param id
+     * @example AssertNotPresent text="undesirable text"
+     * @section Assertions
+     * @param text
      */
     @Step("AssertNotPresent text=\"([^\"]*)\"")
     public void assertNotPresent(final String text) {
@@ -559,7 +559,7 @@ public class AssertionWebDriverSubStepImplementations extends
      *            WebDriver By object that identifies the element
      * @return the web element
      */
-    public WebElement waitForElementToContainText(final By by) {
+    public WebElement waitForElementToContainSomeText(final By by) {
 
         final WebDriverWait wait = new WebDriverWait(getThreadLocalWebDriver(),
                 10);
@@ -580,34 +580,4 @@ public class AssertionWebDriverSubStepImplementations extends
         return wait.until(condition2);
     }
 
-
-    /**
-     * Wait for an element to contain some specific text
-     * 
-     * 
-     * @param by
-     *            WebDriver By object that identifies the element
-     * @return the web element
-     */
-    public WebElement waitForElementToContain(final By by,
-            final String expectedText) {
-
-        final WebDriverWait wait = new WebDriverWait(getThreadLocalWebDriver(),
-                10);
-        final Function<WebDriver, WebElement> condition2 = new Function<WebDriver, WebElement>() {
-            public WebElement apply(final WebDriver driver) {
-                final WebElement rtn = driver.findElement(by);
-
-                final String potentialVal = rtn.getText();
-
-                if (expectedText.contains(potentialVal)) {
-                    return rtn;
-                }
-
-                return null;
-            }
-        };
-
-        return wait.until(condition2);
-    }
 }
