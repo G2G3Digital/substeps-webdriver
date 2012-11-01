@@ -129,3 +129,7 @@ Define: And I double click the link
         
 Define: Then I can see I've double clicked
         AssertValue id dbl-clicked-div text = "element has been double clicked"
+        
+Define: And I can find the disabled text field
+        FindById postcode
+        AssertCurrentElement attribute="disabled" value="disabled"

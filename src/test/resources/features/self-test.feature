@@ -36,6 +36,8 @@ Scenario: a scenario
 	And the table row 1, column 2 contains "Mrs Evil Headtecher"   	
 	And find by child works
 	
+	And I can find the disabled text field
+	
 ##################################################################	
 	# these tests need to be last as they go off to google
 	Given I go to an external page such as Google
