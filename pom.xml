@@ -253,7 +253,6 @@
 
                                 <executionConfig>
                                     <description>Self Test Features</description>
-                                    <tags>@all</tags>
                                     <fastFailParseErrors>false</fastFailParseErrors>
                                     <featureFile>${basedir}/target/test-classes/features</featureFile>
                                     <subStepsFileName>${basedir}/target/test-classes/substeps</subStepsFileName>
@@ -262,9 +261,6 @@
                                         <param>com.technophobia.webdriver.substeps.impl.BaseWebdriverSubStepImplementations</param>
                                     </stepImplementationClassNames>
 
-                                 <!--     <initialisationClass>
-                                        <param>com.technophobia.webdriver.substeps.runner.DefaultExecutionSetupTearDown</param>
-                                    </initialisationClass> -->
                                 </executionConfig>
                             </executionConfigs>
 							

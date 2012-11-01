@@ -101,3 +101,31 @@ Define: And find by child works
         Click
         AssertValue id mcshane-bug-div-id text = "mcshane"
         AssertValue id mcshane-negative-bug-div-id text = "mcshane negative test"	
+
+
+Define: Given the context menu hasn't been clicked
+        FindById context-clicked-div 
+        AssertCurrentElement has attributes=[class="context-not-clicked"]
+        AssertCurrentElement text contains "Not clicked"
+        
+Define: And I click the context menu
+        FindById context-click-a
+        PerformContextClick
+        
+    
+Define: Then I see "context has been clicked"
+         FindById context-clicked-div
+         AssertCurrentElement has attributes=[class="context-clicked"]
+        AssertEventuallyContains context-clicked-div "context has been clicked"
+        
+        
+Define: Given that I've not double clicked the link
+         AssertValue id dbl-clicked-div text = "Not doubled clicked yet"
+        
+    
+Define: And I double click the link
+        FindById dbl-click-a
+        PerformDoubleClick
+        
+Define: Then I can see I've double clicked
+        AssertValue id dbl-clicked-div text = "element has been double clicked"

@@ -22,13 +22,12 @@ import org.junit.runner.RunWith;
 
 import com.technophobia.substeps.runner.JunitFeatureRunner;
 import com.technophobia.substeps.runner.JunitFeatureRunner.SubStepsConfiguration;
-import com.technophobia.webdriver.substeps.runner.DefaultExecutionSetupTearDown;
 
 /**
  * 
  * @author imoore
  */
-@SubStepsConfiguration(featureFile = "./target/test-classes/features", subStepsFile = "./target/test-classes/substeps", stepImplementations = { BaseWebdriverSubStepImplementations.class }, beforeAndAfterImplementations = { DefaultExecutionSetupTearDown.class })
+@SubStepsConfiguration(featureFile = "./target/test-classes/features", subStepsFile = "./target/test-classes/substeps", stepImplementations = { BaseWebdriverSubStepImplementations.class })
 @RunWith(JunitFeatureRunner.class)
 public class SelfTests {
     // no op

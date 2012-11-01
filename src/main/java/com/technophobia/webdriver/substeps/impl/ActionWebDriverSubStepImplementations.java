@@ -37,6 +37,8 @@ import com.technophobia.substeps.model.SubSteps.Step;
 import com.technophobia.substeps.model.SubSteps.StepImplementations;
 import com.technophobia.webdriver.substeps.runner.Condition;
 import com.technophobia.webdriver.substeps.runner.DefaultExecutionSetupTearDown;
+import com.technophobia.webdriver.substeps.runner.DriverType;
+import com.technophobia.webdriver.substeps.runner.WebDriverSubstepsException;
 import com.technophobia.webdriver.substeps.runner.WebdriverSubstepsConfiguration;
 import com.technophobia.webdriver.util.WebDriverContext;
 
@@ -311,6 +313,11 @@ public class ActionWebDriverSubStepImplementations extends
      */
     @Step("PerformContextClick")
     public void performContextClick() {
+
+        if (webDriverContext().getDriverType() == DriverType.HTMLUNIT) {
+            throw new WebDriverSubstepsException(
+                    "PerformContextClick not supported in HTMLUnit");
+        }
 
         final Actions actions = new Actions(webDriver());
 
