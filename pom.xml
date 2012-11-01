@@ -253,6 +253,7 @@
 
                                 <executionConfig>
                                     <description>Self Test Features</description>
+                                    <tags>@non-visual</tags>
                                     <fastFailParseErrors>false</fastFailParseErrors>
                                     <featureFile>${basedir}/target/test-classes/features</featureFile>
                                     <subStepsFileName>${basedir}/target/test-classes/substeps</subStepsFileName>
