@@ -132,4 +132,4 @@ Define: Then I can see I've double clicked
         
 Define: And I can find the disabled text field
         FindById postcode
-        AssertCurrentElement attribute="disabled" value="disabled"
+        AssertCurrentElement attribute="disabled" value="true"
