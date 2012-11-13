@@ -40,6 +40,8 @@ public enum WebdriverSubstepsConfiguration {
     private static final boolean VISUAL_WEBDRIVER_CLOSE_ON_FAIL;
     private static long defaultWebDriverTimeoutSecs = 10;
     private static final boolean HTMLUNIT_DISABLE_JS;
+//    private static final String HTMLUNIT_PROXY_HOST;
+//    private static final Integer HTMLUNIT_PROXY_PORT;
 
     static {
 
@@ -68,6 +70,9 @@ public enum WebdriverSubstepsConfiguration {
 
         HTMLUNIT_DISABLE_JS = Configuration.INSTANCE
                 .getBoolean("htmlunit.disable.javascript");
+        
+        //HTMLUNIT_PROXY_HOST = Configuration.INSTANCE.getString("htmlunit.proxy.host");
+        //HTMLUNIT_PROXY_PORT = Configuration.INSTANCE.getInt("htmlunit.proxy.port");
 
         logger.info("Using properties:\n"
                 + Configuration.INSTANCE.getConfigurationInfo());
@@ -139,5 +144,15 @@ public enum WebdriverSubstepsConfiguration {
     public static long defaultTimeout() {
         return defaultWebDriverTimeoutSecs;
     }
+
+
+	public static String getHtmlUnitProxyHost() {
+		return HTMLUNIT_PROXY_HOST;
+	}
+
+
+	public static Integer getHtmlUnitProxyPort() {
+		return HTMLUNIT_PROXY_PORT; 
+	}
 
 }
