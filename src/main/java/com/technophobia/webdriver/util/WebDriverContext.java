@@ -84,11 +84,11 @@ public class WebDriverContext {
                     .isJavascriptDisabledWithHTMLUnit());
             
             // Run via a proxy - HTML unit only for timebeing
-//            final String proxyHost = WebdriverSubstepsConfiguration.getHtmlUnitProxyHost();
-//            final Integer proxyPort = WebdriverSubstepsConfiguration.getHtmlUnitProxyPort();
-//            if (!StringUtils.isEmpty(proxyHost) && proxyPort != null) {
-//            	htmlUnitDriver.setProxy(proxyHost, proxyPort);            	
-//            }
+            final String proxyHost = WebdriverSubstepsConfiguration.getHtmlUnitProxyHost();
+            if (!StringUtils.isEmpty(proxyHost)) {
+            	final int proxyPort = WebdriverSubstepsConfiguration.getHtmlUnitProxyPort();
+            	htmlUnitDriver.setProxy(proxyHost, proxyPort);            	
+            }
             
             webDriver = htmlUnitDriver;
             break;
