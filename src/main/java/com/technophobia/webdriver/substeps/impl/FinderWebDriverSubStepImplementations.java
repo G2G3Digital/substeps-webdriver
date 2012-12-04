@@ -185,7 +185,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
         WebElement matchingElement = null;
         for (final WebElement element : elementsWithTagName) {
 
-            if (element.getText().startsWith(text)) {
+            if (element.getText().contains(text)) {
 
                 if (matchingElement == null) {
                     matchingElement = element;

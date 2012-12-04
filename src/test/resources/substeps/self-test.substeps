@@ -133,3 +133,7 @@ Define: Then I can see I've double clicked
 Define: And I can find the disabled text field
         FindById postcode
         AssertCurrentElement attribute="disabled" value="true"
+        
+Define: And I select the second option by looking at the text it contains
+        FindTagElementContainingText tag="option" text="two"
+        Click
