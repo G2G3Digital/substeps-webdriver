@@ -278,7 +278,7 @@
 
                                 <!-- self test features -->
 
-                                <mojoExecutionConfig>
+                                <executionConfig>
                                     <description>Self Test Features</description>
                                     <tags>@non-visual</tags>
                                     <fastFailParseErrors>false</fastFailParseErrors>
@@ -289,7 +289,7 @@
                                         <param>com.technophobia.webdriver.substeps.impl.BaseWebdriverSubStepImplementations</param>
                                     </stepImplementationClassNames>
 
-                                </mojoExecutionConfig>
+                                </executionConfig>
                             </executionConfigs>
 							
 							  <executionReportBuilder implementation="com.technophobia.substeps.report.DefaultExecutionReportBuilder">
