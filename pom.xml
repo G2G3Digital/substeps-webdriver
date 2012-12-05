@@ -249,7 +249,7 @@
 
                     <plugin>
                         <groupId>com.technophobia.substeps</groupId>
-                        <artifactId>maven-substeps-plugin</artifactId>
+                        <artifactId>substeps-maven-plugin</artifactId>
                         <version>${substeps.maven.plugin.version}</version>
 
                         <executions>
