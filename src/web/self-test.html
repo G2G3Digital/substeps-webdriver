@@ -261,5 +261,51 @@ function performDoubleClick()
 <input id="postcode" type="text" value="a postcode" name="postcode" disabled="disabled"/>
 
 
+
+<div id="show-text-on-link-click-in-row1" style="visibility:hidden">correct row clicked</div>
+<div id="show-text-on-link-click-in-row2">incorrect row clicked</div>
+
+
+<table class="comments" border="1" id="table-contents-tests">
+  <caption>There are 2 comments awaiting moderation</caption>
+    <thead>
+      <tr>
+    <th>Name</th>
+    <th>Blog title</th>
+    <th>Date </th>
+    <th>Time</th>
+    <th>Comment</th>
+    <th></th>
+    <th></th>
+    <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+          <td><a href="mailto:me@here.com" title="email user">My Name</a></td>
+          <td>Where it all began...</td>
+          <td>December 19 2012</td>
+          <td>09:31</td>
+          <td title="I would like to comment on your blog post. Here it is. ">I would like to comment on your blog post. Here it is. </td>
+          <td><a href="#" onclick='showId("show-text-on-link-click-in-row1");'>View</a></td>
+          <td><a href="#">Approve</a></td>
+          <td><a href="#">Reject</a></td>
+      </tr>
+      <tr>
+          <td><a href="#" title="email user">Someone Else</a></td>
+          <td>Where it all began...</td>
+          <td>December 19 2012</td>
+          <td>09:03</td>
+          <td title="I would also like to make a comment on your blog post. ">I would also like to make a comment on your blog post. </td>
+          <td><a href="#" onclick='hideId("show-text-on-link-click-in-row2");'>View</a></td>
+          <td><a href="#">Approve</a></td>
+          <td><a href="#">Reject</a></td>
+      </tr> 
+   
+    </tbody>
+  </table>
+
+
+
 </body>
 </html>

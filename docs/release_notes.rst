@@ -3,6 +3,11 @@ Webdriver Substeps - Release Notes
 
 - A list of changes per release 
 
+1.1.0
+-----
+- Changes in line with core refactoring
+- Addition of Table row related functionality; FindTableRowWithColumnsThatContainText, FindElementInRow etc 
+
 1.0.2
 -----
 - Refactored some of the Webdriver locating code into new 'By' classes

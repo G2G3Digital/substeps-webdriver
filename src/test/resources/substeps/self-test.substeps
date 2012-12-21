@@ -1,6 +1,5 @@
 Define: Given I go to the self test page
 	NavigateTo /self-test.html
-	
 
 Define: Then I can see '<page_title>'
     AssertPageTitle is "<page_title>" 	
@@ -137,3 +136,15 @@ Define: And I can find the disabled text field
 Define: And I select the second option by looking at the text it contains
         FindTagElementContainingText tag="option" text="two"
         Click
+        
+Define: Then I find a row using column contents
+    FindById table-contents-tests
+    FindTableRowWithColumnsThatContainText ["My Name", "Where it all began...", "09:31"]
+    
+Define: And I can find and click the link "<linkText>" in the row    
+    FindElementInRow linkText="<linkText>"
+    Click
+    FindById show-text-on-link-click-in-row1
+    FindById show-text-on-link-click-in-row2 
+    # this won't have been hidden
+        
