@@ -20,6 +20,7 @@ package com.technophobia.webdriver.util;
 
 import junit.framework.Assert;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -81,6 +82,14 @@ public class WebDriverContext {
                     BrowserVersion.FIREFOX_3_6);
             htmlUnitDriver.setJavascriptEnabled(!WebdriverSubstepsConfiguration
                     .isJavascriptDisabledWithHTMLUnit());
+            
+            // Run via a proxy - HTML unit only for timebeing
+            final String proxyHost = WebdriverSubstepsConfiguration.getHtmlUnitProxyHost();
+            if (!StringUtils.isEmpty(proxyHost)) {
+            	final int proxyPort = WebdriverSubstepsConfiguration.getHtmlUnitProxyPort();
+            	htmlUnitDriver.setProxy(proxyHost, proxyPort);            	
+            }
+            
             webDriver = htmlUnitDriver;
             break;
 

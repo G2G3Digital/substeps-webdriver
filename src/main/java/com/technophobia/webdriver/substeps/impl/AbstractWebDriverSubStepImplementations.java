@@ -21,30 +21,29 @@ package com.technophobia.webdriver.substeps.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
+import com.technophobia.substeps.runner.ProvidesScreenshot;
 import com.technophobia.webdriver.substeps.runner.DefaultExecutionSetupTearDown;
 import com.technophobia.webdriver.util.WebDriverContext;
 
-public abstract class AbstractWebDriverSubStepImplementations {
+public abstract class AbstractWebDriverSubStepImplementations implements ProvidesScreenshot {
 
     private final Supplier<WebDriverContext> webDriverContextSupplier;
-
 
     public AbstractWebDriverSubStepImplementations() {
         this(DefaultExecutionSetupTearDown.currentWebDriverContext());
     }
 
-
-    public AbstractWebDriverSubStepImplementations(
-            final Supplier<WebDriverContext> webDriverContextSupplier) {
+    public AbstractWebDriverSubStepImplementations(final Supplier<WebDriverContext> webDriverContextSupplier) {
         this.webDriverContextSupplier = webDriverContextSupplier;
     }
-
 
     /**
      * Convert a string of the form type="submit",value="Search" to a map.
@@ -76,9 +75,7 @@ public abstract class AbstractWebDriverSubStepImplementations {
         return attributeMap;
     }
 
-
-    protected boolean elementHasExpectedAttributes(final WebElement e,
-            final Map<String, String> expectedAttributes) {
+    protected boolean elementHasExpectedAttributes(final WebElement e, final Map<String, String> expectedAttributes) {
         final Map<String, String> actualValues = new HashMap<String, String>();
 
         for (final String key : expectedAttributes.keySet()) {
@@ -90,18 +87,28 @@ public abstract class AbstractWebDriverSubStepImplementations {
 
         }
 
-        final MapDifference<String, String> difference = Maps.difference(expectedAttributes,
-                actualValues);
+        final MapDifference<String, String> difference = Maps.difference(expectedAttributes, actualValues);
         return difference.areEqual();
     }
-
 
     protected WebDriver webDriver() {
         return webDriverContextSupplier.get().getWebDriver();
     }
 
-
     protected WebDriverContext webDriverContext() {
         return webDriverContextSupplier.get();
+    }
+
+    public byte[] getScreenshotBytes() {
+
+        WebDriver webDriver = webDriver();
+
+        return TakesScreenshot.class.isAssignableFrom(webDriver.getClass()) ? getScreenshotBytes((TakesScreenshot) webDriver)
+                : null;
+    }
+
+    private byte[] getScreenshotBytes(TakesScreenshot screenshotTaker) {
+
+        return screenshotTaker.getScreenshotAs(OutputType.BYTES);
     }
 }
