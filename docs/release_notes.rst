@@ -5,7 +5,9 @@ Webdriver Substeps - Release Notes
 
 1.1.0
 -----
-- Changes in line with core refactoring
+
+- Upgraded dependency on webdriver-java to 2.28.0
+- Some changes to work with api which has been split out of core
 - Addition of Table row related functionality; FindTableRowWithColumnsThatContainText, FindElementInRow etc 
 
 1.0.2

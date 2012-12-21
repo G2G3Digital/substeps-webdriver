@@ -19,7 +19,7 @@
 package com.technophobia.webdriver.substeps.runner;
 
 //import org.junit.runner.Description;
-import com.technophobia.substeps.execution.ExecutionNode;
+import com.technophobia.substeps.execution.node.IExecutionNode;
 import com.technophobia.substeps.runner.INotifier;
 import com.technophobia.webdriver.util.WebDriverContext;
 
@@ -47,7 +47,7 @@ public class TestFailureListener implements INotifier {
      * com.technophobia.substeps.runner.INotifier#notifyTestFailed(com.technophobia
      * .substeps.execution.ExecutionNode, java.lang.Throwable)
      */
-    public void notifyNodeFailed(final ExecutionNode arg0, final Throwable arg1) {
+    public void notifyNodeFailed(final IExecutionNode arg0, final Throwable arg1) {
 
         final WebDriverContext webDriverContext = this.webDriverContextSupplier
                 .get();
@@ -67,7 +67,7 @@ public class TestFailureListener implements INotifier {
      * @see com.technophobia.substeps.runner.INotifier#notifyTestFinished(com.
      * technophobia.substeps.execution.ExecutionNode)
      */
-    public void notifyNodeFinished(final ExecutionNode arg0) {
+    public void notifyNodeFinished(final IExecutionNode arg0) {
         // no op
     }
 
@@ -79,7 +79,7 @@ public class TestFailureListener implements INotifier {
      * com.technophobia.substeps.runner.INotifier#notifyTestStarted(com.technophobia
      * .substeps.execution.ExecutionNode)
      */
-    public void notifyNodeStarted(final ExecutionNode arg0) {
+    public void notifyNodeStarted(final IExecutionNode arg0) {
         // no op
     }
 
@@ -91,7 +91,7 @@ public class TestFailureListener implements INotifier {
      * com.technophobia.substeps.runner.INotifier#notifyTestIgnored(com.technophobia
      * .substeps.execution.ExecutionNode)
      */
-    public void notifyNodeIgnored(final ExecutionNode node) {
+    public void notifyNodeIgnored(final IExecutionNode node) {
         // TODO Auto-generated method stub
 
     }
