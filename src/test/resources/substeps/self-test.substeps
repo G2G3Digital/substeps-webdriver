@@ -147,4 +147,10 @@ Define: And I can find and click the link "<linkText>" in the row
     FindById show-text-on-link-click-in-row1
     FindById show-text-on-link-click-in-row2 
     # this won't have been hidden
-        
+
+Define: Given I click the Dont click me button
+   ClickById pop-alert-button
+   
+Define: Then I see an Alert "<msg>"
+    DismissAlert with message "<msg>"
+            
