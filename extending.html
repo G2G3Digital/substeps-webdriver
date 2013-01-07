@@ -28,6 +28,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/theme_extras.js"></script>
     <link rel="top" title="Webdriver Substeps   documentation" href="index.html" />
+    <link rel="next" title="Webdriver Substeps - Release Notes" href="release_notes.html" />
     <link rel="prev" title="Webdriver Substep implementations" href="stepimplementations.html" /> 
   </head>
   <body>
@@ -41,6 +42,8 @@
         «&#160;&#160;<a href="stepimplementations.html">Webdriver Substep implementations</a>
         &#160;&#160;::&#160;&#160;
         <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="release_notes.html">Webdriver Substeps - Release Notes</a>&#160;&#160;»
         </p>
 
       </div>
@@ -60,12 +63,16 @@
 </pre></div>
 </div>
 <p>Any attempt to use the current element will first check that the element is not null, any attempt to locate a new current element should also set the field to null first and fail if the desired element is not found.</p>
+<p>If you wish to extend the webdriver-substeps classes, your new StepImplementations class will also need to include the initialisation class <tt class="docutils literal"><span class="pre">DefaultExecutionSetupTearDown</span></tt></p>
 <p>New step implementations can make use of and aggregate existing functions, simply instantiate the implementation class and invoke the appropriate method accordingly. For example:</p>
-<div class="highlight-java"><div class="highlight"><pre><span class="nd">@Step</span><span class="o">(</span><span class="s">&quot;DoSomething with parameter \&quot;([^\&quot;]*)\&quot;&quot;</span><span class="o">)</span>
-<span class="kd">public</span> <span class="kt">void</span> <span class="nf">exampleOne</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">param</span><span class="o">)</span>  <span class="o">{</span>
-   <span class="kd">final</span> <span class="n">FinderWebDriverSubStepImplementations</span> <span class="n">finder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FinderWebDriverSubStepImplementations</span><span class="o">();</span>
-   <span class="n">finder</span><span class="o">.</span><span class="na">findById</span><span class="o">(</span><span class="s">&quot;some_id&quot;</span><span class="o">);</span>
-   <span class="o">...</span>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@StepImplementations</span> <span class="o">(</span><span class="n">requiredInitialisationClasses</span><span class="o">=</span><span class="n">DefaultExecutionSetupTearDown</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="kd">public</span> <span class="n">MyWebDriverStepImplementations</span> <span class="o">{</span>
+
+   <span class="nd">@Step</span><span class="o">(</span><span class="s">&quot;DoSomething with parameter \&quot;([^\&quot;]*)\&quot;&quot;</span><span class="o">)</span>
+   <span class="kd">public</span> <span class="kt">void</span> <span class="nf">exampleOne</span><span class="o">(</span><span class="kd">final</span> <span class="n">String</span> <span class="n">param</span><span class="o">)</span>  <span class="o">{</span>
+      <span class="kd">final</span> <span class="n">FinderWebDriverSubStepImplementations</span> <span class="n">finder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FinderWebDriverSubStepImplementations</span><span class="o">();</span>
+      <span class="n">finder</span><span class="o">.</span><span class="na">findById</span><span class="o">(</span><span class="s">&quot;some_id&quot;</span><span class="o">);</span>
+      <span class="o">...</span>
 </pre></div>
 </div>
 </div>
@@ -78,6 +85,8 @@
         «&#160;&#160;<a href="stepimplementations.html">Webdriver Substep implementations</a>
         &#160;&#160;::&#160;&#160;
         <a class="uplink" href="index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="release_notes.html">Webdriver Substeps - Release Notes</a>&#160;&#160;»
         </p>
 
       </div>

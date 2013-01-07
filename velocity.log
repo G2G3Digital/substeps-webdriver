@@ -1,0 +1,228 @@
+2012-12-21 16:47:06,241 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2012-12-21 16:47:06,241 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2012-12-21 16:47:06,242 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2012-12-21 16:47:06,244 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2012-12-21 16:47:06,254 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2012-12-21 16:47:06,255 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2012-12-21 16:47:06,256 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2012-12-21 16:47:06,257 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2012-12-21 16:47:06,258 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2012-12-21 16:47:06,259 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2012-12-21 16:47:06,280 - Created '20' parsers.
+2012-12-21 16:47:06,284 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2012-12-21 16:47:06,284 - Velocimacro : Default library not found.
+2012-12-21 16:47:06,284 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2012-12-21 16:47:06,284 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2012-12-21 16:47:06,284 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2012-12-21 16:47:06,284 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2012-12-21 16:47:06,296 - ResourceManager : found templates/report_frame.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-04 10:57:59,359 - Log4JLogChute initialized using file 'velocity.log'
+2013-01-04 10:57:59,360 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2013-01-04 10:57:59,360 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2013-01-04 10:57:59,360 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2013-01-04 10:57:59,360 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:534)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:144)
+	at com.technophobia.substeps.report.DefaultExecutionReportBuilder.renderAndWriteToFile(DefaultExecutionReportBuilder.java:267)
+	at com.technophobia.substeps.report.DefaultExecutionReportBuilder.buildMainReport(DefaultExecutionReportBuilder.java:254)
+	at com.technophobia.substeps.report.DefaultExecutionReportBuilder.buildReport(DefaultExecutionReportBuilder.java:130)
+	at com.technophobia.substeps.runner.SubstepsRunnerMojo.processBuildData(SubstepsRunnerMojo.java:231)
+	at com.technophobia.substeps.runner.SubstepsRunnerMojo.execute(SubstepsRunnerMojo.java:158)
+	at org.apache.maven.plugin.DefaultPluginManager.executeMojo(DefaultPluginManager.java:490)
+	at org.apache.maven.lifecycle.DefaultLifecycleExecutor.executeGoals(DefaultLifecycleExecutor.java:694)
+	at org.apache.maven.lifecycle.DefaultLifecycleExecutor.executeGoalWithLifecycle(DefaultLifecycleExecutor.java:556)
+	at org.apache.maven.lifecycle.DefaultLifecycleExecutor.executeGoal(DefaultLifecycleExecutor.java:535)
+	at org.apache.maven.lifecycle.DefaultLifecycleExecutor.executeGoalAndHandleFailures(DefaultLifecycleExecutor.java:387)
+	at org.apache.maven.lifecycle.DefaultLifecycleExecutor.executeTaskSegments(DefaultLifecycleExecutor.java:348)
+	at org.apache.maven.lifecycle.DefaultLifecycleExecutor.execute(DefaultLifecycleExecutor.java:180)
+	at org.apache.maven.DefaultMaven.doExecute(DefaultMaven.java:328)
+	at org.apache.maven.DefaultMaven.execute(DefaultMaven.java:138)
+	at org.apache.maven.cli.MavenCli.main(MavenCli.java:362)
+	at org.apache.maven.cli.compat.CompatibleMain.main(CompatibleMain.java:60)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.codehaus.classworlds.Launcher.launchEnhanced(Launcher.java:315)
+	at org.codehaus.classworlds.Launcher.launch(Launcher.java:255)
+	at org.codehaus.classworlds.Launcher.mainWithExitCode(Launcher.java:430)
+	at org.codehaus.classworlds.Launcher.main(Launcher.java:375)
+Caused by: java.lang.ClassNotFoundException: org.apache.log.format.Formatter
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:366)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:355)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:354)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:423)
+	at org.codehaus.classworlds.RealmClassLoader.loadClassDirect(RealmClassLoader.java:195)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:255)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:274)
+	at org.codehaus.classworlds.RealmClassLoader.loadClass(RealmClassLoader.java:214)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:356)
+	... 34 more
+2013-01-04 10:57:59,361 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2013-01-04 10:57:59,361 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2013-01-04 10:57:59,362 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2013-01-04 10:57:59,363 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-04 10:57:59,374 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2013-01-04 10:57:59,375 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2013-01-04 10:57:59,376 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2013-01-04 10:57:59,377 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2013-01-04 10:57:59,378 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2013-01-04 10:57:59,378 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2013-01-04 10:57:59,393 - Created '20' parsers.
+2013-01-04 10:57:59,395 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2013-01-04 10:57:59,396 - Velocimacro : Default library not found.
+2013-01-04 10:57:59,396 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2013-01-04 10:57:59,396 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2013-01-04 10:57:59,396 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2013-01-04 10:57:59,396 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2013-01-04 10:57:59,404 - ResourceManager : found templates/report_frame.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-04 14:44:45,761 - Log4JLogChute initialized using file 'velocity.log'
+2013-01-04 14:44:45,761 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2013-01-04 14:44:45,761 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2013-01-04 14:44:45,761 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2013-01-04 14:44:45,761 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:534)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:144)
+	at com.technophobia.substeps.report.DefaultExecutionReportBuilder.renderAndWriteToFile(DefaultExecutionReportBuilder.java:267)
+	at com.technophobia.substeps.report.DefaultExecutionReportBuilder.buildMainReport(DefaultExecutionReportBuilder.java:254)
+	at com.technophobia.substeps.report.DefaultExecutionReportBuilder.buildReport(DefaultExecutionReportBuilder.java:130)
+	at com.technophobia.substeps.runner.SubstepsRunnerMojo.processBuildData(SubstepsRunnerMojo.java:230)
+	at com.technophobia.substeps.runner.SubstepsRunnerMojo.execute(SubstepsRunnerMojo.java:157)
+	at org.apache.maven.plugin.DefaultPluginManager.executeMojo(DefaultPluginManager.java:490)
+	at org.apache.maven.lifecycle.DefaultLifecycleExecutor.executeGoals(DefaultLifecycleExecutor.java:694)
+	at org.apache.maven.lifecycle.DefaultLifecycleExecutor.executeGoalWithLifecycle(DefaultLifecycleExecutor.java:556)
+	at org.apache.maven.lifecycle.DefaultLifecycleExecutor.executeGoal(DefaultLifecycleExecutor.java:535)
+	at org.apache.maven.lifecycle.DefaultLifecycleExecutor.executeGoalAndHandleFailures(DefaultLifecycleExecutor.java:387)
+	at org.apache.maven.lifecycle.DefaultLifecycleExecutor.executeTaskSegments(DefaultLifecycleExecutor.java:348)
+	at org.apache.maven.lifecycle.DefaultLifecycleExecutor.execute(DefaultLifecycleExecutor.java:180)
+	at org.apache.maven.DefaultMaven.doExecute(DefaultMaven.java:328)
+	at org.apache.maven.DefaultMaven.execute(DefaultMaven.java:138)
+	at org.apache.maven.cli.MavenCli.main(MavenCli.java:362)
+	at org.apache.maven.cli.compat.CompatibleMain.main(CompatibleMain.java:60)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.codehaus.classworlds.Launcher.launchEnhanced(Launcher.java:315)
+	at org.codehaus.classworlds.Launcher.launch(Launcher.java:255)
+	at org.codehaus.classworlds.Launcher.mainWithExitCode(Launcher.java:430)
+	at org.codehaus.classworlds.Launcher.main(Launcher.java:375)
+Caused by: java.lang.ClassNotFoundException: org.apache.log.format.Formatter
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:366)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:355)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:354)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:423)
+	at org.codehaus.classworlds.RealmClassLoader.loadClassDirect(RealmClassLoader.java:195)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:255)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:274)
+	at org.codehaus.classworlds.RealmClassLoader.loadClass(RealmClassLoader.java:214)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:356)
+	... 34 more
+2013-01-04 14:44:45,762 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2013-01-04 14:44:45,762 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2013-01-04 14:44:45,763 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2013-01-04 14:44:45,764 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-04 14:44:45,783 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2013-01-04 14:44:45,784 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2013-01-04 14:44:45,784 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2013-01-04 14:44:45,785 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2013-01-04 14:44:45,785 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2013-01-04 14:44:45,786 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2013-01-04 14:44:45,799 - Created '20' parsers.
+2013-01-04 14:44:45,802 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2013-01-04 14:44:45,802 - Velocimacro : Default library not found.
+2013-01-04 14:44:45,802 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2013-01-04 14:44:45,803 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2013-01-04 14:44:45,803 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2013-01-04 14:44:45,803 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2013-01-04 14:44:45,811 - ResourceManager : found templates/report_frame.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-04 14:57:05,023 - Log4JLogChute initialized using file 'velocity.log'
+2013-01-04 14:57:05,023 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2013-01-04 14:57:05,023 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2013-01-04 14:57:05,023 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2013-01-04 14:57:05,023 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:534)
+	at org.apache.velocity.app.VelocityEngine.init(VelocityEngine.java:144)
+	at com.technophobia.substeps.report.DefaultExecutionReportBuilder.renderAndWriteToFile(DefaultExecutionReportBuilder.java:267)
+	at com.technophobia.substeps.report.DefaultExecutionReportBuilder.buildMainReport(DefaultExecutionReportBuilder.java:254)
+	at com.technophobia.substeps.report.DefaultExecutionReportBuilder.buildReport(DefaultExecutionReportBuilder.java:130)
+	at com.technophobia.substeps.runner.SubstepsRunnerMojo.processBuildData(SubstepsRunnerMojo.java:230)
+	at com.technophobia.substeps.runner.SubstepsRunnerMojo.execute(SubstepsRunnerMojo.java:157)
+	at org.apache.maven.plugin.DefaultPluginManager.executeMojo(DefaultPluginManager.java:490)
+	at org.apache.maven.lifecycle.DefaultLifecycleExecutor.executeGoals(DefaultLifecycleExecutor.java:694)
+	at org.apache.maven.lifecycle.DefaultLifecycleExecutor.executeGoalWithLifecycle(DefaultLifecycleExecutor.java:556)
+	at org.apache.maven.lifecycle.DefaultLifecycleExecutor.executeGoal(DefaultLifecycleExecutor.java:535)
+	at org.apache.maven.lifecycle.DefaultLifecycleExecutor.executeGoalAndHandleFailures(DefaultLifecycleExecutor.java:387)
+	at org.apache.maven.lifecycle.DefaultLifecycleExecutor.executeTaskSegments(DefaultLifecycleExecutor.java:348)
+	at org.apache.maven.lifecycle.DefaultLifecycleExecutor.execute(DefaultLifecycleExecutor.java:180)
+	at org.apache.maven.DefaultMaven.doExecute(DefaultMaven.java:328)
+	at org.apache.maven.DefaultMaven.execute(DefaultMaven.java:138)
+	at org.apache.maven.cli.MavenCli.main(MavenCli.java:362)
+	at org.apache.maven.cli.compat.CompatibleMain.main(CompatibleMain.java:60)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:601)
+	at org.codehaus.classworlds.Launcher.launchEnhanced(Launcher.java:315)
+	at org.codehaus.classworlds.Launcher.launch(Launcher.java:255)
+	at org.codehaus.classworlds.Launcher.mainWithExitCode(Launcher.java:430)
+	at org.codehaus.classworlds.Launcher.main(Launcher.java:375)
+Caused by: java.lang.ClassNotFoundException: org.apache.log.format.Formatter
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:366)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:355)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:354)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:423)
+	at org.codehaus.classworlds.RealmClassLoader.loadClassDirect(RealmClassLoader.java:195)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:255)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:274)
+	at org.codehaus.classworlds.RealmClassLoader.loadClass(RealmClassLoader.java:214)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:356)
+	... 34 more
+2013-01-04 14:57:05,025 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2013-01-04 14:57:05,025 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2013-01-04 14:57:05,026 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2013-01-04 14:57:05,027 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2013-01-04 14:57:05,034 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2013-01-04 14:57:05,034 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2013-01-04 14:57:05,035 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2013-01-04 14:57:05,036 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2013-01-04 14:57:05,036 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2013-01-04 14:57:05,037 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2013-01-04 14:57:05,052 - Created '20' parsers.
+2013-01-04 14:57:05,054 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2013-01-04 14:57:05,055 - Velocimacro : Default library not found.
+2013-01-04 14:57:05,055 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2013-01-04 14:57:05,055 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2013-01-04 14:57:05,055 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2013-01-04 14:57:05,055 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2013-01-04 14:57:05,063 - ResourceManager : found templates/report_frame.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
