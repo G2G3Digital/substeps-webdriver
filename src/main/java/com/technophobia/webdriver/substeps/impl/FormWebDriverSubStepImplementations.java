@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 import org.slf4j.Logger;
@@ -97,6 +98,20 @@ public class FormWebDriverSubStepImplementations extends
         webDriverContext().getCurrentElement().sendKeys(value);
     }
 
+    /**
+     * Enters the given key into the current element, without clearing any current content
+     * 
+     * Note this is to be used for 'special' keys defined by org.openqa.selenium.Keys
+     * 
+     * @example SendKey Key.RETURN
+     * @section Forms
+     * @param key a value from {@link Keys}
+     */
+    @Step("SendKey Key\\.(.+)")
+    public void sendKey(final String key) {
+        logger.debug("About to send key " + key + " to the current element");
+    	webDriverContext().getCurrentElement().sendKeys(Keys.valueOf(key));
+    }
 
     /**
      * Find an element by id, clear any text from the element, and enter text
@@ -115,7 +130,6 @@ public class FormWebDriverSubStepImplementations extends
         clearAndSendKeys(value);
     }
 
-
     /**
      * Clear any text from the element, and enter text (to the current element)
      * 
@@ -131,7 +145,6 @@ public class FormWebDriverSubStepImplementations extends
         webDriverContext().getCurrentElement().clear();
         webDriverContext().getCurrentElement().sendKeys(value);
     }
-
 
     /**
      * Select a value in the option list that has the id
