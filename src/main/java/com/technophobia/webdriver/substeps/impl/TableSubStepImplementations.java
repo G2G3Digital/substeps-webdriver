@@ -182,15 +182,18 @@ public class TableSubStepImplementations extends
 
         Assert.assertNotNull("expecting a tableElement", tableElement);
 
-        final List<WebElement> tbodyElems = tableElement.findElements(By
-                .tagName("tbody"));
-        Assert.assertNotNull("expecting th row elems", tbodyElems);
-        Assert.assertThat("expecting count of 1", tbodyElems.size(), is(1));
+        /* 
+         * Note that we are expecting that the table has a "tbody" element, which is not in fact mandatory.
+         * This will find a "tbody" child of tableElement, there should be only one.
+         * 
+         * @TODO. Should we return tableElement itself if it has no tbody child?
+         */
+        final WebElement tbodyElem = tableElement.findElement(By
+                .xpath("./tbody"));
 
-        final WebElement tbody = tbodyElems.get(0);
-        Assert.assertNotNull("expecting tbody elem", tbody);
+        Assert.assertNotNull("expecting tbody elem", tbodyElem);
 
-        return tbody;
+        return tbodyElem;
     }
 
 
