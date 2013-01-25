@@ -11,7 +11,7 @@ Environment specific settings
 -----------------------------
 
 - It is likely you will need to tailor the execution of tests slightly for various environments, for example in a continuous integration server environment, 
-using the HTMLUnit driver probably makes the most sense, for developers and test authors the visual feedback of Firefox or Chrome is more preferable.
+  using the HTMLUnit driver probably makes the most sense, for developers and test authors the visual feedback of Firefox or Chrome is more preferable.
 
 +--------------------------------+-------------------------------------------------------------------+-+
 | Property                       | Description                                                       | |

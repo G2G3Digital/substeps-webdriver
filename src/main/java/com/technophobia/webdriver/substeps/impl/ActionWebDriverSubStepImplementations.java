@@ -18,12 +18,15 @@
  */
 package com.technophobia.webdriver.substeps.impl;
 
+import static org.hamcrest.CoreMatchers.is;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.TargetLocator;
@@ -43,11 +46,9 @@ import com.technophobia.webdriver.substeps.runner.WebdriverSubstepsConfiguration
 import com.technophobia.webdriver.util.WebDriverContext;
 
 @StepImplementations(requiredInitialisationClasses = DefaultExecutionSetupTearDown.class)
-public class ActionWebDriverSubStepImplementations extends
-        AbstractWebDriverSubStepImplementations {
+public class ActionWebDriverSubStepImplementations extends AbstractWebDriverSubStepImplementations {
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(ActionWebDriverSubStepImplementations.class);
+    private static final Logger logger = LoggerFactory.getLogger(ActionWebDriverSubStepImplementations.class);
 
     private final FinderWebDriverSubStepImplementations locator;
 
@@ -57,8 +58,7 @@ public class ActionWebDriverSubStepImplementations extends
     }
 
 
-    public ActionWebDriverSubStepImplementations(
-            final FinderWebDriverSubStepImplementations locator,
+    public ActionWebDriverSubStepImplementations(final FinderWebDriverSubStepImplementations locator,
             final Supplier<WebDriverContext> webDriverContextSupplier) {
         super(webDriverContextSupplier);
         this.locator = locator;
@@ -150,8 +150,7 @@ public class ActionWebDriverSubStepImplementations extends
     public void clickButton(final String buttonText) {
         logger.debug("About to click button with text " + buttonText);
         webDriverContext().setCurrentElement(null);
-        final WebElement elem = this.locator.findElementWithText("button",
-                buttonText.trim());
+        final WebElement elem = this.locator.findElementWithText("button", buttonText.trim());
         Assert.assertNotNull("expecting to find a button: " + buttonText, elem);
         webDriverContext().setCurrentElement(elem);
         elem.click();
@@ -162,8 +161,7 @@ public class ActionWebDriverSubStepImplementations extends
     public void clickInput(final String buttonText) {
         logger.debug("About to click submit button with text " + buttonText);
         webDriverContext().setCurrentElement(null);
-        final List<WebElement> elems = webDriver().findElements(
-                By.tagName("input"));
+        final List<WebElement> elems = webDriver().findElements(By.tagName("input"));
 
         List<WebElement> matchingElems = null;
         for (final WebElement e : elems) {
@@ -226,17 +224,14 @@ public class ActionWebDriverSubStepImplementations extends
     public void waitForPageTitle(final String expectedTitle) {
         logger.debug("Waiting for " + expectedTitle + " page");
 
-        final boolean conditionMet = webDriverContext().waitForCondition(
-                new Condition() {
-                    public boolean conditionMet() {
-                        final String pageTitle = webDriver().getTitle();
-                        logger.debug(String.format(
-                                "wait for page. Expected='%s', actual='%s'",
-                                expectedTitle, pageTitle));
-                        return pageTitle.equals(expectedTitle);
-                    }
+        final boolean conditionMet = webDriverContext().waitForCondition(new Condition() {
+            public boolean conditionMet() {
+                final String pageTitle = webDriver().getTitle();
+                logger.debug(String.format("wait for page. Expected='%s', actual='%s'", expectedTitle, pageTitle));
+                return pageTitle.equals(expectedTitle);
+            }
 
-                });
+        });
 
         if (!conditionMet) {
             logger.debug(expectedTitle + " page not found");
@@ -256,8 +251,7 @@ public class ActionWebDriverSubStepImplementations extends
         try {
             return new URI(urlToNormalise).toString();
         } catch (final URISyntaxException ex) {
-            throw new IllegalStateException("The url " + urlToNormalise
-                    + " is invalid.", ex);
+            throw new IllegalStateException("The url " + urlToNormalise + " is invalid.", ex);
         }
     }
 
@@ -274,8 +268,7 @@ public class ActionWebDriverSubStepImplementations extends
     public void switchFrameToCurrentElement() {
 
         final TargetLocator targetLocator = webDriver().switchTo();
-        final WebDriver refocusedWebDriver = targetLocator
-                .frame(webDriverContext().getCurrentElement());
+        final WebDriver refocusedWebDriver = targetLocator.frame(webDriverContext().getCurrentElement());
 
         // yes I actually want to check these objects are the same!
         Assert.assertTrue(
@@ -315,8 +308,7 @@ public class ActionWebDriverSubStepImplementations extends
     public void performContextClick() {
 
         if (webDriverContext().getDriverType() == DriverType.HTMLUNIT) {
-            throw new WebDriverSubstepsException(
-                    "PerformContextClick not supported in HTMLUnit");
+            throw new WebDriverSubstepsException("PerformContextClick not supported in HTMLUnit");
         }
 
         final Actions actions = new Actions(webDriver());
@@ -324,5 +316,20 @@ public class ActionWebDriverSubStepImplementations extends
         actions.contextClick(webDriverContext().getCurrentElement());
 
         actions.perform();
+    }
+
+
+    @Step("DismissAlert with message \"([^\"]*)\"")
+    public void dismissAlertWithMessage(final String message) {
+
+        // Get a handle to the open alert, prompt or confirmation
+
+        final Alert alert = webDriverContext().getWebDriver().switchTo().alert();
+        // this will throw a org.openqa.selenium.NoAlertPresentException if no
+        // alert is present
+
+        Assert.assertThat(alert.getText(), is(message));
+        // And acknowledge the alert (equivalent to clicking "OK")
+        alert.accept();
     }
 }

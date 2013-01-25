@@ -18,6 +18,9 @@
  */
 package com.technophobia.webdriver.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import junit.framework.Assert;
 
 import org.apache.commons.lang3.StringUtils;
@@ -45,8 +48,7 @@ import com.technophobia.webdriver.substeps.runner.WebdriverSubstepsConfiguration
  * 
  */
 public class WebDriverContext {
-    private static final Logger logger = LoggerFactory
-            .getLogger(WebDriverContext.class);
+    private static final Logger logger = LoggerFactory.getLogger(WebDriverContext.class);
 
     public static final String EXECUTION_CONTEXT_KEY = "_webdriver_context_key";
 
@@ -55,12 +57,14 @@ public class WebDriverContext {
     private boolean failed = false;
     private final DriverType driverType;
 
+    private Map<String, WebElement> elementStash = null;
+
 
     /**
      * @return the driverType
      */
     public DriverType getDriverType() {
-        return driverType;
+        return this.driverType;
     }
 
 
@@ -74,29 +78,27 @@ public class WebDriverContext {
 
         switch (driverType) {
         case FIREFOX: {
-            webDriver = new FirefoxDriver();
+            this.webDriver = new FirefoxDriver();
             break;
         }
         case HTMLUNIT: {
-            final HtmlUnitDriver htmlUnitDriver = new HtmlUnitDriver(
-                    BrowserVersion.FIREFOX_3_6);
-            htmlUnitDriver.setJavascriptEnabled(!WebdriverSubstepsConfiguration
-                    .isJavascriptDisabledWithHTMLUnit());
-            
+            final HtmlUnitDriver htmlUnitDriver = new HtmlUnitDriver(BrowserVersion.FIREFOX_3_6);
+            htmlUnitDriver.setJavascriptEnabled(!WebdriverSubstepsConfiguration.isJavascriptDisabledWithHTMLUnit());
+
             // Run via a proxy - HTML unit only for timebeing
             final String proxyHost = WebdriverSubstepsConfiguration.getHtmlUnitProxyHost();
             if (!StringUtils.isEmpty(proxyHost)) {
-            	final int proxyPort = WebdriverSubstepsConfiguration.getHtmlUnitProxyPort();
-            	htmlUnitDriver.setProxy(proxyHost, proxyPort);            	
+                final int proxyPort = WebdriverSubstepsConfiguration.getHtmlUnitProxyPort();
+                htmlUnitDriver.setProxy(proxyHost, proxyPort);
             }
-            
-            webDriver = htmlUnitDriver;
+
+            this.webDriver = htmlUnitDriver;
             break;
 
         }
         case CHROME: {
 
-            webDriver = new ChromeDriver();
+            this.webDriver = new ChromeDriver();
             break;
 
         }
@@ -105,16 +107,12 @@ public class WebDriverContext {
             // apparently this is required to get around some IE security
             // restriction.
 
-            final DesiredCapabilities ieCapabilities = DesiredCapabilities
-                    .internetExplorer();
-            ieCapabilities
-                    .setCapability(
-                            InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS,
-                            true);
+            final DesiredCapabilities ieCapabilities = DesiredCapabilities.internetExplorer();
+            ieCapabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
 
             logger.warn("Using IE Webdriver with IGNORING SECURITY DOMAIN");
 
-            webDriver = new InternetExplorerDriver(ieCapabilities);
+            this.webDriver = new InternetExplorerDriver(ieCapabilities);
             break;
         }
         default: {
@@ -125,9 +123,8 @@ public class WebDriverContext {
 
 
     public WebElement getCurrentElement() {
-        Assert.assertNotNull("expecting current element not to be null",
-                currentElement);
-        return currentElement;
+        Assert.assertNotNull("expecting current element not to be null", this.currentElement);
+        return this.currentElement;
     }
 
 
@@ -137,41 +134,66 @@ public class WebDriverContext {
 
 
     public WebDriver getWebDriver() {
-        return webDriver;
+        return this.webDriver;
     }
 
 
     public void shutdownWebDriver() {
         logger.debug("Shutting WebDriver down");
-        if (webDriver != null) {
-            webDriver.manage().deleteAllCookies();
-            webDriver.quit();
+        if (this.webDriver != null) {
+            this.webDriver.manage().deleteAllCookies();
+            this.webDriver.quit();
         }
     }
 
 
     public boolean hasFailed() {
-        return failed;
+        return this.failed;
     }
 
 
     public void setFailed() {
-        failed = true;
+        this.failed = true;
     }
 
 
     public WebElement waitForElement(final By by) {
-        return ElementLocators.waitForElement(by,
-                WebdriverSubstepsConfiguration.defaultTimeout(), webDriver);
+        return ElementLocators.waitForElement(by, WebdriverSubstepsConfiguration.defaultTimeout(), this.webDriver);
     }
 
 
     public WebElement waitForElement(final By by, final long timeOutSeconds) {
-        return ElementLocators.waitForElement(by, timeOutSeconds, webDriver);
+        return ElementLocators.waitForElement(by, timeOutSeconds, this.webDriver);
     }
 
 
     public boolean waitForCondition(final Condition condition) {
-        return ElementLocators.waitForCondition(condition, webDriver);
+        return ElementLocators.waitForCondition(condition, this.webDriver);
+    }
+
+
+    public void stashElement(final String key, final WebElement element) {
+
+        if (this.elementStash == null) {
+            this.elementStash = new HashMap<String, WebElement>();
+        }
+
+        if (this.elementStash.containsKey(key)) {
+
+            // do we care ?
+            logger.debug("replacing existing object in stash using key: " + key);
+        }
+
+        this.elementStash.put(key, element);
+    }
+
+
+    public WebElement getElementFromStash(final String key) {
+
+        final WebElement elem = this.elementStash != null ? this.elementStash.get(key) : null;
+
+        Assert.assertNotNull("Attempt to retrieve a null element from the stash with key: " + key, elem);
+
+        return elem;
     }
 }

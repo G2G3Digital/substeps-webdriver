@@ -191,9 +191,9 @@ public class TableSubStepImplementations extends
         final WebElement tbodyElem = tableElement.findElement(By
                 .xpath("./tbody"));
 
-        Assert.assertNotNull("expecting tbody elem", tbodyElem);
+       Assert.assertNotNull("expecting tbody elem", tbodyElem);
 
-        return tbodyElem;
+        return tbody;
     }
 
 

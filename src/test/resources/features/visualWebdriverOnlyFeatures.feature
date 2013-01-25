@@ -11,3 +11,6 @@ Scenario: a visual scenario
     Given that I've not double clicked the link
     And I double click the link
     Then I can see I've double clicked
+    
+    Given I click the Dont click me button   
+    Then I see an Alert "I told you not to click me!"

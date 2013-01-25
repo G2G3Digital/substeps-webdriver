@@ -3,6 +3,14 @@ Webdriver Substeps - Release Notes
 
 - A list of changes per release 
 
+1.1.0
+-----
+
+- Upgraded dependency on webdriver-java to 2.28.0
+- Some changes to work with api which has been split out of core
+- Addition of Table row related functionality; FindTableRowWithColumnsThatContainText, FindElementInRow etc
+- DismissAlert step implementation
+
 1.0.2
 -----
 - Refactored some of the Webdriver locating code into new 'By' classes

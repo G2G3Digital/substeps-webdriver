@@ -37,6 +37,13 @@ Scenario: a scenario
 	And find by child works
 	
 	And I can find the disabled text field
+
+    And I dont see "number two option" in select id select_id
+    And I select the second option by looking at the text it contains
+	And I see "number two option" in select id select_id
+	
+	Then I find a row using column contents 
+    And I can find and click the link "View" in the row
 	
 ##################################################################	
 	# these tests need to be last as they go off to google
