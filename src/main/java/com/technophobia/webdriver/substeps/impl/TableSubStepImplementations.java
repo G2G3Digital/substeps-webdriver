@@ -193,7 +193,7 @@ public class TableSubStepImplementations extends
 
        Assert.assertNotNull("expecting tbody elem", tbodyElem);
 
-        return tbody;
+        return tbodyElem;
     }
 
 
