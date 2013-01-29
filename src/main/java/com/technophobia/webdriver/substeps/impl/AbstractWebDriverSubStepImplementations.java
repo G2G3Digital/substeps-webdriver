@@ -37,43 +37,16 @@ public abstract class AbstractWebDriverSubStepImplementations implements Provide
 
     private final Supplier<WebDriverContext> webDriverContextSupplier;
 
+
     public AbstractWebDriverSubStepImplementations() {
         this(DefaultExecutionSetupTearDown.currentWebDriverContext());
     }
+
 
     public AbstractWebDriverSubStepImplementations(final Supplier<WebDriverContext> webDriverContextSupplier) {
         this.webDriverContextSupplier = webDriverContextSupplier;
     }
 
-    /**
-     * Convert a string of the form type="submit",value="Search" to a map.
-     * 
-     * @example
-     * @param attributes
-     *            the attributes string
-     * @return the map
-     */
-    protected Map<String, String> convertToMap(final String attributes) {
-        Map<String, String> attributeMap = null;
-
-        // split the attributes up, will be received as a comma separated list
-        // of name value pairs
-        final String[] nvps = attributes.split(",");
-
-        if (nvps != null) {
-            for (final String nvp : nvps) {
-                final String[] split = nvp.split("=");
-                if (split != null && split.length == 2) {
-                    if (attributeMap == null) {
-                        attributeMap = new HashMap<String, String>();
-                    }
-                    attributeMap.put(split[0], split[1].replaceAll("\"", ""));
-                }
-            }
-        }
-
-        return attributeMap;
-    }
 
     protected boolean elementHasExpectedAttributes(final WebElement e, final Map<String, String> expectedAttributes) {
         final Map<String, String> actualValues = new HashMap<String, String>();
@@ -91,23 +64,27 @@ public abstract class AbstractWebDriverSubStepImplementations implements Provide
         return difference.areEqual();
     }
 
+
     protected WebDriver webDriver() {
-        return webDriverContextSupplier.get().getWebDriver();
+        return this.webDriverContextSupplier.get().getWebDriver();
     }
 
+
     protected WebDriverContext webDriverContext() {
-        return webDriverContextSupplier.get();
+        return this.webDriverContextSupplier.get();
     }
+
 
     public byte[] getScreenshotBytes() {
 
-        WebDriver webDriver = webDriver();
+        final WebDriver webDriver = webDriver();
 
         return TakesScreenshot.class.isAssignableFrom(webDriver.getClass()) ? getScreenshotBytes((TakesScreenshot) webDriver)
                 : null;
     }
 
-    private byte[] getScreenshotBytes(TakesScreenshot screenshotTaker) {
+
+    private byte[] getScreenshotBytes(final TakesScreenshot screenshotTaker) {
 
         return screenshotTaker.getScreenshotAs(OutputType.BYTES);
     }

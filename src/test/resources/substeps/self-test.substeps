@@ -157,3 +157,8 @@ Define: Then I see an Alert "<msg>"
 Define: And I can find a table with caption "<caption>"
     FindParentByTagAndAttributes tag="table" attributes=[class="comments"] ThatHasChild tag="caption" text="There are 2 comments awaiting moderation"
     AssertCurrentElement has attributes=[border="1"]
+    
+Define: And I can find a table with an error caption
+    FindParentByTagAndAttributes tag="table" attributes=[class="comments"] ThatHasChild tag="caption" attributes=[class="captionClassError"] 
+    AssertCurrentElement has attributes=[border="2"]
+    

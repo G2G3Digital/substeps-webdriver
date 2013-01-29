@@ -22,7 +22,6 @@ import static com.technophobia.webdriver.substeps.runner.DefaultExecutionSetupTe
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Assert;
 import org.openqa.selenium.By;
@@ -252,9 +251,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
         final WebElement currentElement = webDriverContext().getCurrentElement();
 
-        final Map<String, String> expectedAttributes = convertToMap(attributeString);
-
-        final By byTagAndAttributes = WebDriverSubstepsBy.ByTagAndAttributes(tag, expectedAttributes);
+        final By byTagAndAttributes = WebDriverSubstepsBy.ByTagAndAttributes(tag, attributeString);
 
         final By byCurrentElement = WebDriverSubstepsBy.ByCurrentWebElement(currentElement);
 
@@ -408,11 +405,10 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
     public WebElement findByTagAndAttributes(final String tag, final String attributeString) {
         logger.debug("Looking for item with tag " + tag + " and attributes " + attributeString);
         webDriverContext().setCurrentElement(null);
-        final Map<String, String> expectedAttributes = convertToMap(attributeString);
 
         WebElement rtn = null;
 
-        final By by = WebDriverSubstepsBy.ByTagAndAttributes(tag, expectedAttributes);
+        final By by = WebDriverSubstepsBy.ByTagAndAttributes(tag, attributeString);
 
         final String msg = "failed to locate an element with tag: " + tag + " and attributes: " + attributeString;
 
@@ -450,22 +446,43 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
         webDriverContext().setCurrentElement(null);
 
-        final Map<String, String> expectedAttributes = convertToMap(attributeString);
-
         WebElement rtn = null;
 
+        final By by = WebDriverSubstepsBy.ByTagAndAttributes(tag, attributeString);
+
+        final By childBy = WebDriverSubstepsBy.ByTagAndWithText(childTag, childText);
+
+        final String assertionMessage = "Failed to locate a parent element with tag: " + tag + " and attributes: "
+                + attributeString + " with a child element of tag: " + childTag + " with text: " + childText;
+
+        final String findParentAssertionMessage = "failed to locate an element with tag: " + tag + " and attributes: "
+                + attributeString;
+        final String multipleChildrenMessage = "More than one child element found for parent with tag: " + childTag
+                + " and text: " + childText;
+
+        rtn = findParentByWithChildBy(by, childBy, assertionMessage, findParentAssertionMessage,
+                multipleChildrenMessage);
+        return rtn;
+    }
+
+
+    /**
+     * @param by
+     * @param childBy
+     * @param assertionMessage
+     * @param findParentAssertionMessage
+     * @param multipleChildrenMessage
+     * @return
+     */
+    private WebElement findParentByWithChildBy(final By by, final By childBy, final String assertionMessage,
+            final String findParentAssertionMessage, final String multipleChildrenMessage) {
+        WebElement rtn;
         List<WebElement> matchingElements = null;
-
-        final By by = WebDriverSubstepsBy.ByTagAndAttributes(tag, expectedAttributes);
-
-        final String msg = "failed to locate an element with tag: " + tag + " and attributes: " + attributeString;
 
         final List<WebElement> candidateParentElements = webDriver().findElements(by);
 
-        Assert.assertNotNull(msg, candidateParentElements);
-        Assert.assertFalse(msg, candidateParentElements.isEmpty());
-
-        final By childBy = WebDriverSubstepsBy.ByTagAndWithText(childTag, childText);
+        Assert.assertNotNull(findParentAssertionMessage, candidateParentElements);
+        Assert.assertFalse(findParentAssertionMessage, candidateParentElements.isEmpty());
 
         for (final WebElement parent : candidateParentElements) {
 
@@ -480,16 +497,60 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
                 }
                 matchingElements.add(parent);
                 if (children.size() > 1) {
-                    logger.info("More than one child element found for parent with tag: " + childTag + " and text: "
-                            + childText);
+                    logger.info(multipleChildrenMessage);
                 }
             }
         }
-        rtn = checkForOneMatchingElement("Failed to locate a parent element with tag: " + tag + " and attributes: "
-                + attributeString + " with a child element of tag: " + childTag + " with text: " + childText,
-                matchingElements);
+        rtn = checkForOneMatchingElement(assertionMessage, matchingElements);
 
         webDriverContext().setCurrentElement(rtn);
+        return rtn;
+    }
+
+
+    /**
+     * Finds an element by tag name and a set of attributes and corresponding
+     * values, that has a child tag element of the specified type that has the
+     * specified attributes..
+     * 
+     * @param tag
+     *            the parent tag
+     * @param attributeString
+     *            the parent attribute string
+     * @param childTag
+     *            the child tag
+     * @param childAttributeString
+     *            the child's attribute string
+     * 
+     * @return the web element
+     * @example FindParentByTagAndAttributes tag="table"
+     *          attributes=[class="mytable"] ThatHasChild tag="caption"
+     *          attributes=[class="childClass"]
+     * @section Location
+     */
+    @Step("FindParentByTagAndAttributes tag=\"?([^\"]*)\"? attributes=\\[(.*)\\] ThatHasChild tag=\"?([^\"]*)\"? attributes=\\[(.*)\\]")
+    public WebElement findParentByTagAndAttributesThatHasChildWithTagAndAttributes(final String tag,
+            final String attributeString, final String childTag, final String childAttributeString) {
+
+        webDriverContext().setCurrentElement(null);
+
+        WebElement rtn = null;
+
+        final By by = WebDriverSubstepsBy.ByTagAndAttributes(tag, attributeString);
+
+        final By childBy = WebDriverSubstepsBy.ByTagAndAttributes(childTag, childAttributeString);
+
+        final String assertionMessage = "Failed to locate a parent element with tag: " + tag + " and attributes: "
+                + attributeString + " with a child element of tag: " + childTag + " and attributes: "
+                + childAttributeString;
+
+        final String findParentAssertionMessage = "failed to locate an element with tag: " + tag + " and attributes: "
+                + attributeString;
+        final String multipleChildrenMessage = "More than one child element found for parent with tag: " + childTag
+                + " and and attributes: " + childAttributeString;
+
+        rtn = findParentByWithChildBy(by, childBy, assertionMessage, findParentAssertionMessage,
+                multipleChildrenMessage);
         return rtn;
     }
 

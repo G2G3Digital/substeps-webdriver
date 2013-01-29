@@ -46,6 +46,7 @@ Scenario: a scenario
     And I can find and click the link "View" in the row
     
     And I can find a table with caption "There are 2 comments awaiting moderation"
+    And I can find a table with an error caption 
 	
 ##################################################################	
 	# these tests need to be last as they go off to google

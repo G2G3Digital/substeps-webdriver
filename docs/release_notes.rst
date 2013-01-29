@@ -3,9 +3,12 @@ Webdriver Substeps - Release Notes
 
 - A list of changes per release 
 
+1.1.1
+-----
+- New step implementation, FindParentByTagAndAttributes.
+
 1.1.0
 -----
-
 - Upgraded dependency on webdriver-java to 2.28.0
 - Some changes to work with api which has been split out of core
 - Addition of Table row related functionality; FindTableRowWithColumnsThatContainText, FindElementInRow etc

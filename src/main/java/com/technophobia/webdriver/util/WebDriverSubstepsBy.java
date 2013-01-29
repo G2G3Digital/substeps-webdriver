@@ -43,8 +43,7 @@ public abstract class WebDriverSubstepsBy {
     }
 
 
-    public static ByIdAndText ByIdAndCaseSensitiveText(final String id,
-            final String text) {
+    public static ByIdAndText ByIdAndCaseSensitiveText(final String id, final String text) {
         return new ByIdAndText(id, text, true);
     }
 
@@ -55,19 +54,56 @@ public abstract class WebDriverSubstepsBy {
     }
 
 
+    public static ByTagAndAttributes ByTagAndAttributes(final String tagName, final String attributeString) {
+
+        final Map<String, String> expectedAttributes = convertToMap(attributeString);
+
+        return new ByTagAndAttributes(tagName, expectedAttributes);
+    }
+
+
+    /**
+     * Convert a string of the form type="submit",value="Search" to a map.
+     * 
+     * @example
+     * @param attributes
+     *            the attributes string
+     * @return the map
+     */
+    public static Map<String, String> convertToMap(final String attributes) {
+        Map<String, String> attributeMap = null;
+
+        // split the attributes up, will be received as a comma separated list
+        // of name value pairs
+        final String[] nvps = attributes.split(",");
+
+        if (nvps != null) {
+            for (final String nvp : nvps) {
+                final String[] split = nvp.split("=");
+                if (split != null && split.length == 2) {
+                    if (attributeMap == null) {
+                        attributeMap = new HashMap<String, String>();
+                    }
+                    attributeMap.put(split[0], split[1].replaceAll("\"", ""));
+                }
+            }
+        }
+
+        return attributeMap;
+    }
+
+
     public static ByCurrentWebElement ByCurrentWebElement(final WebElement elem) {
         return new ByCurrentWebElement(elem);
     }
 
 
-    public static ByTagAndWithText ByTagAndWithText(final String tag,
-            final String text) {
+    public static ByTagAndWithText ByTagAndWithText(final String tag, final String text) {
         return new ByTagAndWithText(tag, text);
     }
 
 
-    public static ByIdContainingText ByIdContainingText(final String id,
-            final String text) {
+    public static ByIdContainingText ByIdContainingText(final String id, final String text) {
         return new ByIdContainingText(id, text);
     }
 
@@ -85,8 +121,7 @@ public abstract class WebDriverSubstepsBy {
 
         }
 
-        final MapDifference<String, String> difference = Maps.difference(
-                expectedAttributes, actualValues);
+        final MapDifference<String, String> difference = Maps.difference(expectedAttributes, actualValues);
         return difference.areEqual();
     }
 
@@ -104,8 +139,7 @@ public abstract class WebDriverSubstepsBy {
         }
 
 
-        public abstract List<WebElement> findElementsBy(
-                final SearchContext context);
+        public abstract List<WebElement> findElementsBy(final SearchContext context);
     }
 
     static class ByTagAndAttributes extends BaseBy {
@@ -114,8 +148,7 @@ public abstract class WebDriverSubstepsBy {
         private final Map<String, String> requiredAttributes;
 
 
-        ByTagAndAttributes(final String tagName,
-                final Map<String, String> requiredAttributes) {
+        ByTagAndAttributes(final String tagName, final Map<String, String> requiredAttributes) {
             this.tagName = tagName;
             this.requiredAttributes = requiredAttributes;
         }
@@ -126,8 +159,7 @@ public abstract class WebDriverSubstepsBy {
 
             List<WebElement> matchingElems = null;
 
-            final List<WebElement> tagElements = context.findElements(By
-                    .tagName(this.tagName));
+            final List<WebElement> tagElements = context.findElements(By.tagName(this.tagName));
 
             for (final WebElement e : tagElements) {
                 // does this WebElement have the attributes that we need!
@@ -194,8 +226,7 @@ public abstract class WebDriverSubstepsBy {
 
             List<WebElement> matchingElems = null;
 
-            final List<WebElement> elems = context.findElements(By
-                    .tagName(this.tag));
+            final List<WebElement> elems = context.findElements(By.tagName(this.tag));
             if (elems != null) {
                 for (final WebElement e : elems) {
 
@@ -268,8 +299,7 @@ public abstract class WebDriverSubstepsBy {
         }
 
 
-        ByIdAndText(final String id, final String text,
-                final boolean caseSensitive) {
+        ByIdAndText(final String id, final String text, final boolean caseSensitive) {
             this.id = id;
             this.text = text;
             this.caseSensitive = caseSensitive;
@@ -293,8 +323,7 @@ public abstract class WebDriverSubstepsBy {
                 for (final WebElement e : elems) {
 
                     if ((this.caseSensitive && this.text.equals(e.getText()))
-                            || (!this.caseSensitive && this.text
-                                    .equalsIgnoreCase(e.getText()))) {
+                            || (!this.caseSensitive && this.text.equalsIgnoreCase(e.getText()))) {
 
                         if (matchingElems == null) {
                             matchingElems = new ArrayList<WebElement>();

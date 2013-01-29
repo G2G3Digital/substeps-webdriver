@@ -24,7 +24,6 @@ import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Assert;
 import org.openqa.selenium.By;
@@ -309,9 +308,7 @@ public class TableSubStepImplementations extends AbstractWebDriverSubStepImpleme
     @Step("FindElementInRow ByTagAndAttributes tag=\"?([^\"]*)\"? attributes=\\[(.*)\\]")
     public void findLinkInRowByTagAndAttributes(final String tag, final String attributeString) {
 
-        final Map<String, String> expectedAttributes = convertToMap(attributeString);
-
-        final By by = WebDriverSubstepsBy.ByTagAndAttributes(tag, expectedAttributes);
+        final By by = WebDriverSubstepsBy.ByTagAndAttributes(tag, attributeString);
 
         findElementInRowBy(by);
     }
