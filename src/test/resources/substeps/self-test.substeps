@@ -153,4 +153,7 @@ Define: Given I click the Dont click me button
    
 Define: Then I see an Alert "<msg>"
     DismissAlert with message "<msg>"
-            
+
+Define: And I can find a table with caption "<caption>"
+    FindParentByTagAndAttributes tag="table" attributes=[class="comments"] ThatHasChild tag="caption" text="There are 2 comments awaiting moderation"
+    AssertCurrentElement has attributes=[border="1"]

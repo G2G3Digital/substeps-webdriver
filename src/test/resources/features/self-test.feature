@@ -44,6 +44,8 @@ Scenario: a scenario
 	
 	Then I find a row using column contents 
     And I can find and click the link "View" in the row
+    
+    And I can find a table with caption "There are 2 comments awaiting moderation"
 	
 ##################################################################	
 	# these tests need to be last as they go off to google

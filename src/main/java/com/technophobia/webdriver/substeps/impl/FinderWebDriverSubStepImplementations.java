@@ -44,13 +44,16 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
     private static final Logger logger = LoggerFactory.getLogger(FinderWebDriverSubStepImplementations.class);
 
+
     public FinderWebDriverSubStepImplementations() {
         super();
     }
 
+
     public FinderWebDriverSubStepImplementations(final Supplier<WebDriverContext> webDriverContextSupplier) {
         super(webDriverContextSupplier);
     }
+
 
     /**
      * Find an element by it's ID
@@ -74,6 +77,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
         webDriverContext().setCurrentElement(elem);
         return elem;
     }
+
 
     /**
      * Find an element by it's ID with the specified timeout
@@ -99,6 +103,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
         return elem;
     }
 
+
     /**
      * Find an id by xpath
      * 
@@ -116,6 +121,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
         Assert.assertNotNull("expecting an element with xpath " + xpath, elem);
         webDriverContext().setCurrentElement(elem);
     }
+
 
     /**
      * Find an element using the name attribute of the element
@@ -136,6 +142,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
         webDriverContext().setCurrentElement(elem);
         return elem;
     }
+
 
     /**
      * Find element by predicate.
@@ -164,6 +171,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
         return rtn;
     }
+
 
     /**
      * Finds an element on the page with the specified tag and text
@@ -199,6 +207,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
         webDriverContext().setCurrentElement(matchingElement);
     }
 
+
     /**
      * Finds an element that is a child of the current element using the name
      * attribute, another Find method should be used first
@@ -220,6 +229,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
         webDriverContext().setCurrentElement(elem);
         return elem;
     }
+
 
     /**
      * Finds an element that is a child of the current element using the tag
@@ -259,6 +269,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
         return elem;
     }
 
+
     /**
      * Finds a checkbox that is a child of the specified tag, that contains the
      * specified text; eg.
@@ -285,6 +296,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
         return findInputInsideTag(label, tag, "checkbox");
 
     }
+
 
     // todo variant that also has attributes for the tag
 
@@ -313,6 +325,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
         return findInputInsideTag(label, tag, "radio");
     }
+
 
     /**
      * @param label
@@ -367,6 +380,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
         return elem;
     }
 
+
     /**
      * @param tag
      * @param tagElems
@@ -375,6 +389,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
         Assert.assertNotNull(msg, tagElems);
         Assert.assertTrue(msg, !tagElems.isEmpty());
     }
+
 
     /**
      * Find an element by tag name and a set of attributes and corresponding
@@ -408,6 +423,77 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
         return rtn;
     }
 
+
+    /**
+     * Finds an element by tag name and a set of attributes and corresponding
+     * values, that has a child tag element of the specified type and having the
+     * specified text
+     * 
+     * @param tag
+     *            the parent tag
+     * @param attributeString
+     *            the parent attribute string
+     * @param childTag
+     *            the child tag
+     * @param childText
+     *            the child's text
+     * 
+     * @return the web element
+     * @example FindParentByTagAndAttributes tag="table"
+     *          attributes=[class="mytable"] ThatHasChild tag="caption"
+     *          text="wahoo"
+     * @section Location
+     */
+    @Step("FindParentByTagAndAttributes tag=\"?([^\"]*)\"? attributes=\\[(.*)\\] ThatHasChild tag=\"?([^\"]*)\"? text=\"([^\"]*)\"")
+    public WebElement findParentByTagAndAttributesThatHasChildWithTagAndText(final String tag,
+            final String attributeString, final String childTag, final String childText) {
+
+        webDriverContext().setCurrentElement(null);
+
+        final Map<String, String> expectedAttributes = convertToMap(attributeString);
+
+        WebElement rtn = null;
+
+        List<WebElement> matchingElements = null;
+
+        final By by = WebDriverSubstepsBy.ByTagAndAttributes(tag, expectedAttributes);
+
+        final String msg = "failed to locate an element with tag: " + tag + " and attributes: " + attributeString;
+
+        final List<WebElement> candidateParentElements = webDriver().findElements(by);
+
+        Assert.assertNotNull(msg, candidateParentElements);
+        Assert.assertFalse(msg, candidateParentElements.isEmpty());
+
+        final By childBy = WebDriverSubstepsBy.ByTagAndWithText(childTag, childText);
+
+        for (final WebElement parent : candidateParentElements) {
+
+            final List<WebElement> children = parent.findElements(childBy);
+
+            // do we care if there are more than one matching child ? lets go
+            // with no..
+            if (!children.isEmpty()) {
+
+                if (matchingElements == null) {
+                    matchingElements = new ArrayList<WebElement>();
+                }
+                matchingElements.add(parent);
+                if (children.size() > 1) {
+                    logger.info("More than one child element found for parent with tag: " + childTag + " and text: "
+                            + childText);
+                }
+            }
+        }
+        rtn = checkForOneMatchingElement("Failed to locate a parent element with tag: " + tag + " and attributes: "
+                + attributeString + " with a child element of tag: " + childTag + " with text: " + childText,
+                matchingElements);
+
+        webDriverContext().setCurrentElement(rtn);
+        return rtn;
+    }
+
+
     /**
      * This method will attempt to find many elements using the supplied By, if
      * no elements are found, it will wait until one matching element is found.
@@ -438,6 +524,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
         return rtn;
     }
 
+
     /**
      * Checks that a list of WebElements only contains one (not empty and not
      * too many).
@@ -461,6 +548,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
         Assert.assertNotNull(msg, rtn);
         return rtn;
     }
+
 
     /**
      * Gets the element with text.
