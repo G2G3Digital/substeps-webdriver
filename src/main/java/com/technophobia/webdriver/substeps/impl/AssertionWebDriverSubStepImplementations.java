@@ -150,6 +150,22 @@ public class AssertionWebDriverSubStepImplementations extends
 
 
     /**
+     * Check that the current input field has the expected text value
+     * 
+     * @example AssertCurrentInput value="Hello World!"
+     * @section Assertions
+     * @param expected
+     *            the expected value
+     */
+    @Step("AssertCurrentInput value=\"([^\"]*)\"")
+    public void assertValueInCurrentInput(final String expected) {
+        logger.debug("Asserting the current input has the value" + expected);
+        Assert.assertThat(getThreadLocalWebDriverContext().getCurrentElement()
+                .getAttribute("value"), is(expected));
+    }
+    
+    
+    /**
      * Check that the current element contains the specified text
      * 
      * @example AssertCurrentElement text contains "Hello world"
