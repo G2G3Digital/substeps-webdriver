@@ -33,8 +33,10 @@ public enum WebdriverSubstepsConfiguration {
     private static final Logger logger = LoggerFactory
             .getLogger(WebdriverSubstepsConfiguration.class);
 
+    private static final Class<? extends WebDriverFactory> WEBDRIVER_FACTORY_CLASS;
+
     private static final String BASE_URL;
-    private static final DriverType DRIVER_TYPE;
+    private static final DefaultDriverType DRIVER_TYPE;
     private static final String DRIVER_LOCALE;
     private static final boolean SHUTDOWN_WEBDRIVER;
     private static final boolean VISUAL_WEBDRIVER_CLOSE_ON_FAIL;
@@ -55,7 +57,7 @@ public enum WebdriverSubstepsConfiguration {
         BASE_URL = determineBaseURL(Configuration.INSTANCE
                 .getString("base.url"));
 
-        DRIVER_TYPE = DriverType.valueOf(Configuration.INSTANCE.getString(
+        DRIVER_TYPE = DefaultDriverType.valueOf(Configuration.INSTANCE.getString(
                 "driver.type").toUpperCase());
 
         DRIVER_LOCALE = Configuration.INSTANCE.getString("webdriver.locale");
@@ -70,19 +72,21 @@ public enum WebdriverSubstepsConfiguration {
 
         HTMLUNIT_DISABLE_JS = Configuration.INSTANCE
                 .getBoolean("htmlunit.disable.javascript");
-        
+
         HTMLUNIT_PROXY_HOST = Configuration.INSTANCE.getString("htmlunit.proxy.host");
         HTMLUNIT_PROXY_PORT = Configuration.INSTANCE.getInt("htmlunit.proxy.port");
+
+        try {
+            WEBDRIVER_FACTORY_CLASS = Class.forName(Configuration.INSTANCE.getString("webdriver.factory.class")).asSubclass(WebDriverFactory.class);
+        } catch (ClassNotFoundException ex) {
+            throw new IllegalStateException("'webdriver.factory.class' is invalid.", ex);
+        }
 
         logger.info("Using properties:\n"
                 + Configuration.INSTANCE.getConfigurationInfo());
     }
 
 
-    /**
-     * @param string
-     * @return
-     */
     private static String determineBaseURL(final String baseUrlProperty) {
 
         final String resolvedBaseUrl;
@@ -113,7 +117,7 @@ public enum WebdriverSubstepsConfiguration {
     }
 
 
-    public static DriverType driverType() {
+    public static DefaultDriverType driverType() {
         return DRIVER_TYPE;
     }
 
@@ -138,21 +142,22 @@ public enum WebdriverSubstepsConfiguration {
     }
 
 
-    /**
-     * @return
-     */
     public static long defaultTimeout() {
         return defaultWebDriverTimeoutSecs;
     }
 
 
-	public static String getHtmlUnitProxyHost() {
-		return HTMLUNIT_PROXY_HOST;
-	}
+    public static String getHtmlUnitProxyHost() {
+        return HTMLUNIT_PROXY_HOST;
+    }
 
 
-	public static Integer getHtmlUnitProxyPort() {
-		return HTMLUNIT_PROXY_PORT; 
-	}
+    public static Integer getHtmlUnitProxyPort() {
+        return HTMLUNIT_PROXY_PORT;
+    }
+
+    public static Class<? extends WebDriverFactory> getWebDriverFactoryClass() {
+        return WEBDRIVER_FACTORY_CLASS;
+    }
 
 }

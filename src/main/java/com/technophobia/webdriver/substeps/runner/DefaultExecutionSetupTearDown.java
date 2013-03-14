@@ -37,8 +37,7 @@ import com.technophobia.webdriver.util.WebDriverContext;
 
 public class DefaultExecutionSetupTearDown {
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(DefaultExecutionSetupTearDown.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultExecutionSetupTearDown.class);
     private long startTimeMillis;
 
     private static final MutableSupplier<WebDriverContext> webDriverContextSupplier = new ExecutionContextSupplier<WebDriverContext>(
@@ -80,62 +79,58 @@ public class DefaultExecutionSetupTearDown {
 
         logger.info("env prop: " + env);
 
+
+        WebDriverFactory factory = createWebDriverFactory();
+        ExecutionContext.put(Scope.SUITE, WebDriverFactory.WEB_DRIVER_FACTORY_KEY, factory);
     }
 
 
     @BeforeEveryScenario
     public final void basePreScenarioSetup() {
-        // logger.debug("basePreScenarioSetup");
-
         startTimeMillis = System.currentTimeMillis();
 
-        webDriverContextSupplier.set(new WebDriverContext(driverType()));
-
-        if (driverType() == DriverType.HTMLUNIT) {
-            setDriverLocale(webDriverContextSupplier.get().getWebDriver());
-        }
-
+        WebDriverFactory factory = (WebDriverFactory) ExecutionContext.get(Scope.SUITE, WebDriverFactory.WEB_DRIVER_FACTORY_KEY);
+        webDriverContextSupplier.set(new WebDriverContext(factory.driverType(), factory.createWebDriver()));
     }
 
 
     @AfterEveryScenario
     public final void basePostScenariotearDown() {
 
+
         boolean doShutdown = true;
         // reasons *NOT* to shutdown
 
-        // this overrides everything else
+        final WebDriverContext webDriverContext = webDriverContextSupplier.get();
+
         if (!WebdriverSubstepsConfiguration.shutDownWebdriver()) {
-
+            // this overrides everything else
             System.out.println("global don't shutdown");
-
             doShutdown = false;
-        } else if (webDriverContextSupplier.get() != null
-                && webDriverContextSupplier.get().hasFailed()
-                && (!WebdriverSubstepsConfiguration.closeVisualWebDriveronFail() && driverType()
-                        .isVisual())) {
+        } else if (webDriverContext != null
+                && webDriverContext.hasFailed()
+                && (!WebdriverSubstepsConfiguration.closeVisualWebDriveronFail() && webDriverContext.getDriverType().isVisual())) {
 
             System.out.println("failed and visual shutdown");
-
             doShutdown = false;
         }
 
         if (doShutdown) {
 
-            if (webDriverContextSupplier.get() != null) {
+            if (webDriverContext != null) {
                 System.out.println("webDriverContextSupplier.get().hasFailed(): "
-                        + webDriverContextSupplier.get().hasFailed());
+                        + webDriverContext.hasFailed());
             }
 
             System.out.println("WebdriverSubstepsConfiguration.closeVisualWebDriveronFail(): "
                     + WebdriverSubstepsConfiguration.closeVisualWebDriveronFail());
 
-            System.out.println("driverType().isVisual(): " + driverType().isVisual());
+            System.out.println("driverType().isVisual(): " + webDriverContext.getDriverType().isVisual());
 
             System.out.println("doing shutdown");
 
-            if (webDriverContextSupplier.get() != null) {
-                webDriverContextSupplier.get().shutdownWebDriver();
+            if (webDriverContext != null) {
+                webDriverContext.shutdownWebDriver();
             }
         }
 
@@ -150,42 +145,18 @@ public class DefaultExecutionSetupTearDown {
         }
     }
 
+    private WebDriverFactory createWebDriverFactory() {
+        Class<? extends WebDriverFactory> webDriverFactoryClass = WebdriverSubstepsConfiguration.getWebDriverFactoryClass();
 
-    protected DriverType driverType() {
-        return WebdriverSubstepsConfiguration.driverType();
-    }
-
-
-    /**
-     * By default the HtmlUnit driver is set to en-us. This can cause problems
-     * with formatters.
-     */
-    private void setDriverLocale(final WebDriver driver) {
+        logger.debug("Creating WebDriverFactory of type [{}]", webDriverFactoryClass.getName());
 
         try {
-            final Field field = driver.getClass().getDeclaredField("webClient");
-            if (field != null) {
-                final boolean original = field.isAccessible();
-                field.setAccessible(true);
-
-                final WebClient webClient = (WebClient) field.get(driver);
-                if (webClient != null) {
-                    webClient.addRequestHeader("Accept-Language", "en-gb");
-                }
-                field.setAccessible(original);
-            } else {
-                Assert.fail("Failed to get webclient field to set accept language");
-            }
-        } catch (final IllegalAccessException ex) {
-
-            logger.warn(ex.getMessage());
-
-        } catch (final SecurityException e) {
-
-            logger.warn(e.getMessage());
-        } catch (final NoSuchFieldException e) {
-
-            logger.warn(e.getMessage());
+            return webDriverFactoryClass.newInstance();
+        } catch (InstantiationException ex) {
+            throw new IllegalStateException(String.format("Failed to create WebDriverFactory %s.", webDriverFactoryClass.getName()), ex);
+        } catch (IllegalAccessException ex) {
+            throw new IllegalStateException(String.format("Failed to create WebDriverFactory %s.", webDriverFactoryClass.getName()), ex);
         }
     }
+
 }

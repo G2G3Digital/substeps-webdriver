@@ -307,9 +307,10 @@ public class ActionWebDriverSubStepImplementations extends AbstractWebDriverSubS
     @Step("PerformContextClick")
     public void performContextClick() {
 
-        if (webDriverContext().getDriverType() == DriverType.HTMLUNIT) {
-            throw new WebDriverSubstepsException("PerformContextClick not supported in HTMLUnit");
-        }
+        //DM: removed - this this isn't true?! - plus even if it is, doesn't the HtmlUnitWebDriver tell you this?
+//        if (webDriverContext().getDriverType() == DriverType.HTMLUNIT) {
+//            throw new WebDriverSubstepsException("PerformContextClick not supported in HTMLUnit");
+//        }
 
         final Actions actions = new Actions(webDriver());
 
