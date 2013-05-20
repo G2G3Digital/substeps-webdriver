@@ -95,6 +95,13 @@ public class WebDriverContext {
         }
     }
 
+    public void resetWebDriver() {
+        logger.debug("Resetting WebDriver");
+        if(this.webDriver != null) {
+            this.webDriver.manage().deleteAllCookies();
+        }
+    }
+
 
     public boolean hasFailed() {
         return this.failed;

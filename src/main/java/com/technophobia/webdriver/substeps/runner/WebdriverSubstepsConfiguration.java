@@ -40,6 +40,7 @@ public enum WebdriverSubstepsConfiguration {
     private static final String DRIVER_LOCALE;
     private static final boolean SHUTDOWN_WEBDRIVER;
     private static final boolean VISUAL_WEBDRIVER_CLOSE_ON_FAIL;
+    private static final boolean REUSE_WEBDRIVER;
     private static long defaultWebDriverTimeoutSecs = 10;
     private static final boolean HTMLUNIT_DISABLE_JS;
     private static final String HTMLUNIT_PROXY_HOST;
@@ -66,6 +67,8 @@ public enum WebdriverSubstepsConfiguration {
                 .getBoolean("webdriver.shutdown");
         VISUAL_WEBDRIVER_CLOSE_ON_FAIL = Configuration.INSTANCE
                 .getBoolean("visual.webdriver.close.on.fail");
+
+        REUSE_WEBDRIVER = Configuration.INSTANCE.getBoolean("webdriver.reuse");
 
         defaultWebDriverTimeoutSecs = Configuration.INSTANCE
                 .getInt("default.webdriver.timeout.secs");
@@ -139,6 +142,10 @@ public enum WebdriverSubstepsConfiguration {
 
     public static boolean closeVisualWebDriveronFail() {
         return VISUAL_WEBDRIVER_CLOSE_ON_FAIL;
+    }
+
+    public static boolean reuseWebDriver() {
+        return REUSE_WEBDRIVER;
     }
 
 
