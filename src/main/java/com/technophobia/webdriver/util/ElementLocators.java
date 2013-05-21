@@ -18,6 +18,7 @@
  */
 package com.technophobia.webdriver.util;
 
+import com.technophobia.webdriver.substeps.runner.WebdriverSubstepsConfiguration;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -29,7 +30,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.technophobia.webdriver.substeps.runner.Condition;
-import com.technophobia.webdriver.substeps.runner.WebdriverSubstepsConfiguration;
 
 public class ElementLocators {
 
