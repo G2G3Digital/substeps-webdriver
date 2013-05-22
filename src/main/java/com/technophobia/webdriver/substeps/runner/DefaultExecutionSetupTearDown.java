@@ -175,7 +175,7 @@ public class DefaultExecutionSetupTearDown {
         boolean doStartup = true;
 
         // reasons *NOT* to start up
-        if (webDriverContext != null) {
+        if (!configuration.shutDownWebdriver() && webDriverContext != null) {
 
             //don't start up if:
             // - we want to reuse the webdriver instance, unless the previous test failed and we don't want to close, in which case we need a new instance
@@ -189,9 +189,16 @@ public class DefaultExecutionSetupTearDown {
     }
 
     private boolean failedIsVisualButShouldNotClose(final WebDriverContext webDriverContext) {
-        return webDriverContext != null
-                && webDriverContext.hasFailed()
-                && (!configuration.closeVisualWebDriveronFail() && webDriverContext.getDriverType().isVisual());
+
+        //we default to always closing
+        boolean shouldNotClose = false;
+
+        if(!configuration.closeVisualWebDriveronFail() && webDriverContext != null && webDriverContext.getDriverType().isVisual()) {
+            shouldNotClose = webDriverContext.hasFailed();
+        }
+
+        return shouldNotClose;
+
     }
 
     private WebDriverFactory createWebDriverFactory() {

@@ -30,7 +30,6 @@ import org.junit.Test;
 
 /**
  * @author imoore
- * 
  */
 public class WebdriverSubstepsPropertiesConfigurationTest {
 
@@ -39,7 +38,7 @@ public class WebdriverSubstepsPropertiesConfigurationTest {
 
         System.setProperty("environment", "localhost");
 
-        Assert.assertFalse(WebdriverSubstepsConfiguration.closeVisualWebDriveronFail());
+        Assert.assertFalse(WebdriverSubstepsPropertiesConfiguration.INSTANCE.closeVisualWebDriveronFail());
 
     }
 
@@ -64,8 +63,8 @@ public class WebdriverSubstepsPropertiesConfigurationTest {
 
         final File current = new File(".");
 
-        
-        Assert.assertThat(baseUrl2, is( current.toURI().toString() + "src/web"));
+
+        Assert.assertThat(baseUrl2, is(current.toURI().toString() + "src/web"));
 
         final String baseUrl3 = (String) determineBaseURLMethod.invoke(
                 WebdriverSubstepsPropertiesConfiguration.class, "http://blah-blah.com/src/web");

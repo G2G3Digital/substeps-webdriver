@@ -18,20 +18,18 @@
  */
 package com.technophobia.webdriver.util;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.technophobia.webdriver.substeps.runner.WebdriverSubstepsConfiguration;
+import com.technophobia.webdriver.substeps.runner.Condition;
+import com.technophobia.webdriver.substeps.runner.DriverType;
+import com.technophobia.webdriver.substeps.runner.WebdriverSubstepsPropertiesConfiguration;
 import junit.framework.Assert;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.technophobia.webdriver.substeps.runner.Condition;
-import com.technophobia.webdriver.substeps.runner.DriverType;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A container used to hold the webdriver instance and the current element used
@@ -106,7 +104,7 @@ public class WebDriverContext {
 
 
     public WebElement waitForElement(final By by) {
-        return ElementLocators.waitForElement(by, WebdriverSubstepsConfiguration.defaultTimeout(), this.webDriver);
+        return ElementLocators.waitForElement(by, WebdriverSubstepsPropertiesConfiguration.INSTANCE.defaultTimeout(), this.webDriver);
     }
 
 

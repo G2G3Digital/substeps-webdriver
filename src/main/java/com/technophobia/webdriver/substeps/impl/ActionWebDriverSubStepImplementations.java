@@ -239,7 +239,7 @@ public class ActionWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
 
     private String normaliseURL(final String relativeURL) {
-        return normalise(WebdriverSubstepsConfiguration.baseURL() + relativeURL);
+        return normalise(WebdriverSubstepsPropertiesConfiguration.INSTANCE.baseURL() + relativeURL);
     }
 
 
