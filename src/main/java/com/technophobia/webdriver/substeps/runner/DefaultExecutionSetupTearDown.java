@@ -175,7 +175,7 @@ public class DefaultExecutionSetupTearDown {
         boolean doStartup = true;
 
         // reasons *NOT* to start up
-        if (!configuration.shutDownWebdriver() && webDriverContext != null) {
+        if (webDriverContext != null && !configuration.shutDownWebdriver()) {
 
             //don't start up if:
             // - we want to reuse the webdriver instance, unless the previous test failed and we don't want to close, in which case we need a new instance

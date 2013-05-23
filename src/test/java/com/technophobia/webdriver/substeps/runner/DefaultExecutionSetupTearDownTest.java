@@ -37,13 +37,15 @@ public class DefaultExecutionSetupTearDownTest {
     @Mock
     WebDriverFactory factory;
 
+    private WebDriverContext context;
+
     @Before
     public void initialiseDependencies() {
         std = new DefaultExecutionSetupTearDown(config);
 
         //initialise context with visual webdriver and set test state to failed
-        final WebDriverContext context = new WebDriverContext(DefaultDriverType.FIREFOX, webDriver);
-        context.setFailed();
+        context = new WebDriverContext(DefaultDriverType.FIREFOX, webDriver);
+
         ((MutableSupplier<WebDriverContext>) std.currentWebDriverContext()).set(context);
 
         //creating a new webdriver instance will use the factory.
@@ -60,6 +62,8 @@ public class DefaultExecutionSetupTearDownTest {
         when(config.closeVisualWebDriveronFail()).thenReturn(true);
 
         when(webDriver.manage()).thenReturn(options);
+
+        context.setFailed();
 
         std.basePostScenariotearDown();
 
@@ -78,6 +82,8 @@ public class DefaultExecutionSetupTearDownTest {
 
         when(webDriver.manage()).thenReturn(options);
 
+        context.setFailed();
+
         std.basePostScenariotearDown();
 
         verify(options).deleteAllCookies();
@@ -94,6 +100,8 @@ public class DefaultExecutionSetupTearDownTest {
         when(config.closeVisualWebDriveronFail()).thenReturn(false);
 
         when(webDriver.manage()).thenReturn(options);
+
+        context.setFailed();
 
         std.basePostScenariotearDown();
 
@@ -113,6 +121,8 @@ public class DefaultExecutionSetupTearDownTest {
 
         when(webDriver.manage()).thenReturn(options);
 
+        context.setFailed();
+
         std.basePostScenariotearDown();
 
         verify(options).deleteAllCookies();
@@ -130,6 +140,8 @@ public class DefaultExecutionSetupTearDownTest {
         when(config.closeVisualWebDriveronFail()).thenReturn(true);
 
         when(webDriver.manage()).thenReturn(options);
+
+        context.setFailed();
 
         std.basePostScenariotearDown();
 
@@ -149,6 +161,8 @@ public class DefaultExecutionSetupTearDownTest {
 
         when(webDriver.manage()).thenReturn(options);
 
+        context.setFailed();
+
         std.basePostScenariotearDown();
 
         verify(options).deleteAllCookies();
@@ -166,6 +180,8 @@ public class DefaultExecutionSetupTearDownTest {
         when(config.closeVisualWebDriveronFail()).thenReturn(false);
 
         when(webDriver.manage()).thenReturn(options);
+
+        context.setFailed();
 
         std.basePostScenariotearDown();
 
@@ -186,9 +202,6 @@ public class DefaultExecutionSetupTearDownTest {
 
         when(webDriver.manage()).thenReturn(options);
 
-        //TODO - set test to passed
-        fail();
-
         std.basePostScenariotearDown();
 
         verify(options).deleteAllCookies();
@@ -197,14 +210,144 @@ public class DefaultExecutionSetupTearDownTest {
 
 
     /********* startup ***********/
+
+    /**
+     * Clean start - no webdriver context yet.
+     */
     @Test
-    public void shouldAlwaysStartupIfGlobalShutdownEnabledAndReuseEnabledAndCloseOnFailEnabled() {
-        when(config.shutDownWebdriver()).thenReturn(true);
-        when(config.closeVisualWebDriveronFail()).thenReturn(true);
-        when(config.reuseWebDriver()).thenReturn(true);
+    public void shouldStartupOnCleanStartBeforeWebDriverContextIsInitialised() {
+        ((MutableSupplier<WebDriverContext>) std.currentWebDriverContext()).set(null);
 
         std.basePreScenarioSetup();
 
         verify(factory).createWebDriver();
     }
+
+
+    /**
+     * Global shutdown enabled - should always startup
+     */
+    @Test
+    public void shouldStartupIfGlobalShutdownEnabledAndReuseEnabledAndCloseOnFailEnabled() {
+        when(config.shutDownWebdriver()).thenReturn(true);
+        when(config.closeVisualWebDriveronFail()).thenReturn(true);
+        when(config.reuseWebDriver()).thenReturn(true);
+
+        context.setFailed();
+        std.basePreScenarioSetup();
+
+        verify(factory).createWebDriver();
+    }
+
+
+    /**
+     * Global shutdown enabled - should always startup
+     */
+    @Test
+    public void shouldStartupIfGlobalShutdownEnabledAndReuseDisabledAndCloseOnFailEnabled() {
+        when(config.shutDownWebdriver()).thenReturn(true);
+        when(config.reuseWebDriver()).thenReturn(false);
+        when(config.closeVisualWebDriveronFail()).thenReturn(true);
+
+        context.setFailed();
+        std.basePreScenarioSetup();
+
+        verify(factory).createWebDriver();
+    }
+
+    /**
+     * Global shutdown enabled - should always startup
+     */
+    @Test
+    public void shouldStartupIfGlobalShutdownEnabledAndReuseEnabledAndCloseOnFailDisabled() {
+        when(config.shutDownWebdriver()).thenReturn(true);
+        when(config.reuseWebDriver()).thenReturn(true);
+        when(config.closeVisualWebDriveronFail()).thenReturn(false);
+
+        context.setFailed();
+        std.basePreScenarioSetup();
+
+        verify(factory).createWebDriver();
+    }
+
+    /**
+     * Case where the user doesn't care about retaining browser instances for failed tests, and wants to reuse
+     * instances in subsequent tests - should not startup because we'll reuse the existing instance.
+     */
+    @Test
+    public void shouldNotStartupIfGlobalShutdownDisabledAndReuseEnabledAndCloseOnFailEnabled() {
+        when(config.shutDownWebdriver()).thenReturn(false);
+        when(config.reuseWebDriver()).thenReturn(true);
+        when(config.closeVisualWebDriveronFail()).thenReturn(true);
+
+        context.setFailed();
+        std.basePreScenarioSetup();
+
+        verify(factory, never()).createWebDriver();
+    }
+
+    /**
+     * Case where user doesn't care about retaining browser instances for failed tests, but hasn't declared that
+     * they want to reuse them either - will have shut down, so should restart.
+     */
+    @Test
+    public void shouldStartupIfGlobalShutdownDisabledAndReuseDisabledAndCloseOnFailEnabled() {
+        when(config.shutDownWebdriver()).thenReturn(false);
+        when(config.reuseWebDriver()).thenReturn(false);
+        when(config.closeVisualWebDriveronFail()).thenReturn(true);
+
+        context.setFailed();
+        std.basePreScenarioSetup();
+
+        verify(factory).createWebDriver();
+    }
+
+    /**
+     * Case where user wants to keep browser open for failed tests (possibly to see page on failure), and doesn't
+     * want the browser to be reused - must startup because previous test failed and browser is being kept open.
+     */
+    @Test
+    public void shouldStartupIfGlobalShutdownDisabledAndReuseDisabledAndCloseOnFailDisabled() {
+        when(config.shutDownWebdriver()).thenReturn(false);
+        when(config.closeVisualWebDriveronFail()).thenReturn(false);
+        when(config.reuseWebDriver()).thenReturn(false);
+
+        context.setFailed();
+        std.basePreScenarioSetup();
+
+        verify(factory).createWebDriver();
+    }
+
+    /**
+     * Case where user wants to keep browser open for failed tests (possibly to see page on failure), but
+     * does also want the browser to be reused - must startup because previous test failed and browser is being kept open.
+     */
+    @Test
+    public void shouldStartupIfGlobalShutdownDisabledAndReuseEnabledAndCloseOnFailDisabled() {
+        when(config.shutDownWebdriver()).thenReturn(false);
+        when(config.reuseWebDriver()).thenReturn(true);
+        when(config.closeVisualWebDriveronFail()).thenReturn(false);
+
+        context.setFailed();
+        std.basePreScenarioSetup();
+
+        verify(factory).createWebDriver();
+    }
+
+    /**
+     * Case where user wants to keep browser open for failed tests (possibly to see page on failure), but
+     * does want the browser to be reused - don't startup because the test has passed and we want to reuse the
+     * webdriver instance
+     */
+    @Test
+    public void shouldNotStartupIfGlobalShutdownDisabledAndReuseEnabledAndCloseOnFailDisabledAndTestPasses() {
+        when(config.shutDownWebdriver()).thenReturn(false);
+        when(config.reuseWebDriver()).thenReturn(true);
+        when(config.closeVisualWebDriveronFail()).thenReturn(false);
+
+        std.basePreScenarioSetup();
+
+        verify(factory, never()).createWebDriver();
+    }
+
 }
