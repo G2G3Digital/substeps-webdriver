@@ -48,31 +48,27 @@ public class WebdriverSubstepsPropertiesConfigurationTest {
             NoSuchMethodException, IllegalArgumentException, IllegalAccessException,
             InvocationTargetException {
 
-        final Method determineBaseURLMethod = WebdriverSubstepsPropertiesConfiguration.class
-                .getDeclaredMethod("determineBaseURL", String.class);
+        final WebdriverSubstepsPropertiesConfiguration config = WebdriverSubstepsPropertiesConfiguration.INSTANCE;
 
+        final Method determineBaseURLMethod = config.getClass().getDeclaredMethod("determineBaseURL", String.class);
         determineBaseURLMethod.setAccessible(true);
 
-        final String baseUrl = (String) determineBaseURLMethod.invoke(
-                WebdriverSubstepsPropertiesConfiguration.class, "src/web");
+        final String baseUrl = (String) determineBaseURLMethod.invoke(config, "src/web");
 
         Assert.assertThat(baseUrl, startsWith("file:/"));
 
-        final String baseUrl2 = (String) determineBaseURLMethod.invoke(
-                WebdriverSubstepsPropertiesConfiguration.class, "./src/web");
+        final String baseUrl2 = (String) determineBaseURLMethod.invoke(config, "./src/web");
 
         final File current = new File(".");
 
 
         Assert.assertThat(baseUrl2, is(current.toURI().toString() + "src/web"));
 
-        final String baseUrl3 = (String) determineBaseURLMethod.invoke(
-                WebdriverSubstepsPropertiesConfiguration.class, "http://blah-blah.com/src/web");
+        final String baseUrl3 = (String) determineBaseURLMethod.invoke(config, "http://blah-blah.com/src/web");
 
         Assert.assertThat(baseUrl3, startsWith("http://"));
 
-        final String baseUrl4 = (String) determineBaseURLMethod.invoke(
-                WebdriverSubstepsPropertiesConfiguration.class, "file://some-path/whatever");
+        final String baseUrl4 = (String) determineBaseURLMethod.invoke(config, "file://some-path/whatever");
 
         Assert.assertThat(baseUrl4, is("file://some-path/whatever"));
 
