@@ -29,7 +29,9 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.google.common.base.Supplier;
 import com.technophobia.substeps.model.Scope;
 import com.technophobia.substeps.runner.ExecutionContext;
+import com.technophobia.substeps.runner.ExecutionContextSupplier;
 import com.technophobia.substeps.runner.INotificationDistributor;
+import com.technophobia.substeps.runner.MutableSupplier;
 import com.technophobia.substeps.runner.setupteardown.Annotations.AfterEveryScenario;
 import com.technophobia.substeps.runner.setupteardown.Annotations.BeforeAllFeatures;
 import com.technophobia.substeps.runner.setupteardown.Annotations.BeforeEveryScenario;
@@ -37,8 +39,7 @@ import com.technophobia.webdriver.util.WebDriverContext;
 
 public class DefaultExecutionSetupTearDown {
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(DefaultExecutionSetupTearDown.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultExecutionSetupTearDown.class);
     private long startTimeMillis;
 
     private static final MutableSupplier<WebDriverContext> webDriverContextSupplier = new ExecutionContextSupplier<WebDriverContext>(
@@ -63,8 +64,8 @@ public class DefaultExecutionSetupTearDown {
     @BeforeAllFeatures
     public final void beforeAllFeaturesSetup() {
 
-        final INotificationDistributor notifier = (INotificationDistributor) ExecutionContext.get(
-                Scope.SUITE, INotificationDistributor.NOTIFIER_DISTRIBUTOR_KEY);
+        final INotificationDistributor notifier = (INotificationDistributor) ExecutionContext.get(Scope.SUITE,
+                INotificationDistributor.NOTIFIER_DISTRIBUTOR_KEY);
 
         notifier.addListener(new TestFailureListener(webDriverContextSupplier));
 
@@ -87,7 +88,7 @@ public class DefaultExecutionSetupTearDown {
     public final void basePreScenarioSetup() {
         // logger.debug("basePreScenarioSetup");
 
-        startTimeMillis = System.currentTimeMillis();
+        this.startTimeMillis = System.currentTimeMillis();
 
         webDriverContextSupplier.set(new WebDriverContext(driverType()));
 
@@ -110,10 +111,8 @@ public class DefaultExecutionSetupTearDown {
             System.out.println("global don't shutdown");
 
             doShutdown = false;
-        } else if (webDriverContextSupplier.get() != null
-                && webDriverContextSupplier.get().hasFailed()
-                && (!WebdriverSubstepsConfiguration.closeVisualWebDriveronFail() && driverType()
-                        .isVisual())) {
+        } else if (webDriverContextSupplier.get() != null && webDriverContextSupplier.get().hasFailed()
+                && (!WebdriverSubstepsConfiguration.closeVisualWebDriveronFail() && driverType().isVisual())) {
 
             System.out.println("failed and visual shutdown");
 
@@ -141,7 +140,7 @@ public class DefaultExecutionSetupTearDown {
 
         // TODO put long test threshold in config
 
-        final long ticks = (System.currentTimeMillis() - startTimeMillis) / 1000;
+        final long ticks = (System.currentTimeMillis() - this.startTimeMillis) / 1000;
 
         if (ticks > 30) {
             logger.warn(String.format("Test scenario took %s seconds", ticks));

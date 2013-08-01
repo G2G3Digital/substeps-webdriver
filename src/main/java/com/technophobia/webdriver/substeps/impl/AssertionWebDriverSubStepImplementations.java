@@ -43,6 +43,7 @@ import com.technophobia.substeps.model.Scope;
 import com.technophobia.substeps.model.SubSteps.Step;
 import com.technophobia.substeps.model.SubSteps.StepImplementations;
 import com.technophobia.substeps.runner.ExecutionContext;
+import com.technophobia.substeps.step.StepImplementationUtils;
 import com.technophobia.webdriver.substeps.runner.DefaultExecutionSetupTearDown;
 import com.technophobia.webdriver.util.WebDriverContext;
 import com.technophobia.webdriver.util.WebDriverSubstepsBy;
@@ -334,7 +335,7 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
 
         final WebElement currentElem = getThreadLocalWebDriverContext().getCurrentElement();
 
-        final Map<String, String> expectedAttributes = WebDriverSubstepsBy.convertToMap(attributeString);
+        final Map<String, String> expectedAttributes = StepImplementationUtils.convertToMap(attributeString);
 
         Assert.assertTrue("element doesn't have expected attributes: " + attributeString,
                 elementHasExpectedAttributes(currentElem, expectedAttributes));

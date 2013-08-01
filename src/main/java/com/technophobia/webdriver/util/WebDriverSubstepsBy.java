@@ -30,6 +30,7 @@ import org.openqa.selenium.WebElement;
 
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
+import com.technophobia.substeps.step.StepImplementationUtils;
 
 /**
  * 
@@ -56,40 +57,9 @@ public abstract class WebDriverSubstepsBy {
 
     public static ByTagAndAttributes ByTagAndAttributes(final String tagName, final String attributeString) {
 
-        final Map<String, String> expectedAttributes = convertToMap(attributeString);
+        final Map<String, String> expectedAttributes = StepImplementationUtils.convertToMap(attributeString);
 
         return new ByTagAndAttributes(tagName, expectedAttributes);
-    }
-
-
-    /**
-     * Convert a string of the form type="submit",value="Search" to a map.
-     * 
-     * @example
-     * @param attributes
-     *            the attributes string
-     * @return the map
-     */
-    public static Map<String, String> convertToMap(final String attributes) {
-        Map<String, String> attributeMap = null;
-
-        // split the attributes up, will be received as a comma separated list
-        // of name value pairs
-        final String[] nvps = attributes.split(",");
-
-        if (nvps != null) {
-            for (final String nvp : nvps) {
-                final String[] split = nvp.split("=");
-                if (split != null && split.length == 2) {
-                    if (attributeMap == null) {
-                        attributeMap = new HashMap<String, String>();
-                    }
-                    attributeMap.put(split[0], split[1].replaceAll("\"", ""));
-                }
-            }
-        }
-
-        return attributeMap;
     }
 
 
