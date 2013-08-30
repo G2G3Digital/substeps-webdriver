@@ -30,7 +30,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -52,6 +51,8 @@ import com.technophobia.webdriver.util.WebDriverSubstepsBy;
 public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverSubStepImplementations {
 
     private static final Logger logger = LoggerFactory.getLogger(AssertionWebDriverSubStepImplementations.class);
+
+    private final FinderWebDriverSubStepImplementations finder = new FinderWebDriverSubStepImplementations();
 
 
     public AssertionWebDriverSubStepImplementations() {
@@ -78,20 +79,7 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
     public void assertElementText(final String id, final String expected) {
         logger.debug("Asserting element with id " + id + " has the text " + expected);
 
-        try {
-            webDriverContext().setCurrentElement(null);
-
-            final By byIdAndText = WebDriverSubstepsBy.ByIdAndText(id, expected);
-
-            final WebElement elem = webDriverContext().waitForElement(byIdAndText);
-
-            Assert.assertNotNull("expecting to find an element with id: " + id, elem);
-            webDriverContext().setCurrentElement(elem);
-        } catch (final TimeoutException e) {
-            logger.debug("timed out waiting for id: " + id + " with text: " + expected + " page src:\n"
-                    + webDriver().getPageSource());
-            throw e;
-        }
+        this.finder.findByIdAndText(id, expected);
     }
 
 
@@ -109,17 +97,22 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
     @Step("AssertChildElementsContainText xpath=\"([^\"]*)\" text=\"([^\"]*)\"")
     public void assertChildElementsContainText(final String xpath, final String text) {
         logger.debug("Asserting chile element with xpath " + xpath + " has the text " + text);
-        final List<WebElement> itemList = webDriverContext().getCurrentElement().findElements(By.xpath(xpath));
-        boolean found = false;
-        for (final WebElement item : itemList) {
-            final String itemText = item.getText();
-            if (itemText.startsWith(text)) {
-                found = true;
-                break;
-            }
-        }
 
-        Assert.assertTrue("expecting child element to contain text: " + text, found);
+        this.finder.findChildElementContainingText(xpath, text);
+
+        // final List<WebElement> itemList =
+        // webDriverContext().getCurrentElement().findElements(By.xpath(xpath));
+        // boolean found = false;
+        // for (final WebElement item : itemList) {
+        // final String itemText = item.getText();
+        // if (itemText.startsWith(text)) {
+        // found = true;
+        // break;
+        // }
+        // }
+        //
+        // Assert.assertTrue("expecting child element to contain text: " + text,
+        // found);
     }
 
 
@@ -174,7 +167,7 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
 
 
     /**
-     * Check that any of the html tags have the specified text
+     * Check that any of the html tags contain the specified text
      * 
      * @example AssertTagElementContainsText tag="ul" text="list item itext"
      * @section Assertions
@@ -186,17 +179,41 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
     @Step("AssertTagElementContainsText tag=\"([^\"]*)\" text=\"([^\"]*)\"")
     public void assertTagElementContainsText(final String tag, final String text) {
         logger.debug("Asserting tag element " + tag + " has text " + text);
-        final List<WebElement> itemList = webDriver().findElements(By.tagName(tag));
-        boolean found = false;
-        for (final WebElement item : itemList) {
-            final String itemText = item.getText();
-            if (itemText.startsWith(text)) {
-                found = true;
-                break;
-            }
-        }
 
-        Assert.assertTrue("expecting child element to contain text: " + text, found);
+        this.finder.findTagElementContainingText(tag, text);
+
+        // final List<WebElement> itemList =
+        // webDriver().findElements(By.tagName(tag));
+        // boolean found = false;
+        // for (final WebElement item : itemList) {
+        // final String itemText = item.getText();
+        // if (itemText.startsWith(text)) {
+        // found = true;
+        // break;
+        // }
+        // }
+        //
+        // Assert.assertTrue("expecting child element to contain text: " + text,
+        // found);
+    }
+
+
+    /**
+     * Check that an html tag of the specified type start with the specified
+     * text
+     * 
+     * @example AssertTagElementStartsWithText tag="ul" text="list item itext"
+     * @section Assertions
+     * @param tag
+     *            the tag
+     * @param text
+     *            the text
+     */
+    @Step("AssertTagElementStartsWithText tag=\"([^\"]*)\" text=\"([^\"]*)\"")
+    public void assertTagElementStartsWithText(final String tag, final String text) {
+        logger.debug("Asserting tag element " + tag + " has text " + text);
+
+        this.finder.findTagElementStartsWithText(tag, text);
     }
 
 
@@ -388,9 +405,8 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
      */
     @Step("RememberForScenario textFrom \"([^\"]*)\" as \"([^\"]*)\"")
     public void rememberForScenario(final String elementId, final String nameToSaveAs) {
-        final FinderWebDriverSubStepImplementations finder = new FinderWebDriverSubStepImplementations();
 
-        final WebElement element = finder.findById(elementId);
+        final WebElement element = this.finder.findById(elementId);
         final String text = element.getText();
         ExecutionContext.put(Scope.SCENARIO, nameToSaveAs, text);
     }
@@ -411,8 +427,7 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
     @Step("AssertDifferent rememberedValue \"([^\"]*)\" compareToElement \"([^\"]*)\"")
     public void assertDifferent(final String rememberedValueName, final String elementId) {
 
-        final FinderWebDriverSubStepImplementations finder = new FinderWebDriverSubStepImplementations();
-        final WebElement element = finder.findById(elementId);
+        final WebElement element = this.finder.findById(elementId);
         final String text = element.getText();
 
         Object retrievedValue = null;
@@ -443,9 +458,7 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
     @Step("AssertSame rememberedValue \"([^\"]*)\" compareToElement \"([^\"]*)\"")
     public void assertSame(final String rememberedValueName, final String elementId) {
 
-        final FinderWebDriverSubStepImplementations finder = new FinderWebDriverSubStepImplementations();
-
-        final WebElement element = finder.findById(elementId);
+        final WebElement element = this.finder.findById(elementId);
         final String text = element.getText();
 
         Object retrievedValue = null;

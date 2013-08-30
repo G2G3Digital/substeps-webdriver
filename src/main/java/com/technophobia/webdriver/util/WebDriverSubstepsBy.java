@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
@@ -69,12 +71,27 @@ public abstract class WebDriverSubstepsBy {
 
 
     public static ByTagAndWithText ByTagAndWithText(final String tag, final String text) {
-        return new ByTagAndWithText(tag, text);
+        return new ByTagAndWithText(tag, Matchers.equalToIgnoringCase(text));
+    }
+
+
+    public static ByTagAndWithText ByTagContainingText(final String tag, final String text) {
+        return new ByTagAndWithText(tag, Matchers.containsString(text));
+    }
+
+
+    public static ByTagAndWithText ByTagStartingWithText(final String tag, final String text) {
+        return new ByTagAndWithText(tag, Matchers.startsWith(text));
     }
 
 
     public static ByIdContainingText ByIdContainingText(final String id, final String text) {
         return new ByIdContainingText(id, text);
+    }
+
+
+    public static BySomethingContainingText ByXpathContainingText(final String xpath, final String text) {
+        return new BySomethingContainingText(By.xpath(xpath), text);
     }
 
 
@@ -174,13 +191,14 @@ public abstract class WebDriverSubstepsBy {
     public static class ByTagAndWithText extends BaseBy {
 
         private final String tag;
-        private final String text;
+        // private final String text;
+        private final Matcher<String> stringMatcher;
 
 
-        ByTagAndWithText(final String tag, final String text) {
+        ByTagAndWithText(final String tag, final Matcher<String> stringMatcher) {
 
             this.tag = tag;
-            this.text = text;
+            this.stringMatcher = stringMatcher;
         }
 
 
@@ -200,7 +218,7 @@ public abstract class WebDriverSubstepsBy {
             if (elems != null) {
                 for (final WebElement e : elems) {
 
-                    if (this.text.equalsIgnoreCase(e.getText())) {
+                    if (this.stringMatcher.matches(e.getText())) {
 
                         if (matchingElems == null) {
                             matchingElems = new ArrayList<WebElement>();
@@ -213,6 +231,47 @@ public abstract class WebDriverSubstepsBy {
             return matchingElems;
         }
 
+    }
+
+    public static class BySomethingContainingText extends BaseBy {
+        protected final String text;
+        protected final By by;
+
+
+        BySomethingContainingText(final By by, final String text) {
+            this.by = by;
+            this.text = text;
+        }
+
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see
+         * org.openqa.selenium.By#findElements(org.openqa.selenium.SearchContext
+         * )
+         */
+        @Override
+        public List<WebElement> findElementsBy(final SearchContext context) {
+
+            List<WebElement> matchingElems = null;
+
+            final List<WebElement> elems = context.findElements(this.by);
+            if (elems != null) {
+                for (final WebElement e : elems) {
+
+                    if (e.getText() != null && e.getText().contains(this.text)) {
+
+                        if (matchingElems == null) {
+                            matchingElems = new ArrayList<WebElement>();
+                        }
+                        matchingElems.add(e);
+                    }
+                }
+            }
+
+            return matchingElems;
+        }
     }
 
     public static class ByIdContainingText extends BaseBy {
