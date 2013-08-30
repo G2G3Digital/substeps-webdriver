@@ -176,44 +176,26 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
     /**
      * Finds an element on the page with the specified tag and text
      * 
-     * @example FindTagElementContainingText tag="ul" text="list item itext"
+     * @example FindFirstTagElementContainingText tag="ul"
+     *          text="list item itext"
      * @section Location
      * @param tag
      *            the tag
      * @param text
      *            the text
      */
-    @Step("FindTagElementContainingText tag=\"([^\"]*)\" text=\"([^\"]*)\"")
-    public void findTagElementContainingText(final String tag, final String text) {
+    @Step("FindFirstTagElementContainingText tag=\"([^\"]*)\" text=\"([^\"]*)\"")
+    public void findFirstTagElementContainingText(final String tag, final String text) {
         logger.debug("Finding tag element " + tag + "and asserting has text " + text);
 
         webDriverContext().setCurrentElement(null);
 
-        final WebElement elem = lookForManyWaitForOne(WebDriverSubstepsBy.ByTagContainingText(tag, text),
-                "expecting at least one child element to contain text: " + text);
+        final By by = WebDriverSubstepsBy.ByTagContainingText(tag, text);
+
+        final WebElement elem = MatchingElementResultHandler.AtLeastOneElement.processResults(webDriverContext(),
+                by, "expecting at least one child element to contain text: " + text);
 
         webDriverContext().setCurrentElement(elem);
-
-        // final List<WebElement> elementsWithTagName =
-        // webDriver().findElements(By.tagName(tag));
-        //
-        // WebElement matchingElement = null;
-        // for (final WebElement element : elementsWithTagName) {
-        //
-        // if (element.getText().contains(text)) {
-        //
-        // if (matchingElement == null) {
-        // matchingElement = element;
-        // } else {
-        // Assert.fail("expected one element with tag " + tag + " and text " +
-        // text + " but found multiple");
-        // }
-        // }
-        // }
-        //
-        // Assert.assertNotNull("expecting element with tag " + tag +
-        // " and text " + text, matchingElement);
-        // webDriverContext().setCurrentElement(matchingElement);
     }
 
 
@@ -269,7 +251,8 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
         final String msg = "failed to locate a child element with tag: " + tag + " and attributes: " + attributeString;
 
-        final WebElement elem = lookForManyWaitForOne(chained, msg);
+        final WebElement elem = MatchingElementResultHandler.ExactlyOneElement.processResults(webDriverContext(),
+                chained, msg);
 
         webDriverContext().setCurrentElement(elem);
 
@@ -414,6 +397,14 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
     @Step("FindByTagAndAttributes tag=\"?([^\"]*)\"? attributes=\\[(.*)\\]")
     public WebElement findByTagAndAttributes(final String tag, final String attributeString) {
         logger.debug("Looking for item with tag " + tag + " and attributes " + attributeString);
+
+        return findByTagAndAttributes(tag, attributeString, MatchingElementResultHandler.ExactlyOneElement);
+    }
+
+
+    private WebElement findByTagAndAttributes(final String tag, final String attributeString,
+            final MatchingElementResultHandler handler) {
+
         webDriverContext().setCurrentElement(null);
 
         WebElement rtn = null;
@@ -422,11 +413,32 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
         final String msg = "failed to locate an element with tag: " + tag + " and attributes: " + attributeString;
 
-        rtn = lookForManyWaitForOne(by, msg);
+        rtn = handler.processResults(webDriverContext(), by, msg);
 
         webDriverContext().setCurrentElement(rtn);
 
         return rtn;
+    }
+
+
+    /**
+     * Finds the first element by tag name and a set of attributes and
+     * corresponding values
+     * 
+     * @param tag
+     *            the tag
+     * @param attributeString
+     *            the attribute string
+     * @return the web element
+     * @example FindByTagAndAttributes tag="input"
+     *          attributes=[type="submit",value="Search"]
+     * @section Location
+     */
+    @Step("FindFirstByTagAndAttributes tag=\"?([^\"]*)\"? attributes=\\[(.*)\\]")
+    public WebElement findFirstByTagAndAttributes(final String tag, final String attributeString) {
+        logger.debug("Looking for first item with tag " + tag + " and attributes " + attributeString);
+
+        return findByTagAndAttributes(tag, attributeString, MatchingElementResultHandler.AtLeastOneElement);
     }
 
 
@@ -564,70 +576,77 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
         return rtn;
     }
 
-
     /**
-     * This method will attempt to find many elements using the supplied By, if
-     * no elements are found, it will wait until one matching element is found.
-     * finding multiple elements will result in failure
+     * Enum encapsulating logic around how to process multiple results found as
+     * result of a By. Enum instances should specialise the checking of multiple
+     * results
      * 
-     * @param by
-     * @param matchingElems
-     * @param msg
-     * @return
-     */
-    private WebElement lookForManyWaitForOne(final By by, final String msg) {
-
-        WebElement rtn = null;
-
-        List<WebElement> matchingElems = webDriverContext().getWebDriver().findElements(by);
-
-        if (matchingElems == null || matchingElems.isEmpty()) {
-
-            // wait for at least one - if we need to wait, we will only find one
-            final WebElement elementWaitedFor = webDriverContext().waitForElement(by);
-            if (matchingElems == null) {
-                matchingElems = new ArrayList<WebElement>();
-            }
-            matchingElems.add(elementWaitedFor);
-        }
-
-        rtn = checkForOneMatchingElement(msg, matchingElems);
-        return rtn;
-    }
-
-
-    /**
-     * This method will attempt to the first element using the supplied By, if
-     * no elements are found, it will wait until one matching element is found.
+     * @author imoore
      * 
-     * @param by
-     * @param matchingElems
-     * @param msg
-     * @return
      */
-    private WebElement lookForFirstWaitForOne(final By by, final String msg) {
+    private static enum MatchingElementResultHandler {
 
-        WebElement rtn = null;
+        /**
+         * This enum instance will check that only one matching element is
+         * found. finding multiple elements will result in failure
+         * 
+         * @param matchingElems
+         * @param msg
+         * @return
+         */
 
-        List<WebElement> matchingElems = webDriverContext().getWebDriver().findElements(by);
+        ExactlyOneElement() {
+            @Override
+            WebElement checkMatchingElements(final List<WebElement> matchingElems, final String msg) {
 
-        if (matchingElems == null || matchingElems.isEmpty()) {
-
-            // wait for at least one - if we need to wait, we will only find one
-            final WebElement elementWaitedFor = webDriverContext().waitForElement(by);
-            if (matchingElems == null) {
-                matchingElems = new ArrayList<WebElement>();
+                return checkForOneMatchingElement(msg, matchingElems);
             }
-            matchingElems.add(elementWaitedFor);
+        },
+        /**
+         * This enum will look for one matching element and disregard others. If
+         * no elements are found a failure will be reported. The first element
+         * out of multiple will be returned.
+         */
+        AtLeastOneElement() {
+
+            @Override
+            WebElement checkMatchingElements(final List<WebElement> matchingElems, final String msg) {
+
+                WebElement rtn = null;
+
+                if (matchingElems != null && !matchingElems.isEmpty()) {
+                    rtn = matchingElems.get(0);
+                }
+
+                Assert.assertNotNull(msg, rtn);
+                return rtn;
+            }
+        };
+
+        abstract WebElement checkMatchingElements(List<WebElement> matchingElems, final String msg);
+
+
+        WebElement processResults(final WebDriverContext ctx, final By by, final String msg) {
+            WebElement rtn = null;
+
+            List<WebElement> matchingElems = ctx.getWebDriver().findElements(by);
+
+            if (matchingElems == null || matchingElems.isEmpty()) {
+
+                // wait for at least one - if we need to wait, we will only find
+                // one
+                final WebElement elementWaitedFor = ctx.waitForElement(by);
+                if (matchingElems == null) {
+                    matchingElems = new ArrayList<WebElement>();
+                }
+                matchingElems.add(elementWaitedFor);
+            }
+
+            rtn = checkMatchingElements(matchingElems, msg);
+
+            return rtn;
         }
 
-        else {
-            rtn = matchingElems.get(0);
-        }
-
-        Assert.assertNotNull(msg, rtn);
-
-        return rtn;
     }
 
 
@@ -639,7 +658,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
      * @param matchingElems
      * @return
      */
-    public WebElement checkForOneMatchingElement(final String msg, final List<WebElement> matchingElems) {
+    public static WebElement checkForOneMatchingElement(final String msg, final List<WebElement> matchingElems) {
         WebElement rtn = null;
         if (matchingElems != null && matchingElems.size() > 1) {
             // ambiguous
@@ -684,7 +703,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
     /**
      * Find the element with id that has the text ....
      * 
-     * @example FindById id msg_id and text = "Hello World"
+     * @example FindById msg_id and text = "Hello World"
      * @section Finders
      * @param id
      *            the id
@@ -716,14 +735,15 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
      * From the current element, apply the xpath selecting the first child that
      * has the text ...
      * 
-     * @example FindChildElementContainingText xpath="li//a" text = "Log Out"
+     * @example FindFirstChildElementContainingText xpath="li//a" text =
+     *          "Log Out"
      * @section Finders
      * @param xpath
      *            the xpath
      * @param text
      *            the text
      */
-    @Step("FindChildElementContainingText xpath=\"([^\"]*)\" text=\"([^\"]*)\"")
+    @Step("FindFirstChildElementContainingText xpath=\"([^\"]*)\" text=\"([^\"]*)\"")
     public void findChildElementContainingText(final String xpath, final String text) {
         logger.debug("Find child element with xpath " + xpath + " has the text " + text);
 
@@ -731,8 +751,10 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
         final By chained = new ByChained(byCurrentElement, WebDriverSubstepsBy.ByXpathContainingText(xpath, text));
 
-        final WebElement elem = lookForFirstWaitForOne(chained,
-                "expecting at least one child element to contain text: " + text);
+        webDriverContext().setCurrentElement(null);
+
+        final WebElement elem = MatchingElementResultHandler.AtLeastOneElement.processResults(webDriverContext(),
+                chained, "expecting at least one child element to contain text: " + text);
 
         webDriverContext().setCurrentElement(elem);
 
@@ -740,7 +762,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
 
     /**
-     * Find an html tag that starts with the specified text
+     * Finds the first html tag that starts with the specified text
      * 
      * @example FindTagElementStartingWithText tag="ul" text="list item itext"
      * @section Finders
@@ -749,15 +771,17 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
      * @param text
      *            the text
      */
-    @Step("FindTagElementStartingWithText tag=\"([^\"]*)\" text=\"([^\"]*)\"")
-    public void findTagElementStartsWithText(final String tag, final String text) {
+    @Step("FindFirstTagElementStartingWithText tag=\"([^\"]*)\" text=\"([^\"]*)\"")
+    public void findFirstTagElementStartingWithText(final String tag, final String text) {
 
         logger.debug("findTagElementStartsWithText tag: " + tag + " has text " + text);
 
         webDriverContext().setCurrentElement(null);
 
-        final WebElement elem = lookForFirstWaitForOne(WebDriverSubstepsBy.ByTagStartingWithText(tag, text),
-                "expecting at least one child element to contain text: " + text);
+        final By by = WebDriverSubstepsBy.ByTagStartingWithText(tag, text);
+
+        final WebElement elem = MatchingElementResultHandler.AtLeastOneElement.processResults(webDriverContext(),
+                by, "expecting at least one child element to contain text: " + text);
 
         webDriverContext().setCurrentElement(elem);
 

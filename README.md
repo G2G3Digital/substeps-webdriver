@@ -1,7 +1,9 @@
 substeps-webdriver
 ==================
 
-Webdriver based step implementations. Project documentation can be found [here](http://technophobia.github.com/substeps-webdriver/ "Webdriver Substeps documentation")
+Webdriver based step implementations. 
+
+Substeps documentation can be found [here](http://substeps.technophobia.com/ "Substeps documentation").  
 
 There is also a [Substeps Google group](http://groups.google.com/group/substeps?hl=en-GB "Substeps Google group") if you have any queries and where new releases will ne announced.
 
@@ -14,7 +16,14 @@ Release Notes
 * Refactored some methods out of this project into the api
 * 1.1.1 core and api dependency
 * selenium 2.35.0 dependency
-* More Finders, consistency of string matching in terms of contains, starts with equal to ignoring case etc
+* Ability to reset webdriver between scenarios rather than close and restart
+* WebDriverFactory customisation to allow customisation of the creation and initialisation of the WebDriver instance
+* Clarify some Assertions and Finders, we've decided to remove Asserts that are simply Finders, and also tighten the wording of some steps.  Changes to steps :
+    AssertTagElementStartsWithText -> FindFirstTagElementStartingWithText
+    AssertValue id msg_id text = "Hello World" -> FindById msg_id and text = "Hello World"
+    AssertChildElementsContainText xpath="li//a" text = "Log Out" -> FindFirstChildElementContainingText xpath="li//a" text = "Log Out"
+    AssertTagElementContainsText tag="ul" text="list item itext" ->  FindFirstTagElementContainingText tag="ul" text="list item itext"
+    FindTagElementContainingText ... -> FindFirstTagElementContainingText ...
 
 1.1.0
 -----

@@ -66,57 +66,6 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
 
 
     /**
-     * Check that the element with id has the text ....
-     * 
-     * @example AssertValue id msg_id text = "Hello World"
-     * @section Assertions
-     * @param id
-     *            the id
-     * @param expected
-     *            the expected
-     */
-    @Step("AssertValue id ([^\"]*) text = \"([^\"]*)\"")
-    public void assertElementText(final String id, final String expected) {
-        logger.debug("Asserting element with id " + id + " has the text " + expected);
-
-        this.finder.findByIdAndText(id, expected);
-    }
-
-
-    /**
-     * From the current element, apply the xpath and check to see if any of the
-     * children have the text ...
-     * 
-     * @example AssertChildElementsContainText xpath="li//a" text = "Log Out"
-     * @section Assertions
-     * @param xpath
-     *            the xpath
-     * @param text
-     *            the text
-     */
-    @Step("AssertChildElementsContainText xpath=\"([^\"]*)\" text=\"([^\"]*)\"")
-    public void assertChildElementsContainText(final String xpath, final String text) {
-        logger.debug("Asserting chile element with xpath " + xpath + " has the text " + text);
-
-        this.finder.findChildElementContainingText(xpath, text);
-
-        // final List<WebElement> itemList =
-        // webDriverContext().getCurrentElement().findElements(By.xpath(xpath));
-        // boolean found = false;
-        // for (final WebElement item : itemList) {
-        // final String itemText = item.getText();
-        // if (itemText.startsWith(text)) {
-        // found = true;
-        // break;
-        // }
-        // }
-        //
-        // Assert.assertTrue("expecting child element to contain text: " + text,
-        // found);
-    }
-
-
-    /**
      * Check that the current element has the expected text value
      * 
      * @example AssertCurrentElement text="Hello World!"
@@ -163,57 +112,6 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
         final String attributeValue = getThreadLocalWebDriverContext().getCurrentElement().getAttribute(attribute);
         Assert.assertNotNull("Expecting to find attribute " + attribute + " on current element", attributeValue);
         Assert.assertThat(attributeValue, is(expected));
-    }
-
-
-    /**
-     * Check that any of the html tags contain the specified text
-     * 
-     * @example AssertTagElementContainsText tag="ul" text="list item itext"
-     * @section Assertions
-     * @param tag
-     *            the tag
-     * @param text
-     *            the text
-     */
-    @Step("AssertTagElementContainsText tag=\"([^\"]*)\" text=\"([^\"]*)\"")
-    public void assertTagElementContainsText(final String tag, final String text) {
-        logger.debug("Asserting tag element " + tag + " has text " + text);
-
-        this.finder.findTagElementContainingText(tag, text);
-
-        // final List<WebElement> itemList =
-        // webDriver().findElements(By.tagName(tag));
-        // boolean found = false;
-        // for (final WebElement item : itemList) {
-        // final String itemText = item.getText();
-        // if (itemText.startsWith(text)) {
-        // found = true;
-        // break;
-        // }
-        // }
-        //
-        // Assert.assertTrue("expecting child element to contain text: " + text,
-        // found);
-    }
-
-
-    /**
-     * Check that an html tag of the specified type start with the specified
-     * text
-     * 
-     * @example AssertTagElementStartsWithText tag="ul" text="list item itext"
-     * @section Assertions
-     * @param tag
-     *            the tag
-     * @param text
-     *            the text
-     */
-    @Step("AssertTagElementStartsWithText tag=\"([^\"]*)\" text=\"([^\"]*)\"")
-    public void assertTagElementStartsWithText(final String tag, final String text) {
-        logger.debug("Asserting tag element " + tag + " has text " + text);
-
-        this.finder.findTagElementStartsWithText(tag, text);
     }
 
 

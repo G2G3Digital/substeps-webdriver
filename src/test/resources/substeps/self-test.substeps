@@ -11,7 +11,7 @@ Define: And if I click the '<btn_text>' button
     ClickSubmitButton "<btn_text>"
     
 Define: Then I can see "<msg>" message  
-		AssertValue id show-text-on-button-click-text-div-id text = "<msg>"
+		FindById show-text-on-button-click-text-div-id and text = "<msg>"
 		
 Define: And I see "<option_value>" in select id <select_id>
     AssertSelect id="<select_id>" text="<option_value>" is currently selected
@@ -26,7 +26,7 @@ Define: And if I click the Click by id button
 	ClickById click-id
 	
 Define: Then I can see another "<msg>" message
-    AssertValue id show-text-on-id-click-text-div-id text = "<msg>"
+    FindById show-text-on-id-click-text-div-id and text = "<msg>"
     
 Define: Then I see "<msg>" after a pause
     FindByIdTimeout show-text-on-deplayed-id-click-text-div-id timeout = 10 secs
@@ -98,8 +98,8 @@ Define: And find by child works
         FindByTagAndAttributes tag="div" attributes=[class="mini-profile"]
         FindChild ByTagAndAttributes tag="a" attributes=[class="btn edit-button dialog-modal"]  
         Click
-        AssertValue id mcshane-bug-div-id text = "mcshane"
-        AssertValue id mcshane-negative-bug-div-id text = "mcshane negative test"	
+        FindById mcshane-bug-div-id and text = "mcshane"
+        FindById mcshane-negative-bug-div-id and text = "mcshane negative test"	
 
 
 Define: Given the context menu hasn't been clicked
@@ -119,7 +119,7 @@ Define: Then I see "context has been clicked"
         
         
 Define: Given that I've not double clicked the link
-         AssertValue id dbl-clicked-div text = "Not doubled clicked yet"
+         FindById dbl-clicked-div and text = "Not doubled clicked yet"
         
     
 Define: And I double click the link
@@ -127,14 +127,14 @@ Define: And I double click the link
         PerformDoubleClick
         
 Define: Then I can see I've double clicked
-        AssertValue id dbl-clicked-div text = "element has been double clicked"
+        FindById dbl-clicked-div and text = "element has been double clicked"
         
 Define: And I can find the disabled text field
         FindById postcode
         AssertCurrentElement attribute="disabled" value="true"
         
 Define: And I select the second option by looking at the text it contains
-        FindTagElementContainingText tag="option" text="two"
+        FindFirstTagElementContainingText tag="option" text="two"
         Click
         
 Define: Then I find a row using column contents

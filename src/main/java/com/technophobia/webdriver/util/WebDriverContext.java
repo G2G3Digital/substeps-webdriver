@@ -18,107 +18,42 @@
  */
 package com.technophobia.webdriver.util;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.technophobia.webdriver.substeps.runner.Condition;
+import com.technophobia.webdriver.substeps.runner.DriverType;
+import com.technophobia.webdriver.substeps.runner.WebdriverSubstepsPropertiesConfiguration;
 import junit.framework.Assert;
-
-import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.technophobia.webdriver.substeps.runner.Condition;
-import com.technophobia.webdriver.substeps.runner.DriverType;
-import com.technophobia.webdriver.substeps.runner.WebdriverSubstepsConfiguration;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A container used to hold the webdriver instance and the current element used
  * by step implementations.
- * 
+ *
  * @author imoore
- * 
  */
 public class WebDriverContext {
     private static final Logger logger = LoggerFactory.getLogger(WebDriverContext.class);
 
     public static final String EXECUTION_CONTEXT_KEY = "_webdriver_context_key";
 
+    private final DriverType driverType;
     private final WebDriver webDriver;
+
     private WebElement currentElement = null;
     private boolean failed = false;
-    private final DriverType driverType;
 
     private Map<String, WebElement> elementStash = null;
 
 
-    /**
-     * @return the driverType
-     */
-    public DriverType getDriverType() {
-        return this.driverType;
-    }
-
-
-    // may need to expand the params, javascript enabled, profile paths etc
-    public WebDriverContext(final DriverType driverType) {
-        // TODO - make this nicer by having a factory interface which the enum
-        // implements, each instance will overide the method
-        // focussing on overall functionality at present
-
+    public WebDriverContext(final DriverType driverType, final WebDriver webDriver) {
         this.driverType = driverType;
-
-        switch (driverType) {
-        case FIREFOX: {
-            this.webDriver = new FirefoxDriver();
-            break;
-        }
-        case HTMLUNIT: {
-            final HtmlUnitDriver htmlUnitDriver = new HtmlUnitDriver(BrowserVersion.FIREFOX_3_6);
-            htmlUnitDriver.setJavascriptEnabled(!WebdriverSubstepsConfiguration.isJavascriptDisabledWithHTMLUnit());
-
-            // Run via a proxy - HTML unit only for timebeing
-            final String proxyHost = WebdriverSubstepsConfiguration.getHtmlUnitProxyHost();
-            if (!StringUtils.isEmpty(proxyHost)) {
-                final int proxyPort = WebdriverSubstepsConfiguration.getHtmlUnitProxyPort();
-                htmlUnitDriver.setProxy(proxyHost, proxyPort);
-            }
-
-            this.webDriver = htmlUnitDriver;
-            break;
-
-        }
-        case CHROME: {
-
-            this.webDriver = new ChromeDriver();
-            break;
-
-        }
-        case IE: {
-
-            // apparently this is required to get around some IE security
-            // restriction.
-
-            final DesiredCapabilities ieCapabilities = DesiredCapabilities.internetExplorer();
-            ieCapabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
-
-            logger.warn("Using IE Webdriver with IGNORING SECURITY DOMAIN");
-
-            this.webDriver = new InternetExplorerDriver(ieCapabilities);
-            break;
-        }
-        default: {
-            throw new IllegalArgumentException("unknown driver type");
-        }
-        }
+        this.webDriver = webDriver;
     }
 
 
@@ -137,12 +72,23 @@ public class WebDriverContext {
         return this.webDriver;
     }
 
+    public DriverType getDriverType() {
+        return this.driverType;
+    }
+
 
     public void shutdownWebDriver() {
         logger.debug("Shutting WebDriver down");
         if (this.webDriver != null) {
             this.webDriver.manage().deleteAllCookies();
             this.webDriver.quit();
+        }
+    }
+
+    public void resetWebDriver() {
+        logger.debug("Resetting WebDriver");
+        if(this.webDriver != null) {
+            this.webDriver.manage().deleteAllCookies();
         }
     }
 
@@ -158,7 +104,7 @@ public class WebDriverContext {
 
 
     public WebElement waitForElement(final By by) {
-        return ElementLocators.waitForElement(by, WebdriverSubstepsConfiguration.defaultTimeout(), this.webDriver);
+        return ElementLocators.waitForElement(by, WebdriverSubstepsPropertiesConfiguration.INSTANCE.defaultTimeout(), this.webDriver);
     }
 
 
