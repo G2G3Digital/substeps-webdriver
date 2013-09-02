@@ -171,9 +171,10 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
      * @example AssertPageSourceContains "foobar"
      * 
      * @param expected
-     *            Some text you expect to appear on the page
+     *            the text you expect to find in the page source - this can
+     *            include quotes.
      */
-    @Step("AssertPageSourceContains \"([^\"]*)\"")
+    @Step("AssertPageSourceContains \"(.*)\"$")
     public void pageSourceContains(final String expected) {
         logger.debug("Checking page source for expeted content [" + expected + "]");
 

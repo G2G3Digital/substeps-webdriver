@@ -24,6 +24,7 @@ Release Notes
     AssertChildElementsContainText xpath="li//a" text = "Log Out" -> FindFirstChildElementContainingText xpath="li//a" text = "Log Out"
     AssertTagElementContainsText tag="ul" text="list item itext" ->  FindFirstTagElementContainingText tag="ul" text="list item itext"
     FindTagElementContainingText ... -> FindFirstTagElementContainingText ...
+* AssertPageSourceContains can now handle checking for quoted strings, eg checking javascript values or return values from ReSTful calls.
 
 1.1.0
 -----
