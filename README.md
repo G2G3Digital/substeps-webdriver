@@ -25,6 +25,7 @@ Release Notes
     AssertTagElementContainsText tag="ul" text="list item itext" ->  FindFirstTagElementContainingText tag="ul" text="list item itext"
     FindTagElementContainingText ... -> FindFirstTagElementContainingText ...
 * AssertPageSourceContains can now handle checking for quoted strings, eg checking javascript values or return values from ReSTful calls.
+* new step implementation FindFirstChild ByTagAndAttributes
 
 1.1.0
 -----

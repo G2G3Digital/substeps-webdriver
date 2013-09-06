@@ -192,8 +192,8 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
         final By by = WebDriverSubstepsBy.ByTagContainingText(tag, text);
 
-        final WebElement elem = MatchingElementResultHandler.AtLeastOneElement.processResults(webDriverContext(),
-                by, "expecting at least one child element to contain text: " + text);
+        final WebElement elem = MatchingElementResultHandler.AtLeastOneElement.processResults(webDriverContext(), by,
+                "expecting at least one child element to contain text: " + text);
 
         webDriverContext().setCurrentElement(elem);
     }
@@ -239,6 +239,14 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
     @Step("FindChild ByTagAndAttributes tag=\"?([^\"]*)\"? attributes=\\[(.*)\\]")
     public WebElement findChildByTagAndAttributes(final String tag, final String attributeString) {
         logger.debug("Looking for child with tag " + tag + " and attributes " + attributeString);
+
+        return findChildByTagAndAttributes(tag, attributeString, MatchingElementResultHandler.ExactlyOneElement);
+    }
+
+
+    private WebElement findChildByTagAndAttributes(final String tag, final String attributeString,
+            final MatchingElementResultHandler resultHandler) {
+
         Assert.assertNotNull("expecting a current element", webDriverContext().getCurrentElement());
 
         final WebElement currentElement = webDriverContext().getCurrentElement();
@@ -251,12 +259,35 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
         final String msg = "failed to locate a child element with tag: " + tag + " and attributes: " + attributeString;
 
-        final WebElement elem = MatchingElementResultHandler.ExactlyOneElement.processResults(webDriverContext(),
-                chained, msg);
+        final WebElement elem = resultHandler.processResults(webDriverContext(), chained, msg);
 
         webDriverContext().setCurrentElement(elem);
 
         return elem;
+    }
+
+
+    /**
+     * Finds the first child element of the 'current' element using the tag name
+     * and specified attributes, another Find method should be used first
+     * 
+     * @example FindFirstChild ByTagAndAttributes tag="input"
+     *          attributes=[type="submit",value="Search"]
+     * @section Location
+     * 
+     * @param tag
+     *            the tag
+     * @param attributeString
+     *            the attribute string
+     * @return the web element
+     */
+    @Step("FindFirstChild ByTagAndAttributes tag=\"?([^\"]*)\"? attributes=\\[(.*)\\]")
+    public WebElement findFirstChildByTagAndAttributes(final String tag, final String attributeString) {
+
+        logger.debug("Looking for first child with tag " + tag + " and attributes " + attributeString);
+
+        return findChildByTagAndAttributes(tag, attributeString, MatchingElementResultHandler.AtLeastOneElement);
+
     }
 
 
@@ -430,7 +461,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
      * @param attributeString
      *            the attribute string
      * @return the web element
-     * @example FindByTagAndAttributes tag="input"
+     * @example FindFirstByTagAndAttributes tag="input"
      *          attributes=[type="submit",value="Search"]
      * @section Location
      */
@@ -704,7 +735,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
      * Find the element with id that has the text ....
      * 
      * @example FindById msg_id and text = "Hello World"
-     * @section Finders
+     * @section Location
      * @param id
      *            the id
      * @param expected
@@ -737,7 +768,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
      * 
      * @example FindFirstChildElementContainingText xpath="li//a" text =
      *          "Log Out"
-     * @section Finders
+     * @section Location
      * @param xpath
      *            the xpath
      * @param text
@@ -765,7 +796,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
      * Finds the first html tag that starts with the specified text
      * 
      * @example FindTagElementStartingWithText tag="ul" text="list item itext"
-     * @section Finders
+     * @section Location
      * @param tag
      *            the tag
      * @param text
@@ -780,8 +811,8 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
         final By by = WebDriverSubstepsBy.ByTagStartingWithText(tag, text);
 
-        final WebElement elem = MatchingElementResultHandler.AtLeastOneElement.processResults(webDriverContext(),
-                by, "expecting at least one child element to contain text: " + text);
+        final WebElement elem = MatchingElementResultHandler.AtLeastOneElement.processResults(webDriverContext(), by,
+                "expecting at least one child element to contain text: " + text);
 
         webDriverContext().setCurrentElement(elem);
 
