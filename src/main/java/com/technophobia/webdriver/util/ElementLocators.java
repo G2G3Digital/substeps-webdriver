@@ -42,6 +42,11 @@ public class ElementLocators {
     }
 
 
+    /**
+     * Waits for a WebElement that can be found using the specified By to exist, or for a timeout to occur.
+     *
+     * @return the discovered WebElement, or null if it does not exist within the timeout period.
+     */
     public static WebElement waitForElement(final By by, final long timeOutSeconds, WebDriver webDriver) {
         final WebDriverWait wait = new WebDriverWait(webDriver, timeOutSeconds);
         final Function<WebDriver, WebElement> condition2 = new Function<WebDriver, WebElement>() {
@@ -55,8 +60,7 @@ public class ElementLocators {
         return waitUntil(wait, condition2, webDriver);
     }
 
-
-    public static WebElement waitUntil(final WebDriverWait wait, final Function<WebDriver, WebElement> condition,
+    private static WebElement waitUntil(final WebDriverWait wait, final Function<WebDriver, WebElement> condition,
                                        WebDriver webDriver) {
         WebElement elem = null;
         try {
