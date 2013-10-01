@@ -29,6 +29,8 @@ import org.hamcrest.Matchers;
 import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
@@ -40,6 +42,9 @@ import com.technophobia.substeps.step.StepImplementationUtils;
  * 
  */
 public abstract class WebDriverSubstepsBy {
+
+    static final Logger logger = LoggerFactory.getLogger(WebDriverSubstepsBy.class);
+
 
     public static ByIdAndText ByIdAndText(final String id, final String text) {
         return new ByIdAndText(id, text);
@@ -62,6 +67,15 @@ public abstract class WebDriverSubstepsBy {
         final Map<String, String> expectedAttributes = StepImplementationUtils.convertToMap(attributeString);
 
         return new ByTagAndAttributes(tagName, expectedAttributes);
+    }
+
+
+    public static ByTagAndAttributes NthByTagAndAttributes(final String tagName, final String attributeString,
+            final int nth) {
+
+        final Map<String, String> expectedAttributes = StepImplementationUtils.convertToMap(attributeString);
+
+        return new ByTagAndAttributes(tagName, expectedAttributes, nth);
     }
 
 
@@ -133,11 +147,20 @@ public abstract class WebDriverSubstepsBy {
 
         private final String tagName;
         private final Map<String, String> requiredAttributes;
+        private final int minimumExpected;
 
 
         ByTagAndAttributes(final String tagName, final Map<String, String> requiredAttributes) {
             this.tagName = tagName;
             this.requiredAttributes = requiredAttributes;
+            this.minimumExpected = 1;
+        }
+
+
+        ByTagAndAttributes(final String tagName, final Map<String, String> requiredAttributes, final int nth) {
+            this.tagName = tagName;
+            this.requiredAttributes = requiredAttributes;
+            this.minimumExpected = nth;
         }
 
 
@@ -158,6 +181,13 @@ public abstract class WebDriverSubstepsBy {
                     }
                     matchingElems.add(e);
                 }
+            }
+
+            if (matchingElems != null && matchingElems.size() < this.minimumExpected) {
+                logger.info("expecting at least " + this.minimumExpected + " matching elems, found only "
+                        + matchingElems.size() + " this time around");
+                // we haven't found enough, clear out
+                matchingElems = null;
             }
 
             return matchingElems;

@@ -19,6 +19,7 @@
 package com.technophobia.webdriver.substeps.impl;
 
 import static com.technophobia.webdriver.substeps.runner.DefaultExecutionSetupTearDown.getThreadLocalWebDriver;
+import static org.hamcrest.Matchers.greaterThan;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Supplier;
 import com.technophobia.substeps.model.SubSteps.Step;
 import com.technophobia.substeps.model.SubSteps.StepImplementations;
+import com.technophobia.substeps.model.SubSteps.StepParameter;
+import com.technophobia.substeps.model.parameter.IntegerConverter;
 import com.technophobia.webdriver.substeps.runner.DefaultExecutionSetupTearDown;
 import com.technophobia.webdriver.util.WebDriverContext;
 import com.technophobia.webdriver.util.WebDriverSubstepsBy;
@@ -474,6 +477,45 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
 
     /**
+     * Finds the n th element by tag name and a set of attributes and
+     * corresponding values
+     * 
+     * @param n
+     *            the nth matching element we wish to find
+     * @param tag
+     *            the tag
+     * @param attributeString
+     *            the attribute string
+     * @return the web element
+     * @example FindNthByTagAndAttributes n=2 tag="input"
+     *          attributes=[type="submit",value="Search"]
+     * @section Location
+     */
+    @Step("FindNthByTagAndAttributes n=\"?([^\"]*)\"? tag=\"?([^\"]*)\"? attributes=\\[(.*)\\]")
+    public WebElement findNthByTagAndAttributes(@StepParameter(converter = IntegerConverter.class) final Integer nth,
+            final String tag, final String attributeString) {
+        logger.debug("Looking for nth item with tag " + tag + " and attributes " + attributeString);
+
+        webDriverContext().setCurrentElement(null);
+
+        WebElement rtn = null;
+
+        final By by = WebDriverSubstepsBy.NthByTagAndAttributes(tag, attributeString, nth);
+
+        final String msg = "failed to locate the " + nth.intValue() + "th element with tag: " + tag
+                + " and attributes: " + attributeString;
+
+        final MatchingElementResultHandler.NthElement handler = new MatchingElementResultHandler.NthElement(nth);
+
+        rtn = handler.processResults(webDriverContext(), by, msg);
+
+        webDriverContext().setCurrentElement(rtn);
+
+        return rtn;
+    }
+
+
+    /**
      * Finds an element by tag name and a set of attributes and corresponding
      * values, that has a child tag element of the specified type and having the
      * specified text
@@ -615,30 +657,33 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
      * @author imoore
      * 
      */
-    private static enum MatchingElementResultHandler {
+    private static abstract class MatchingElementResultHandler {
+
+        // this class started off as an Enum before the NthElement handler, left
+        // a bit of sugar in to maintain the existing code
+        static final AtLeastOneElementImpl AtLeastOneElement = new AtLeastOneElementImpl();
+        static final ExactlyOneElementImpl ExactlyOneElement = new ExactlyOneElementImpl();
 
         /**
-         * This enum instance will check that only one matching element is
-         * found. finding multiple elements will result in failure
+         * This class will check that only one matching element is found.
+         * finding multiple elements will result in failure
          * 
-         * @param matchingElems
-         * @param msg
-         * @return
          */
+        private static class ExactlyOneElementImpl extends MatchingElementResultHandler {
 
-        ExactlyOneElement() {
             @Override
             WebElement checkMatchingElements(final List<WebElement> matchingElems, final String msg) {
 
                 return checkForOneMatchingElement(msg, matchingElems);
             }
-        },
+        }
+
         /**
-         * This enum will look for one matching element and disregard others. If
-         * no elements are found a failure will be reported. The first element
-         * out of multiple will be returned.
+         * This class will look for one matching element and disregard others.
+         * If no elements are found a failure will be reported. The first
+         * element out of multiple will be returned.
          */
-        AtLeastOneElement() {
+        private static class AtLeastOneElementImpl extends MatchingElementResultHandler {
 
             @Override
             WebElement checkMatchingElements(final List<WebElement> matchingElems, final String msg) {
@@ -652,7 +697,37 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
                 Assert.assertNotNull(msg, rtn);
                 return rtn;
             }
-        };
+        }
+
+        /**
+         * This class will look for at least n matching elements and return the
+         * nth
+         * 
+         */
+        private static class NthElement extends MatchingElementResultHandler {
+
+            int idx;
+
+
+            NthElement(final int n) {
+                Assert.assertThat(n, greaterThan(0));
+                this.idx = n - 1;
+            }
+
+
+            @Override
+            WebElement checkMatchingElements(final List<WebElement> matchingElems, final String msg) {
+                WebElement rtn = null;
+
+                if (matchingElems != null && !matchingElems.isEmpty() && matchingElems.size() > this.idx) {
+                    rtn = matchingElems.get(this.idx);
+                }
+
+                Assert.assertNotNull(msg, rtn);
+                return rtn;
+            }
+        }
+
 
         abstract WebElement checkMatchingElements(List<WebElement> matchingElems, final String msg);
 
@@ -677,6 +752,11 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
             return rtn;
         }
+
+        //
+        // MatchingElementResultHandler(final int n) {
+        // this.idx = n - 1;
+        // }
 
     }
 
