@@ -26,6 +26,7 @@ Release Notes
     FindTagElementContainingText ... -> FindFirstTagElementContainingText ...
 * AssertPageSourceContains can now handle checking for quoted strings, eg checking javascript values or return values from ReSTful calls.
 * new step implementation FindFirstChild ByTagAndAttributes
+* new step implementation Find nth ByTagAndAttributes
 
 1.1.0
 -----
