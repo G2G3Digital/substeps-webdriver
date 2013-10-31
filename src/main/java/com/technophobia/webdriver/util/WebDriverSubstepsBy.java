@@ -28,6 +28,7 @@ import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,19 +112,29 @@ public abstract class WebDriverSubstepsBy {
 
     protected static boolean elementHasExpectedAttributes(final WebElement e,
             final Map<String, String> expectedAttributes) {
-        final Map<String, String> actualValues = new HashMap<String, String>();
 
-        for (final String key : expectedAttributes.keySet()) {
-            final String elementVal = e.getAttribute(key);
+        boolean matches = false;
 
-            // if no attribute will this throw an exception or just return
-            // null ??
-            actualValues.put(key, elementVal);
+        try {
 
+            final Map<String, String> actualValues = new HashMap<String, String>();
+
+            for (final String key : expectedAttributes.keySet()) {
+                final String elementVal = e.getAttribute(key);
+
+                // if no attribute will this throw an exception or just return
+                // null ??
+                actualValues.put(key, elementVal);
+
+            }
+
+            final MapDifference<String, String> difference = Maps.difference(expectedAttributes, actualValues);
+            matches = difference.areEqual();
+        } catch (final StaleElementReferenceException ex) {
+            logger.debug("StaleElementReferenceException traversing elements found during initial search, skipping");
         }
 
-        final MapDifference<String, String> difference = Maps.difference(expectedAttributes, actualValues);
-        return difference.areEqual();
+        return matches;
     }
 
     static abstract class BaseBy extends By {
