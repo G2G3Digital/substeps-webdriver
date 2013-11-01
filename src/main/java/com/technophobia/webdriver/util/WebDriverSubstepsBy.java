@@ -322,7 +322,7 @@ public abstract class WebDriverSubstepsBy {
         @Override
         protected void buildXPath(final StringBuilder xpathBuilder) {
 
-            xpathBuilder.append(".//[@id = '")
+            xpathBuilder.append(".//*[@id='")
                     .append(this.id)
                     .append("' and contains(text(), '")
                     .append(this.text)
@@ -353,12 +353,12 @@ public abstract class WebDriverSubstepsBy {
         @Override
         protected void buildXPath(final StringBuilder xpathBuilder) {
 
-            xpathBuilder.append(".//[@id = '").append(this.id).append("' and ");
+            xpathBuilder.append(".//*[@id='").append(this.id).append("' and ");
 
             if (caseSensitive) {
-                xpathBuilder.append("text() = '").append(this.text).append("'");
+                xpathBuilder.append("text()='").append(this.text).append("'");
             } else {
-                xpathBuilder.append("lower-case(text()) = '").append(this.text.toLowerCase()).append("'");
+                xpathBuilder.append("lower-case(text())='").append(this.text.toLowerCase()).append("'");
             }
 
             xpathBuilder.append("]");
