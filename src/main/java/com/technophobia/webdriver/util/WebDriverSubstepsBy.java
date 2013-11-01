@@ -37,9 +37,7 @@ import com.google.common.collect.Maps;
 import com.technophobia.substeps.step.StepImplementationUtils;
 
 /**
- * 
  * @author imoore
- * 
  */
 public abstract class WebDriverSubstepsBy {
 
@@ -57,7 +55,7 @@ public abstract class WebDriverSubstepsBy {
 
 
     public static ByTagAndAttributes ByTagAndAttributes(final String tagName,
-            final Map<String, String> requiredAttributes) {
+                                                        final Map<String, String> requiredAttributes) {
         return new ByTagAndAttributes(tagName, requiredAttributes);
     }
 
@@ -71,7 +69,7 @@ public abstract class WebDriverSubstepsBy {
 
 
     public static ByTagAndAttributes NthByTagAndAttributes(final String tagName, final String attributeString,
-            final int nth) {
+                                                           final int nth) {
 
         final Map<String, String> expectedAttributes = StepImplementationUtils.convertToMap(attributeString);
 
@@ -173,7 +171,7 @@ public abstract class WebDriverSubstepsBy {
 
                 for (Map.Entry<String, String> requiredAttribute : requiredAttributes.entrySet()) {
 
-                    if(!firstOne) {
+                    if (!firstOne) {
                         xpathBuilder.append(" and ");
                     }
 
@@ -186,23 +184,24 @@ public abstract class WebDriverSubstepsBy {
             }
 
         }
-        
+
         @Override
         public List<WebElement> findElementsBy(final SearchContext searchContext) {
-            List<WebElement> matchingElems = super.findElementsBy(searchContext);
-            
+            final List<WebElement> matchingElems = super.findElementsBy(searchContext);
+
             if (matchingElems != null && matchingElems.size() < this.minimumExpected) {
                 logger.info("expecting at least " + this.minimumExpected + " matching elems, found only "
                         + matchingElems.size() + " this time around");
                 // we haven't found enough, clear out
-                matchingElems = null;
+                return null;
             }
+
+            return matchingElems;
         }
     }
 
     /**
      * A By for use with the current web element, to be chained with other Bys
-     * 
      */
     static class ByCurrentWebElement extends BaseBy {
 
@@ -356,7 +355,7 @@ public abstract class WebDriverSubstepsBy {
 
             xpathBuilder.append(".//[@id = '").append(this.id).append("' and ");
 
-            if(caseSensitive) {
+            if (caseSensitive) {
                 xpathBuilder.append("text() = '").append(this.text).append("'");
             } else {
                 xpathBuilder.append("lower-case(text()) = '").append(this.text.toLowerCase()).append("'");
