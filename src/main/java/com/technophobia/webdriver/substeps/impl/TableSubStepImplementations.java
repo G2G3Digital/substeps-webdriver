@@ -137,7 +137,7 @@ public class TableSubStepImplementations extends AbstractWebDriverSubStepImpleme
 
     /**
      * Check that a table cell contains the specified text using a 1 based
-     * index. Row 0 is the first
+     * index. Row 1 is the first
      * <tr>
      * beneath a <tbody>
      * 

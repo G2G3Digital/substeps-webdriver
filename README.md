@@ -10,6 +10,10 @@ There is also a [Substeps Google group](http://groups.google.com/group/substeps?
 Release Notes
 =============
 
+1.1.2
+-----
+* Catch StaleElementExceptions in FindByTagAndAttributes - elements located in the initial search can become detached from the DOM, such elements can be discared from the results. 
+
 1.1.1
 -----
 * New step implementation, FindParentByTagAndAttributes.
@@ -25,6 +29,8 @@ Release Notes
     AssertTagElementContainsText tag="ul" text="list item itext" ->  FindFirstTagElementContainingText tag="ul" text="list item itext"
     FindTagElementContainingText ... -> FindFirstTagElementContainingText ...
 * AssertPageSourceContains can now handle checking for quoted strings, eg checking javascript values or return values from ReSTful calls.
+* new step implementation FindFirstChild ByTagAndAttributes
+* new step implementation Find nth ByTagAndAttributes
 
 1.1.0
 -----

@@ -20,19 +20,31 @@ package com.technophobia.webdriver.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.MapDifference;
+import com.google.common.collect.Maps;
 import com.technophobia.substeps.step.StepImplementationUtils;
 
 /**
+ * 
  * @author imoore
+ * 
  */
 public abstract class WebDriverSubstepsBy {
+
+    static final Logger logger = LoggerFactory.getLogger(WebDriverSubstepsBy.class);
+
 
     public static ByIdAndText ByIdAndText(final String id, final String text) {
         return new ByIdAndText(id, text);
@@ -55,6 +67,15 @@ public abstract class WebDriverSubstepsBy {
         final Map<String, String> expectedAttributes = StepImplementationUtils.convertToMap(attributeString);
 
         return new ByTagAndAttributes(tagName, expectedAttributes);
+    }
+
+
+    public static ByTagAndAttributes NthByTagAndAttributes(final String tagName, final String attributeString,
+            final int nth) {
+
+        final Map<String, String> expectedAttributes = StepImplementationUtils.convertToMap(attributeString);
+
+        return new ByTagAndAttributes(tagName, expectedAttributes, nth);
     }
 
 
@@ -101,6 +122,7 @@ public abstract class WebDriverSubstepsBy {
             return matchingElems;
         }
 
+
         public abstract List<WebElement> findElementsBy(final SearchContext context);
     }
 
@@ -121,13 +143,24 @@ public abstract class WebDriverSubstepsBy {
 
     static class ByTagAndAttributes extends XPathBy {
 
-        protected final String tagName;
-        protected final Map<String, String> requiredAttributes;
+        private final String tagName;
+        private final Map<String, String> requiredAttributes;
+        private final int minimumExpected;
+
 
         ByTagAndAttributes(final String tagName, final Map<String, String> requiredAttributes) {
             this.tagName = tagName;
             this.requiredAttributes = requiredAttributes;
+            this.minimumExpected = 1;
         }
+
+
+        ByTagAndAttributes(final String tagName, final Map<String, String> requiredAttributes, final int nth) {
+            this.tagName = tagName;
+            this.requiredAttributes = requiredAttributes;
+            this.minimumExpected = nth;
+        }
+
 
         @Override
         protected void buildXPath(final StringBuilder xpathBuilder) {
@@ -153,10 +186,23 @@ public abstract class WebDriverSubstepsBy {
             }
 
         }
+        
+        @Override
+        public List<WebElement> findElementsBy(final SearchContext searchContext) {
+            List<WebElement> matchingElems = super.findElementsBy(searchContext);
+            
+            if (matchingElems != null && matchingElems.size() < this.minimumExpected) {
+                logger.info("expecting at least " + this.minimumExpected + " matching elems, found only "
+                        + matchingElems.size() + " this time around");
+                // we haven't found enough, clear out
+                matchingElems = null;
+            }
+        }
     }
 
     /**
      * A By for use with the current web element, to be chained with other Bys
+     * 
      */
     static class ByCurrentWebElement extends BaseBy {
 
