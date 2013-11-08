@@ -237,7 +237,7 @@ public abstract class WebDriverSubstepsBy {
 
         @Override
         protected void buildXPath(StringBuilder xpathBuilder) {
-            xpathBuilder.append(".//").append(this.tag).append("[lower-case(text()) = '").append(this.text.toLowerCase()).append("']");
+            xpathBuilder.append(".//").append(this.tag).append("[").append(equalsIgnoringCaseXPath("text()", "'" + this.text.toLowerCase() + "'")).append("]");
         }
 
     }
@@ -358,10 +358,17 @@ public abstract class WebDriverSubstepsBy {
             if (caseSensitive) {
                 xpathBuilder.append("text()='").append(this.text).append("'");
             } else {
-                xpathBuilder.append("lower-case(text())='").append(this.text.toLowerCase()).append("'");
+                xpathBuilder.append(equalsIgnoringCaseXPath("text()", "'" + this.text.toLowerCase() + "'"));
             }
 
             xpathBuilder.append("]");
         }
+    }
+
+    private static String equalsIgnoringCaseXPath(String str1, String str2) {
+        return new StringBuilder().append("translate(")
+                .append(str1)
+                .append(", 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')=")
+                .append(str2).toString();
     }
 }
