@@ -13,6 +13,7 @@ Release Notes
 1.1.2
 -----
 * Catch StaleElementExceptions in FindByTagAndAttributes - elements located in the initial search can become detached from the DOM, such elements can be discared from the results. 
+* Removed some dead substeps in the self tests. 
 
 1.1.1
 -----

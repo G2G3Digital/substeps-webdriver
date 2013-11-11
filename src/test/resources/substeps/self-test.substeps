@@ -4,9 +4,6 @@ Define: Given I go to the self test page
 Define: Then I can see '<page_title>'
     AssertPageTitle is "<page_title>" 	
 	
-Define: And the header title is '<msg>' 
-	AssertValue id header-id text = "<msg>"
-	
 Define: And if I click the '<btn_text>' button
     ClickSubmitButton "<btn_text>"
     
@@ -39,11 +36,6 @@ Define: Then the text field will contain "<txt>"
     FindByName "named_text_field"
     AssertCurrentElement attribute="value" value="<txt>"
 #    AssertCurrentElement text="<txt>"
-
-Define: Given I enter "<txt>" another way into the text field
-	ClearAndSendKeys <txt> to id text-id
- 	FindByXpath "id('text-id')"
-    AssertCurrentElement attribute="value" value="<txt>"
 
 Define: Given radio button with text "<rb_text>" is checked
 	FindRadioButton inside tag="label" with label="<rb_text>"
