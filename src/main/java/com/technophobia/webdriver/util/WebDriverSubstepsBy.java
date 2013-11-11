@@ -28,7 +28,6 @@ import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,9 +37,7 @@ import com.google.common.collect.Maps;
 import com.technophobia.substeps.step.StepImplementationUtils;
 
 /**
- * 
  * @author imoore
- * 
  */
 public abstract class WebDriverSubstepsBy {
 
@@ -58,7 +55,7 @@ public abstract class WebDriverSubstepsBy {
 
 
     public static ByTagAndAttributes ByTagAndAttributes(final String tagName,
-            final Map<String, String> requiredAttributes) {
+                                                        final Map<String, String> requiredAttributes) {
         return new ByTagAndAttributes(tagName, requiredAttributes);
     }
 
@@ -72,7 +69,7 @@ public abstract class WebDriverSubstepsBy {
 
 
     public static ByTagAndAttributes NthByTagAndAttributes(final String tagName, final String attributeString,
-            final int nth) {
+                                                           final int nth) {
 
         final Map<String, String> expectedAttributes = StepImplementationUtils.convertToMap(attributeString);
 
@@ -86,17 +83,17 @@ public abstract class WebDriverSubstepsBy {
 
 
     public static ByTagAndWithText ByTagAndWithText(final String tag, final String text) {
-        return new ByTagAndWithText(tag, Matchers.equalToIgnoringCase(text));
+        return new ByTagAndWithText(tag, text);
     }
 
 
     public static ByTagAndWithText ByTagContainingText(final String tag, final String text) {
-        return new ByTagAndWithText(tag, Matchers.containsString(text));
+        return new ByTagAndContainingText(tag, text);
     }
 
 
     public static ByTagAndWithText ByTagStartingWithText(final String tag, final String text) {
-        return new ByTagAndWithText(tag, Matchers.startsWith(text));
+        return new ByTagAndStartingWithText(tag, text);
     }
 
 
@@ -109,33 +106,6 @@ public abstract class WebDriverSubstepsBy {
         return new BySomethingContainingText(By.xpath(xpath), text);
     }
 
-
-    protected static boolean elementHasExpectedAttributes(final WebElement e,
-            final Map<String, String> expectedAttributes) {
-
-        boolean matches = false;
-
-        try {
-
-            final Map<String, String> actualValues = new HashMap<String, String>();
-
-            for (final String key : expectedAttributes.keySet()) {
-                final String elementVal = e.getAttribute(key);
-
-                // if no attribute will this throw an exception or just return
-                // null ??
-                actualValues.put(key, elementVal);
-
-            }
-
-            final MapDifference<String, String> difference = Maps.difference(expectedAttributes, actualValues);
-            matches = difference.areEqual();
-        } catch (final StaleElementReferenceException ex) {
-            logger.debug("StaleElementReferenceException traversing elements found during initial search, skipping");
-        }
-
-        return matches;
-    }
 
     static abstract class BaseBy extends By {
 
@@ -154,7 +124,22 @@ public abstract class WebDriverSubstepsBy {
         public abstract List<WebElement> findElementsBy(final SearchContext context);
     }
 
-    static class ByTagAndAttributes extends BaseBy {
+    static abstract class XPathBy extends BaseBy {
+
+        @Override
+        public List<WebElement> findElementsBy(SearchContext context) {
+
+            final StringBuilder xpathBuilder = new StringBuilder();
+
+            buildXPath(xpathBuilder);
+
+            return context.findElements(By.xpath(xpathBuilder.toString()));
+        }
+
+        protected abstract void buildXPath(StringBuilder xpathBuilder);
+    }
+
+    static class ByTagAndAttributes extends XPathBy {
 
         private final String tagName;
         private final Map<String, String> requiredAttributes;
@@ -176,29 +161,39 @@ public abstract class WebDriverSubstepsBy {
 
 
         @Override
-        public List<WebElement> findElementsBy(final SearchContext context) {
+        protected void buildXPath(final StringBuilder xpathBuilder) {
+            xpathBuilder.append(".//").append(tagName);
 
-            List<WebElement> matchingElems = null;
+            if (!requiredAttributes.isEmpty()) {
+                xpathBuilder.append("[");
 
-            final List<WebElement> tagElements = context.findElements(By.tagName(this.tagName));
+                boolean firstOne = true;
 
-            for (final WebElement e : tagElements) {
-                // does this WebElement have the attributes that we need!
+                for (Map.Entry<String, String> requiredAttribute : requiredAttributes.entrySet()) {
 
-                if (elementHasExpectedAttributes(e, this.requiredAttributes)) {
-
-                    if (matchingElems == null) {
-                        matchingElems = new ArrayList<WebElement>();
+                    if (!firstOne) {
+                        xpathBuilder.append(" and ");
                     }
-                    matchingElems.add(e);
+
+                    xpathBuilder.append("@").append(requiredAttribute.getKey()).append(" = '").append(requiredAttribute.getValue()).append("'");
+
+                    firstOne = false;
                 }
+
+                xpathBuilder.append("]");
             }
+
+        }
+
+        @Override
+        public List<WebElement> findElementsBy(final SearchContext searchContext) {
+            final List<WebElement> matchingElems = super.findElementsBy(searchContext);
 
             if (matchingElems != null && matchingElems.size() < this.minimumExpected) {
                 logger.info("expecting at least " + this.minimumExpected + " matching elems, found only "
                         + matchingElems.size() + " this time around");
                 // we haven't found enough, clear out
-                matchingElems = null;
+                return null;
             }
 
             return matchingElems;
@@ -207,7 +202,6 @@ public abstract class WebDriverSubstepsBy {
 
     /**
      * A By for use with the current web element, to be chained with other Bys
-     * 
      */
     static class ByCurrentWebElement extends BaseBy {
 
@@ -229,52 +223,51 @@ public abstract class WebDriverSubstepsBy {
         }
     }
 
-    public static class ByTagAndWithText extends BaseBy {
+    static class ByTagAndWithText extends XPathBy {
 
-        private final String tag;
-        // private final String text;
-        private final Matcher<String> stringMatcher;
+        protected final String tag;
+        protected final String text;
 
 
-        ByTagAndWithText(final String tag, final Matcher<String> stringMatcher) {
-
+        ByTagAndWithText(final String tag, final String text) {
             this.tag = tag;
-            this.stringMatcher = stringMatcher;
+            this.text = text;
         }
 
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see
-         * org.openqa.selenium.By#findElements(org.openqa.selenium.SearchContext
-         * )
-         */
         @Override
-        public List<WebElement> findElementsBy(final SearchContext context) {
-
-            List<WebElement> matchingElems = null;
-
-            final List<WebElement> elems = context.findElements(By.tagName(this.tag));
-            if (elems != null) {
-                for (final WebElement e : elems) {
-
-                    if (this.stringMatcher.matches(e.getText())) {
-
-                        if (matchingElems == null) {
-                            matchingElems = new ArrayList<WebElement>();
-                        }
-                        matchingElems.add(e);
-                    }
-                }
-            }
-
-            return matchingElems;
+        protected void buildXPath(StringBuilder xpathBuilder) {
+            xpathBuilder.append(".//").append(this.tag).append("[").append(equalsIgnoringCaseXPath("text()", "'" + this.text.toLowerCase() + "'")).append("]");
         }
 
     }
 
-    public static class BySomethingContainingText extends BaseBy {
+    static class ByTagAndContainingText extends ByTagAndWithText {
+
+        ByTagAndContainingText(String tag, String text) {
+            super(tag, text);
+        }
+
+        @Override
+        protected void buildXPath(StringBuilder xpathBuilder) {
+            xpathBuilder.append(".//").append(this.tag).append("[contains(text(), '").append(this.text).append("')]");
+        }
+    }
+
+    static class ByTagAndStartingWithText extends ByTagAndWithText {
+
+        ByTagAndStartingWithText(String tag, String text) {
+            super(tag, text);
+        }
+
+        @Override
+        protected void buildXPath(StringBuilder xpathBuilder) {
+            xpathBuilder.append(".//").append(this.tag).append("[starts-with(text(), '").append(this.text).append("')]");
+        }
+    }
+
+    static class BySomethingContainingText extends BaseBy {
+
         protected final String text;
         protected final By by;
 
@@ -315,7 +308,7 @@ public abstract class WebDriverSubstepsBy {
         }
     }
 
-    public static class ByIdContainingText extends BaseBy {
+    static class ByIdContainingText extends XPathBy {
 
         protected final String text;
         protected final String id;
@@ -326,38 +319,19 @@ public abstract class WebDriverSubstepsBy {
             this.text = text;
         }
 
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see
-         * org.openqa.selenium.By#findElements(org.openqa.selenium.SearchContext
-         * )
-         */
         @Override
-        public List<WebElement> findElementsBy(final SearchContext context) {
+        protected void buildXPath(final StringBuilder xpathBuilder) {
 
-            List<WebElement> matchingElems = null;
+            xpathBuilder.append(".//*[@id='")
+                    .append(this.id)
+                    .append("' and contains(text(), '")
+                    .append(this.text)
+                    .append("')]");
 
-            final List<WebElement> elems = context.findElements(By.id(this.id));
-            if (elems != null) {
-                for (final WebElement e : elems) {
-
-                    if (e.getText() != null && e.getText().contains(this.text)) {
-
-                        if (matchingElems == null) {
-                            matchingElems = new ArrayList<WebElement>();
-                        }
-                        matchingElems.add(e);
-                    }
-                }
-            }
-
-            return matchingElems;
         }
     }
 
-    public static class ByIdAndText extends BaseBy {
+    static class ByIdAndText extends XPathBy {
 
         protected final String text;
         protected final String id;
@@ -376,34 +350,25 @@ public abstract class WebDriverSubstepsBy {
         }
 
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see
-         * org.openqa.selenium.By#findElements(org.openqa.selenium.SearchContext
-         * )
-         */
         @Override
-        public List<WebElement> findElementsBy(final SearchContext context) {
+        protected void buildXPath(final StringBuilder xpathBuilder) {
 
-            List<WebElement> matchingElems = null;
+            xpathBuilder.append(".//*[@id='").append(this.id).append("' and ");
 
-            final List<WebElement> elems = context.findElements(By.id(this.id));
-            if (elems != null) {
-                for (final WebElement e : elems) {
-
-                    if ((this.caseSensitive && this.text.equals(e.getText()))
-                            || (!this.caseSensitive && this.text.equalsIgnoreCase(e.getText()))) {
-
-                        if (matchingElems == null) {
-                            matchingElems = new ArrayList<WebElement>();
-                        }
-                        matchingElems.add(e);
-                    }
-                }
+            if (caseSensitive) {
+                xpathBuilder.append("text()='").append(this.text).append("'");
+            } else {
+                xpathBuilder.append(equalsIgnoringCaseXPath("text()", "'" + this.text.toLowerCase() + "'"));
             }
 
-            return matchingElems;
+            xpathBuilder.append("]");
         }
+    }
+
+    private static String equalsIgnoringCaseXPath(String str1, String str2) {
+        return new StringBuilder().append("translate(")
+                .append(str1)
+                .append(", 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')=")
+                .append(str2).toString();
     }
 }
