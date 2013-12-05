@@ -24,12 +24,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
+import com.technophobia.substeps.step.StepImplementationUtils;
 
 /**
  * 
@@ -37,6 +42,9 @@ import com.google.common.collect.Maps;
  * 
  */
 public abstract class WebDriverSubstepsBy {
+
+    static final Logger logger = LoggerFactory.getLogger(WebDriverSubstepsBy.class);
+
 
     public static ByIdAndText ByIdAndText(final String id, final String text) {
         return new ByIdAndText(id, text);
@@ -56,40 +64,18 @@ public abstract class WebDriverSubstepsBy {
 
     public static ByTagAndAttributes ByTagAndAttributes(final String tagName, final String attributeString) {
 
-        final Map<String, String> expectedAttributes = convertToMap(attributeString);
+        final Map<String, String> expectedAttributes = StepImplementationUtils.convertToMap(attributeString);
 
         return new ByTagAndAttributes(tagName, expectedAttributes);
     }
 
 
-    /**
-     * Convert a string of the form type="submit",value="Search" to a map.
-     * 
-     * @example
-     * @param attributes
-     *            the attributes string
-     * @return the map
-     */
-    public static Map<String, String> convertToMap(final String attributes) {
-        Map<String, String> attributeMap = null;
+    public static ByTagAndAttributes NthByTagAndAttributes(final String tagName, final String attributeString,
+            final int nth) {
 
-        // split the attributes up, will be received as a comma separated list
-        // of name value pairs
-        final String[] nvps = attributes.split(",");
+        final Map<String, String> expectedAttributes = StepImplementationUtils.convertToMap(attributeString);
 
-        if (nvps != null) {
-            for (final String nvp : nvps) {
-                final String[] split = nvp.split("=");
-                if (split != null && split.length == 2) {
-                    if (attributeMap == null) {
-                        attributeMap = new HashMap<String, String>();
-                    }
-                    attributeMap.put(split[0], split[1].replaceAll("\"", ""));
-                }
-            }
-        }
-
-        return attributeMap;
+        return new ByTagAndAttributes(tagName, expectedAttributes, nth);
     }
 
 
@@ -99,12 +85,27 @@ public abstract class WebDriverSubstepsBy {
 
 
     public static ByTagAndWithText ByTagAndWithText(final String tag, final String text) {
-        return new ByTagAndWithText(tag, text);
+        return new ByTagAndWithText(tag, Matchers.equalToIgnoringCase(text));
+    }
+
+
+    public static ByTagAndWithText ByTagContainingText(final String tag, final String text) {
+        return new ByTagAndWithText(tag, Matchers.containsString(text));
+    }
+
+
+    public static ByTagAndWithText ByTagStartingWithText(final String tag, final String text) {
+        return new ByTagAndWithText(tag, Matchers.startsWith(text));
     }
 
 
     public static ByIdContainingText ByIdContainingText(final String id, final String text) {
         return new ByIdContainingText(id, text);
+    }
+
+
+    public static BySomethingContainingText ByXpathContainingText(final String xpath, final String text) {
+        return new BySomethingContainingText(By.xpath(xpath), text);
     }
 
 
@@ -146,11 +147,20 @@ public abstract class WebDriverSubstepsBy {
 
         private final String tagName;
         private final Map<String, String> requiredAttributes;
+        private final int minimumExpected;
 
 
         ByTagAndAttributes(final String tagName, final Map<String, String> requiredAttributes) {
             this.tagName = tagName;
             this.requiredAttributes = requiredAttributes;
+            this.minimumExpected = 1;
+        }
+
+
+        ByTagAndAttributes(final String tagName, final Map<String, String> requiredAttributes, final int nth) {
+            this.tagName = tagName;
+            this.requiredAttributes = requiredAttributes;
+            this.minimumExpected = nth;
         }
 
 
@@ -171,6 +181,13 @@ public abstract class WebDriverSubstepsBy {
                     }
                     matchingElems.add(e);
                 }
+            }
+
+            if (matchingElems != null && matchingElems.size() < this.minimumExpected) {
+                logger.info("expecting at least " + this.minimumExpected + " matching elems, found only "
+                        + matchingElems.size() + " this time around");
+                // we haven't found enough, clear out
+                matchingElems = null;
             }
 
             return matchingElems;
@@ -204,13 +221,14 @@ public abstract class WebDriverSubstepsBy {
     public static class ByTagAndWithText extends BaseBy {
 
         private final String tag;
-        private final String text;
+        // private final String text;
+        private final Matcher<String> stringMatcher;
 
 
-        ByTagAndWithText(final String tag, final String text) {
+        ByTagAndWithText(final String tag, final Matcher<String> stringMatcher) {
 
             this.tag = tag;
-            this.text = text;
+            this.stringMatcher = stringMatcher;
         }
 
 
@@ -230,7 +248,7 @@ public abstract class WebDriverSubstepsBy {
             if (elems != null) {
                 for (final WebElement e : elems) {
 
-                    if (this.text.equalsIgnoreCase(e.getText())) {
+                    if (this.stringMatcher.matches(e.getText())) {
 
                         if (matchingElems == null) {
                             matchingElems = new ArrayList<WebElement>();
@@ -243,6 +261,47 @@ public abstract class WebDriverSubstepsBy {
             return matchingElems;
         }
 
+    }
+
+    public static class BySomethingContainingText extends BaseBy {
+        protected final String text;
+        protected final By by;
+
+
+        BySomethingContainingText(final By by, final String text) {
+            this.by = by;
+            this.text = text;
+        }
+
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see
+         * org.openqa.selenium.By#findElements(org.openqa.selenium.SearchContext
+         * )
+         */
+        @Override
+        public List<WebElement> findElementsBy(final SearchContext context) {
+
+            List<WebElement> matchingElems = null;
+
+            final List<WebElement> elems = context.findElements(this.by);
+            if (elems != null) {
+                for (final WebElement e : elems) {
+
+                    if (e.getText() != null && e.getText().contains(this.text)) {
+
+                        if (matchingElems == null) {
+                            matchingElems = new ArrayList<WebElement>();
+                        }
+                        matchingElems.add(e);
+                    }
+                }
+            }
+
+            return matchingElems;
+        }
     }
 
     public static class ByIdContainingText extends BaseBy {

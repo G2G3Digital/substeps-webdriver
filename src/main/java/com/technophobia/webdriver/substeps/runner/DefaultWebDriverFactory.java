@@ -38,23 +38,33 @@ public class DefaultWebDriverFactory implements WebDriverFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultWebDriverFactory.class);
 
+    private final WebdriverSubstepsConfiguration configuration;
+
+    public DefaultWebDriverFactory() {
+        this(WebdriverSubstepsPropertiesConfiguration.INSTANCE);
+    }
+
+    public DefaultWebDriverFactory(WebdriverSubstepsConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
     public WebDriver createWebDriver() {
 
         final WebDriver webDriver;
 
-        switch (WebdriverSubstepsConfiguration.driverType()) {
+        switch (configuration.driverType()) {
             case FIREFOX: {
                 webDriver = new FirefoxDriver();
                 break;
             }
             case HTMLUNIT: {
                 final HtmlUnitDriver htmlUnitDriver = new HtmlUnitDriver(BrowserVersion.FIREFOX_3_6);
-                htmlUnitDriver.setJavascriptEnabled(!WebdriverSubstepsConfiguration.isJavascriptDisabledWithHTMLUnit());
+                htmlUnitDriver.setJavascriptEnabled(!configuration.isJavascriptDisabledWithHTMLUnit());
 
                 // Run via a proxy - HTML unit only for timebeing
-                final String proxyHost = WebdriverSubstepsConfiguration.getHtmlUnitProxyHost();
+                final String proxyHost = configuration.getHtmlUnitProxyHost();
                 if (!StringUtils.isEmpty(proxyHost)) {
-                    final int proxyPort = WebdriverSubstepsConfiguration.getHtmlUnitProxyPort();
+                    final int proxyPort = configuration.getHtmlUnitProxyPort();
                     htmlUnitDriver.setProxy(proxyHost, proxyPort);
                 }
 
@@ -93,7 +103,7 @@ public class DefaultWebDriverFactory implements WebDriverFactory {
     }
 
     public DriverType driverType() {
-        return WebdriverSubstepsConfiguration.driverType();
+        return configuration.driverType();
     }
 
     /**

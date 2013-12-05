@@ -25,6 +25,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.technophobia.webdriver.substeps.runner.*;
 import org.junit.Assert;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
@@ -38,11 +39,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Supplier;
 import com.technophobia.substeps.model.SubSteps.Step;
 import com.technophobia.substeps.model.SubSteps.StepImplementations;
-import com.technophobia.webdriver.substeps.runner.Condition;
-import com.technophobia.webdriver.substeps.runner.DefaultExecutionSetupTearDown;
-import com.technophobia.webdriver.substeps.runner.DriverType;
-import com.technophobia.webdriver.substeps.runner.WebDriverSubstepsException;
-import com.technophobia.webdriver.substeps.runner.WebdriverSubstepsConfiguration;
 import com.technophobia.webdriver.util.WebDriverContext;
 
 @StepImplementations(requiredInitialisationClasses = DefaultExecutionSetupTearDown.class)
@@ -243,7 +239,7 @@ public class ActionWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
 
     private String normaliseURL(final String relativeURL) {
-        return normalise(WebdriverSubstepsConfiguration.baseURL() + relativeURL);
+        return normalise(WebdriverSubstepsPropertiesConfiguration.INSTANCE.baseURL() + relativeURL);
     }
 
 

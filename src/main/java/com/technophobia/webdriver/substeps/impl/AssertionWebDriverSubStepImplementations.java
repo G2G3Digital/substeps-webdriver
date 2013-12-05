@@ -30,7 +30,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -43,6 +42,7 @@ import com.technophobia.substeps.model.Scope;
 import com.technophobia.substeps.model.SubSteps.Step;
 import com.technophobia.substeps.model.SubSteps.StepImplementations;
 import com.technophobia.substeps.runner.ExecutionContext;
+import com.technophobia.substeps.step.StepImplementationUtils;
 import com.technophobia.webdriver.substeps.runner.DefaultExecutionSetupTearDown;
 import com.technophobia.webdriver.util.WebDriverContext;
 import com.technophobia.webdriver.util.WebDriverSubstepsBy;
@@ -52,6 +52,8 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
 
     private static final Logger logger = LoggerFactory.getLogger(AssertionWebDriverSubStepImplementations.class);
 
+    private final FinderWebDriverSubStepImplementations finder = new FinderWebDriverSubStepImplementations();
+
 
     public AssertionWebDriverSubStepImplementations() {
         super();
@@ -60,65 +62,6 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
 
     public AssertionWebDriverSubStepImplementations(final Supplier<WebDriverContext> webDriverContextSupplier) {
         super(webDriverContextSupplier);
-    }
-
-
-    /**
-     * Check that the element with id has the text ....
-     * 
-     * @example AssertValue id msg_id text = "Hello World"
-     * @section Assertions
-     * @param id
-     *            the id
-     * @param expected
-     *            the expected
-     */
-    @Step("AssertValue id ([^\"]*) text = \"([^\"]*)\"")
-    public void assertElementText(final String id, final String expected) {
-        logger.debug("Asserting element with id " + id + " has the text " + expected);
-
-        try {
-            webDriverContext().setCurrentElement(null);
-
-            final By byIdAndText = WebDriverSubstepsBy.ByIdAndText(id, expected);
-
-            final WebElement elem = webDriverContext().waitForElement(byIdAndText);
-
-            Assert.assertNotNull("expecting to find an element with id: " + id, elem);
-            webDriverContext().setCurrentElement(elem);
-        } catch (final TimeoutException e) {
-            logger.debug("timed out waiting for id: " + id + " with text: " + expected + " page src:\n"
-                    + webDriver().getPageSource());
-            throw e;
-        }
-    }
-
-
-    /**
-     * From the current element, apply the xpath and check to see if any of the
-     * children have the text ...
-     * 
-     * @example AssertChildElementsContainText xpath="li//a" text = "Log Out"
-     * @section Assertions
-     * @param xpath
-     *            the xpath
-     * @param text
-     *            the text
-     */
-    @Step("AssertChildElementsContainText xpath=\"([^\"]*)\" text=\"([^\"]*)\"")
-    public void assertChildElementsContainText(final String xpath, final String text) {
-        logger.debug("Asserting chile element with xpath " + xpath + " has the text " + text);
-        final List<WebElement> itemList = webDriverContext().getCurrentElement().findElements(By.xpath(xpath));
-        boolean found = false;
-        for (final WebElement item : itemList) {
-            final String itemText = item.getText();
-            if (itemText.startsWith(text)) {
-                found = true;
-                break;
-            }
-        }
-
-        Assert.assertTrue("expecting child element to contain text: " + text, found);
     }
 
 
@@ -169,33 +112,6 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
         final String attributeValue = getThreadLocalWebDriverContext().getCurrentElement().getAttribute(attribute);
         Assert.assertNotNull("Expecting to find attribute " + attribute + " on current element", attributeValue);
         Assert.assertThat(attributeValue, is(expected));
-    }
-
-
-    /**
-     * Check that any of the html tags have the specified text
-     * 
-     * @example AssertTagElementContainsText tag="ul" text="list item itext"
-     * @section Assertions
-     * @param tag
-     *            the tag
-     * @param text
-     *            the text
-     */
-    @Step("AssertTagElementContainsText tag=\"([^\"]*)\" text=\"([^\"]*)\"")
-    public void assertTagElementContainsText(final String tag, final String text) {
-        logger.debug("Asserting tag element " + tag + " has text " + text);
-        final List<WebElement> itemList = webDriver().findElements(By.tagName(tag));
-        boolean found = false;
-        for (final WebElement item : itemList) {
-            final String itemText = item.getText();
-            if (itemText.startsWith(text)) {
-                found = true;
-                break;
-            }
-        }
-
-        Assert.assertTrue("expecting child element to contain text: " + text, found);
     }
 
 
@@ -255,9 +171,10 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
      * @example AssertPageSourceContains "foobar"
      * 
      * @param expected
-     *            Some text you expect to appear on the page
+     *            the text you expect to find in the page source - this can
+     *            include quotes.
      */
-    @Step("AssertPageSourceContains \"([^\"]*)\"")
+    @Step("AssertPageSourceContains \"(.*)\"$")
     public void pageSourceContains(final String expected) {
         logger.debug("Checking page source for expeted content [" + expected + "]");
 
@@ -334,7 +251,7 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
 
         final WebElement currentElem = getThreadLocalWebDriverContext().getCurrentElement();
 
-        final Map<String, String> expectedAttributes = WebDriverSubstepsBy.convertToMap(attributeString);
+        final Map<String, String> expectedAttributes = StepImplementationUtils.convertToMap(attributeString);
 
         Assert.assertTrue("element doesn't have expected attributes: " + attributeString,
                 elementHasExpectedAttributes(currentElem, expectedAttributes));
@@ -387,9 +304,8 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
      */
     @Step("RememberForScenario textFrom \"([^\"]*)\" as \"([^\"]*)\"")
     public void rememberForScenario(final String elementId, final String nameToSaveAs) {
-        final FinderWebDriverSubStepImplementations finder = new FinderWebDriverSubStepImplementations();
 
-        final WebElement element = finder.findById(elementId);
+        final WebElement element = this.finder.findById(elementId);
         final String text = element.getText();
         ExecutionContext.put(Scope.SCENARIO, nameToSaveAs, text);
     }
@@ -410,8 +326,7 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
     @Step("AssertDifferent rememberedValue \"([^\"]*)\" compareToElement \"([^\"]*)\"")
     public void assertDifferent(final String rememberedValueName, final String elementId) {
 
-        final FinderWebDriverSubStepImplementations finder = new FinderWebDriverSubStepImplementations();
-        final WebElement element = finder.findById(elementId);
+        final WebElement element = this.finder.findById(elementId);
         final String text = element.getText();
 
         Object retrievedValue = null;
@@ -442,9 +357,7 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
     @Step("AssertSame rememberedValue \"([^\"]*)\" compareToElement \"([^\"]*)\"")
     public void assertSame(final String rememberedValueName, final String elementId) {
 
-        final FinderWebDriverSubStepImplementations finder = new FinderWebDriverSubStepImplementations();
-
-        final WebElement element = finder.findById(elementId);
+        final WebElement element = this.finder.findById(elementId);
         final String text = element.getText();
 
         Object retrievedValue = null;

@@ -18,6 +18,9 @@
  */
 package com.technophobia.webdriver.util;
 
+import com.google.common.base.Function;
+import com.technophobia.webdriver.substeps.runner.Condition;
+import com.technophobia.webdriver.substeps.runner.WebdriverSubstepsPropertiesConfiguration;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -25,11 +28,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
-import com.google.common.base.Function;
-import com.technophobia.webdriver.substeps.runner.Condition;
-import com.technophobia.webdriver.substeps.runner.WebdriverSubstepsConfiguration;
 
 public class ElementLocators {
 
@@ -40,7 +38,7 @@ public class ElementLocators {
 
 
     public static WebElement waitForElement(final By by, WebDriver webDriver) {
-        return waitForElement(by, WebdriverSubstepsConfiguration.defaultTimeout(), webDriver);
+        return waitForElement(by, WebdriverSubstepsPropertiesConfiguration.INSTANCE.defaultTimeout(), webDriver);
     }
 
 
@@ -59,7 +57,7 @@ public class ElementLocators {
 
 
     public static WebElement waitUntil(final WebDriverWait wait, final Function<WebDriver, WebElement> condition,
-            WebDriver webDriver) {
+                                       WebDriver webDriver) {
         WebElement elem = null;
         try {
             elem = wait.until(condition);

@@ -18,28 +18,18 @@
  */
 package com.technophobia.webdriver.util;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.technophobia.webdriver.substeps.runner.DefaultDriverType;
+import com.technophobia.webdriver.substeps.runner.Condition;
+import com.technophobia.webdriver.substeps.runner.DriverType;
+import com.technophobia.webdriver.substeps.runner.WebdriverSubstepsPropertiesConfiguration;
 import junit.framework.Assert;
-
-import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.technophobia.webdriver.substeps.runner.Condition;
-import com.technophobia.webdriver.substeps.runner.DriverType;
-import com.technophobia.webdriver.substeps.runner.WebdriverSubstepsConfiguration;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A container used to hold the webdriver instance and the current element used
@@ -95,6 +85,13 @@ public class WebDriverContext {
         }
     }
 
+    public void resetWebDriver() {
+        logger.debug("Resetting WebDriver");
+        if(this.webDriver != null) {
+            this.webDriver.manage().deleteAllCookies();
+        }
+    }
+
 
     public boolean hasFailed() {
         return this.failed;
@@ -107,7 +104,7 @@ public class WebDriverContext {
 
 
     public WebElement waitForElement(final By by) {
-        return ElementLocators.waitForElement(by, WebdriverSubstepsConfiguration.defaultTimeout(), this.webDriver);
+        return ElementLocators.waitForElement(by, WebdriverSubstepsPropertiesConfiguration.INSTANCE.defaultTimeout(), this.webDriver);
     }
 
 

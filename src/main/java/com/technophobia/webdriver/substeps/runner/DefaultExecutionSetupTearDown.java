@@ -18,18 +18,16 @@
  */
 package com.technophobia.webdriver.substeps.runner;
 
-import java.lang.reflect.Field;
-
-import org.junit.Assert;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.gargoylesoftware.htmlunit.WebClient;
 import com.google.common.base.Supplier;
 import com.technophobia.substeps.model.Scope;
 import com.technophobia.substeps.runner.ExecutionContext;
+import com.technophobia.substeps.runner.ExecutionContextSupplier;
 import com.technophobia.substeps.runner.INotificationDistributor;
+import com.technophobia.substeps.runner.MutableSupplier;
 import com.technophobia.substeps.runner.setupteardown.Annotations.AfterEveryScenario;
 import com.technophobia.substeps.runner.setupteardown.Annotations.BeforeAllFeatures;
 import com.technophobia.substeps.runner.setupteardown.Annotations.BeforeEveryScenario;
@@ -38,6 +36,8 @@ import com.technophobia.webdriver.util.WebDriverContext;
 public class DefaultExecutionSetupTearDown {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultExecutionSetupTearDown.class);
+
+    private final WebdriverSubstepsConfiguration configuration;
     private long startTimeMillis;
 
     private static final MutableSupplier<WebDriverContext> webDriverContextSupplier = new ExecutionContextSupplier<WebDriverContext>(
@@ -58,12 +58,20 @@ public class DefaultExecutionSetupTearDown {
         return webDriverContextSupplier.get();
     }
 
+    public DefaultExecutionSetupTearDown() {
+        this(WebdriverSubstepsPropertiesConfiguration.INSTANCE);
+    }
+
+    public DefaultExecutionSetupTearDown(WebdriverSubstepsConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
 
     @BeforeAllFeatures
     public final void beforeAllFeaturesSetup() {
 
-        final INotificationDistributor notifier = (INotificationDistributor) ExecutionContext.get(
-                Scope.SUITE, INotificationDistributor.NOTIFIER_DISTRIBUTOR_KEY);
+        final INotificationDistributor notifier = (INotificationDistributor) ExecutionContext.get(Scope.SUITE,
+                INotificationDistributor.NOTIFIER_DISTRIBUTOR_KEY);
 
         notifier.addListener(new TestFailureListener(webDriverContextSupplier));
 
@@ -89,8 +97,14 @@ public class DefaultExecutionSetupTearDown {
     public final void basePreScenarioSetup() {
         startTimeMillis = System.currentTimeMillis();
 
-        WebDriverFactory factory = (WebDriverFactory) ExecutionContext.get(Scope.SUITE, WebDriverFactory.WEB_DRIVER_FACTORY_KEY);
-        webDriverContextSupplier.set(new WebDriverContext(factory.driverType(), factory.createWebDriver()));
+        final WebDriverContext webDriverContext = webDriverContextSupplier.get();
+
+        boolean createNewWebDriver = shouldStartup(webDriverContext);
+
+        if (createNewWebDriver) {
+            WebDriverFactory factory = (WebDriverFactory) ExecutionContext.get(Scope.SUITE, WebDriverFactory.WEB_DRIVER_FACTORY_KEY);
+            webDriverContextSupplier.set(new WebDriverContext(factory.driverType(), factory.createWebDriver()));
+        }
     }
 
 
@@ -98,45 +112,22 @@ public class DefaultExecutionSetupTearDown {
     public final void basePostScenariotearDown() {
 
 
-        boolean doShutdown = true;
-        // reasons *NOT* to shutdown
-
         final WebDriverContext webDriverContext = webDriverContextSupplier.get();
 
-        if (!WebdriverSubstepsConfiguration.shutDownWebdriver()) {
-            // this overrides everything else
-            System.out.println("global don't shutdown");
-            doShutdown = false;
-        } else if (webDriverContext != null
-                && webDriverContext.hasFailed()
-                && (!WebdriverSubstepsConfiguration.closeVisualWebDriveronFail() && webDriverContext.getDriverType().isVisual())) {
+        if (webDriverContext != null) {
 
-            System.out.println("failed and visual shutdown");
-            doShutdown = false;
-        }
+            boolean doShutdown = shouldShutdown(webDriverContext);
 
-        if (doShutdown) {
-
-            if (webDriverContext != null) {
-                System.out.println("webDriverContextSupplier.get().hasFailed(): "
-                        + webDriverContext.hasFailed());
-            }
-
-            System.out.println("WebdriverSubstepsConfiguration.closeVisualWebDriveronFail(): "
-                    + WebdriverSubstepsConfiguration.closeVisualWebDriveronFail());
-
-            System.out.println("driverType().isVisual(): " + webDriverContext.getDriverType().isVisual());
-
-            System.out.println("doing shutdown");
-
-            if (webDriverContext != null) {
+            if (doShutdown) {
                 webDriverContext.shutdownWebDriver();
+            } else {
+                webDriverContext.resetWebDriver();
             }
         }
 
         // TODO put long test threshold in config
 
-        final long ticks = (System.currentTimeMillis() - startTimeMillis) / 1000;
+        final long ticks = (System.currentTimeMillis() - this.startTimeMillis) / 1000;
 
         if (ticks > 30) {
             logger.warn(String.format("Test scenario took %s seconds", ticks));
@@ -145,8 +136,75 @@ public class DefaultExecutionSetupTearDown {
         }
     }
 
+    private boolean shouldShutdown(final WebDriverContext webDriverContext) {
+
+        if (webDriverContext != null) {
+            logger.debug("webDriverContextSupplier.get().hasFailed(): {}", webDriverContext.hasFailed());
+            logger.debug("driverType().isVisual(): {}", webDriverContext.getDriverType().isVisual());
+        }
+
+        logger.debug("WebdriverSubstepsPropertiesConfiguration.closeVisualWebDriveronFail(): {}", configuration.closeVisualWebDriveronFail());
+        logger.debug("WebdriverSubstepsPropertiesConfiguration.reuseWebDriver(): {}", configuration.reuseWebDriver());
+
+        boolean doShutDown = true;
+
+        // reasons *NOT* to shutdown
+        if (!configuration.shutDownWebdriver()) {
+
+            //don't shutdown if:
+            // - global config says we don't have to
+            // - and config says we don't close visual webdrivers on failure
+            // - and we're going to reuse the webdriver
+
+            if (failedIsVisualButShouldNotClose(webDriverContext) || configuration.reuseWebDriver()) {
+                doShutDown = false;
+            }
+        }
+
+        return doShutDown;
+    }
+
+    private boolean shouldStartup(final WebDriverContext webDriverContext) {
+
+        if (webDriverContext != null) {
+            logger.debug("webDriverContextSupplier.get().hasFailed(): {}", webDriverContext.hasFailed());
+            logger.debug("driverType().isVisual(): {}", webDriverContext.getDriverType().isVisual());
+        }
+
+        logger.debug("WebdriverSubstepsPropertiesConfiguration.closeVisualWebDriveronFail(): {}", configuration.closeVisualWebDriveronFail());
+        logger.debug("WebdriverSubstepsPropertiesConfiguration.reuseWebDriver(): {}", configuration.reuseWebDriver());
+
+        boolean doStartup = true;
+
+        // reasons *NOT* to start up
+        if (webDriverContext != null && !configuration.shutDownWebdriver()) {
+
+            //don't start up if:
+            // - we want to reuse the webdriver instance, unless the previous test failed and we don't want to close, in which case we need a new instance
+
+            if (!failedIsVisualButShouldNotClose(webDriverContext) && configuration.reuseWebDriver()) {
+                doStartup = false;
+            }
+        }
+
+        return doStartup;
+    }
+
+    private boolean failedIsVisualButShouldNotClose(final WebDriverContext webDriverContext) {
+
+        //we default to always closing
+        boolean shouldNotClose = false;
+
+        if(!configuration.closeVisualWebDriveronFail() && webDriverContext != null && webDriverContext.getDriverType().isVisual()) {
+            shouldNotClose = webDriverContext.hasFailed();
+        }
+
+        return shouldNotClose;
+
+    }
+
     private WebDriverFactory createWebDriverFactory() {
-        Class<? extends WebDriverFactory> webDriverFactoryClass = WebdriverSubstepsConfiguration.getWebDriverFactoryClass();
+        Class<? extends WebDriverFactory> webDriverFactoryClass = configuration.getWebDriverFactoryClass();
 
         logger.debug("Creating WebDriverFactory of type [{}]", webDriverFactoryClass.getName());
 

@@ -20,6 +20,7 @@ package com.technophobia.webdriver.substeps.runner;
 
 import com.technophobia.substeps.execution.node.IExecutionNode;
 import com.technophobia.substeps.runner.INotifier;
+import com.technophobia.substeps.runner.MutableSupplier;
 import com.technophobia.webdriver.util.WebDriverContext;
 
 /**
