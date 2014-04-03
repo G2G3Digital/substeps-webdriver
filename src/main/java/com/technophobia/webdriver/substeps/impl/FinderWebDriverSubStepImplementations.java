@@ -120,7 +120,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
     public void findByXpath(final String xpath) {
         logger.debug("Looking for item with xpath " + xpath);
         webDriverContext().setCurrentElement(null);
-        final WebElement elem = webDriver().findElement(By.xpath(xpath));
+        final WebElement elem = webDriverContext().waitForElement(By.xpath(xpath));
         Assert.assertNotNull("expecting an element with xpath " + xpath, elem);
         webDriverContext().setCurrentElement(elem);
     }
