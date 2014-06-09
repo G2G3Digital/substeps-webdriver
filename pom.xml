@@ -290,8 +290,9 @@
                                         <param>com.technophobia.webdriver.substeps.impl.BaseWebdriverSubStepImplementations</param>
                                     </stepImplementationClassNames>
 
-								  	<executionListeners>
-										<param>com.technophobia.substeps.runner.logger.ColourExecutionLogger</param>
+								    	<executionListeners>
+									<!--	<param>com.technophobia.substeps.runner.logger.AnsiColourExecutionLogger</param> -->
+									 	<param>com.technophobia.substeps.runner.logger.StepExecutionLogger</param>  
 									</executionListeners>
 
                                 </executionConfig>
