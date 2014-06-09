@@ -154,3 +154,6 @@ Define: And I can find a table with an error caption
     FindParentByTagAndAttributes tag="table" attributes=[class="comments"] ThatHasChild tag="caption" attributes=[class="captionClassError"] 
     AssertCurrentElement has attributes=[border="2"]
     
+    
+Define: blah <css_selector>
+	    FIndByCss "#whatevs .doodah"
