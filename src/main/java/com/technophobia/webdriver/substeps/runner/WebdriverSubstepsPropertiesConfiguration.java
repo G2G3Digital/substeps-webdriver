@@ -1,5 +1,5 @@
 /*
- *	Copyright Technophobia Ltd 2012
+ *    Copyright Technophobia Ltd 2012
  *
  *   This file is part of Substeps.
  *
@@ -44,6 +44,8 @@ public enum WebdriverSubstepsPropertiesConfiguration implements WebdriverSubstep
     private final Integer htmlUnitProxyPort;
     private final DefaultDriverType driverType;
     private final boolean visualWebdriverCloseOnFail;
+    private final String networkProxyHost;
+    private final int networkProxyPort;
 
     private long defaultWebDriverTimeoutSecs = 10; //TODO: why's this one special?
 
@@ -72,6 +74,8 @@ public enum WebdriverSubstepsPropertiesConfiguration implements WebdriverSubstep
 
         htmlUnitProxyHost = Configuration.INSTANCE.getString("htmlunit.proxy.host");
         htmlUnitProxyPort = Configuration.INSTANCE.getInt("htmlunit.proxy.port");
+        networkProxyHost = Configuration.INSTANCE.getString("network.proxy.host");
+        networkProxyPort = Configuration.INSTANCE.getInt("network.proxy.port");
 
         try {
             webdriverFactoryClass = Class.forName(Configuration.INSTANCE.getString("webdriver.factory.class")).asSubclass(WebDriverFactory.class);
@@ -134,6 +138,14 @@ public enum WebdriverSubstepsPropertiesConfiguration implements WebdriverSubstep
 
     public Class<? extends WebDriverFactory> getWebDriverFactoryClass() {
         return webdriverFactoryClass;
+    }
+
+    public String getNetworkProxyHost() {
+        return networkProxyHost;
+    }
+
+    public int getNetworkProxyPort() {
+        return networkProxyPort;
     }
 
     private String determineBaseURL(final String baseUrlProperty) {

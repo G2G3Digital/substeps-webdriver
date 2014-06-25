@@ -19,8 +19,8 @@
 
 package com.technophobia.webdriver.substeps.runner;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.WebClient;
+import java.lang.reflect.Field;
+
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.openqa.selenium.WebDriver;
@@ -28,11 +28,13 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Field;
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.WebClient;
 
 public class DefaultWebDriverFactory implements WebDriverFactory {
 
@@ -54,17 +56,26 @@ public class DefaultWebDriverFactory implements WebDriverFactory {
 
         switch (configuration.driverType()) {
             case FIREFOX: {
-                webDriver = new FirefoxDriver();
+                final DesiredCapabilities firefoxCapabilities = DesiredCapabilities.firefox();
+                setNetworkCapabilities(firefoxCapabilities);
+                webDriver = new FirefoxDriver(firefoxCapabilities);
                 break;
+
             }
             case HTMLUNIT: {
                 final HtmlUnitDriver htmlUnitDriver = new HtmlUnitDriver(BrowserVersion.FIREFOX_3_6);
                 htmlUnitDriver.setJavascriptEnabled(!configuration.isJavascriptDisabledWithHTMLUnit());
 
-                // Run via a proxy - HTML unit only for timebeing
-                final String proxyHost = configuration.getHtmlUnitProxyHost();
-                if (!StringUtils.isEmpty(proxyHost)) {
-                    final int proxyPort = configuration.getHtmlUnitProxyPort();
+                // Run via a proxy - firstly try deprecated HTML unit only properties
+                final String htmlunitProxyHost = configuration.getHtmlUnitProxyHost();
+                if (StringUtils.isNotEmpty(htmlunitProxyHost)) {
+                    final int htmlunitProxyPort = configuration.getHtmlUnitProxyPort();
+                    htmlUnitDriver.setProxy(htmlunitProxyHost, htmlunitProxyPort);
+                }
+                // Run via a proxy - secondly new network proxy settings
+                final String proxyHost = configuration.getNetworkProxyHost();
+                if (StringUtils.isNotEmpty(proxyHost)) {
+                    final int proxyPort = configuration.getNetworkProxyPort();
                     htmlUnitDriver.setProxy(proxyHost, proxyPort);
                 }
 
@@ -76,7 +87,9 @@ public class DefaultWebDriverFactory implements WebDriverFactory {
             }
             case CHROME: {
 
-                webDriver = new ChromeDriver();
+                final DesiredCapabilities chromeCapabilities = DesiredCapabilities.chrome();
+                setNetworkCapabilities(chromeCapabilities);
+                webDriver = new ChromeDriver(chromeCapabilities);
                 break;
 
             }
@@ -84,22 +97,35 @@ public class DefaultWebDriverFactory implements WebDriverFactory {
 
                 // apparently this is required to get around some IE security
                 // restriction.
-
                 final DesiredCapabilities ieCapabilities = DesiredCapabilities.internetExplorer();
                 ieCapabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
 
                 LOG.warn("Using IE Webdriver with IGNORING SECURITY DOMAIN");
 
+                setNetworkCapabilities(ieCapabilities);
                 webDriver = new InternetExplorerDriver(ieCapabilities);
                 break;
             }
             default: {
-                throw new IllegalArgumentException("unknown driver type");
+                throw new IllegalArgumentException("unknown driver type " + configuration.driverType());
             }
         }
 
         return webDriver;
 
+    }
+
+    private void setNetworkCapabilities(DesiredCapabilities capabilities) {
+        final String proxyHost = configuration.getNetworkProxyHost();
+        if (StringUtils.isNotEmpty(proxyHost)) {
+            final int proxyPort = configuration.getNetworkProxyPort();
+            final String proxyHostAndPort = proxyHost + ":" + proxyPort;
+            org.openqa.selenium.Proxy proxy = new org.openqa.selenium.Proxy();
+            proxy.setHttpProxy(proxyHostAndPort).setFtpProxy(proxyHostAndPort)
+                    .setSslProxy(proxyHostAndPort);
+            capabilities.setCapability(CapabilityType.PROXY, proxy);
+            LOG.info("Proxy set to {}", proxyHostAndPort);
+        }
     }
 
     public DriverType driverType() {
