@@ -28,17 +28,17 @@
 
 
 <logger name="com.technophobia.webdriver" additivity="false">
-  <level value="debug"/>
+  <level value="INFO"/>
   <appender-ref ref="console" />
 </logger>
 
 <logger name="com.technophobia.substeps" additivity="false">
-  <level value="debug"/>
+  <level value="INFO"/>
   <appender-ref ref="console" />
 </logger>
 
   <root>
-    <priority value ="info" />
+    <priority value ="INFO" />
     <appender-ref ref="console" />
   </root>
 

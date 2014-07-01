@@ -383,7 +383,8 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
      */
     @Step("AssertEventuallyNotEmpty id=\"([^\"]*)\"")
     public void assertEventuallyNotEmpty(final String elementId) {
-        waitForElementToContainSomeText(By.id(elementId));
+        WebElement webElement = waitForElementToContainSomeText(By.id(elementId));
+        Assert.assertNotNull(String.format("Expected to find a non-empty element with 'id=%s' but didn't.", elementId), webElement);
     }
 
 
@@ -400,9 +401,8 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
      */
     @Step("AssertEventuallyContains ([^\"]*) \"([^\"]*)\"")
     public void assertEventuallyContains(final String elementId, final String text) {
-
-        webDriverContext().waitForElement(WebDriverSubstepsBy.ByIdContainingText(elementId, text));
-
+        WebElement webElement = webDriverContext().waitForElement(WebDriverSubstepsBy.ByIdContainingText(elementId, text));
+        Assert.assertNotNull(String.format("Expected to find a element with 'id=%s' containing text '%s' but didn't.", elementId, text), webElement);
     }
 
 
