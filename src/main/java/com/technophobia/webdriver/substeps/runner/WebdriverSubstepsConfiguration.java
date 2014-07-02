@@ -22,9 +22,17 @@ public interface WebdriverSubstepsConfiguration {
 
     long defaultTimeout();
 
+    /** @deprecated use getNetworkProxyHost instead */
+    @Deprecated
     String getHtmlUnitProxyHost();
 
+    /** @deprecated use getNetworkProxyPort instead */
+    @Deprecated
     Integer getHtmlUnitProxyPort();
 
+    String getNetworkProxyHost();
+    
+    int getNetworkProxyPort();
+    
     Class<? extends WebDriverFactory> getWebDriverFactoryClass();
 }
