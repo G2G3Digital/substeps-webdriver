@@ -13,6 +13,7 @@ Release Notes
 1.1.3
 -----
 * addition of ExecutionListener config in the pom, set to default step logger implemenation.
+* Add in proxy capabilities for other browsers [Peter Phillips]
 
 1.1.2
 -----
