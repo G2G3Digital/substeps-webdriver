@@ -153,7 +153,23 @@ Define: And I can find a table with caption "<caption>"
 Define: And I can find a table with an error caption
     FindParentByTagAndAttributes tag="table" attributes=[class="comments"] ThatHasChild tag="caption" attributes=[class="captionClassError"] 
     AssertCurrentElement has attributes=[border="2"]
-    
-    
+
+#Define: Check if given button is clickable
+	#Click button. test should pass
+#	FindById clickableButton
+#	Click
+	
+	#Click parent of clickable button
+#	FindById failsOPasses
+#	Click
+
+Define: Then I click a button which makes the div I'm going to click visible in 2 seconds time
+	FindById makeFailOrPassVisible
+	Click
+
+Define: Check to see if I wait until the div I've just made visbile in 2 secs is clickable
+	FindById failsOPasses
+	Click
+
 Define: blah <css_selector>
 	    FIndByCss "#whatevs .doodah"

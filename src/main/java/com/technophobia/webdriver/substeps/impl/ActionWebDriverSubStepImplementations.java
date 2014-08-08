@@ -26,13 +26,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.technophobia.webdriver.substeps.runner.*;
+
 import org.junit.Assert;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.TargetLocator;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +53,7 @@ public class ActionWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
     private final FinderWebDriverSubStepImplementations locator;
 
+    private final int webDriverWaitTimout = 5; //in seconds
 
     public ActionWebDriverSubStepImplementations() {
         this.locator = new FinderWebDriverSubStepImplementations();
@@ -111,7 +117,21 @@ public class ActionWebDriverSubStepImplementations extends AbstractWebDriverSubS
     @Step("Click")
     public void click() {
         logger.debug("About to click on current element");
-        webDriverContext().getCurrentElement().click();
+        WebElement element = webDriverContext().getCurrentElement();
+        String id = element.getAttribute("id");
+        
+        try{
+        	element.click();
+        }
+        catch(WebDriverException e){
+        	WebDriverWait wait = new WebDriverWait(webDriver(), this.webDriverWaitTimout);
+        	WebElement elem = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(id)));
+        	if(elem != null){
+	        	logger.debug("About to click on current element");
+	        	elem.click();
+        	}
+        	//Don't need an else statement because error will be thrown if element is not clickable or visible.
+        }
     }
 
 
