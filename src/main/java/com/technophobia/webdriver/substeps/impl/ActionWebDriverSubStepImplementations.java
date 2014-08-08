@@ -53,6 +53,7 @@ public class ActionWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
     private final FinderWebDriverSubStepImplementations locator;
 
+    //TODO: Would be a good idea to more this variable to a config file
     private final int webDriverWaitTimout = 5; //in seconds
 
     public ActionWebDriverSubStepImplementations() {
