@@ -20,6 +20,7 @@
 package com.technophobia.webdriver.substeps.runner;
 
 import java.lang.reflect.Field;
+import java.util.logging.Level;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
@@ -28,6 +29,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.logging.LogType;
+import org.openqa.selenium.logging.LoggingPreferences;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
@@ -46,7 +49,7 @@ public class DefaultWebDriverFactory implements WebDriverFactory {
         this(WebdriverSubstepsPropertiesConfiguration.INSTANCE);
     }
 
-    public DefaultWebDriverFactory(WebdriverSubstepsConfiguration configuration) {
+    public DefaultWebDriverFactory(final WebdriverSubstepsConfiguration configuration) {
         this.configuration = configuration;
     }
 
@@ -58,6 +61,9 @@ public class DefaultWebDriverFactory implements WebDriverFactory {
             case FIREFOX: {
                 final DesiredCapabilities firefoxCapabilities = DesiredCapabilities.firefox();
                 setNetworkCapabilities(firefoxCapabilities);
+
+                setLoggingPreferences(firefoxCapabilities);
+
                 webDriver = new FirefoxDriver(firefoxCapabilities);
                 break;
 
@@ -66,7 +72,8 @@ public class DefaultWebDriverFactory implements WebDriverFactory {
                 final HtmlUnitDriver htmlUnitDriver = new HtmlUnitDriver(BrowserVersion.FIREFOX_3_6);
                 htmlUnitDriver.setJavascriptEnabled(!configuration.isJavascriptDisabledWithHTMLUnit());
 
-                // Run via a proxy - firstly try deprecated HTML unit only properties
+                // Run via a proxy - firstly try deprecated HTML unit only
+                // properties
                 final String htmlunitProxyHost = configuration.getHtmlUnitProxyHost();
                 if (StringUtils.isNotEmpty(htmlunitProxyHost)) {
                     final int htmlunitProxyPort = configuration.getHtmlUnitProxyPort();
@@ -89,6 +96,9 @@ public class DefaultWebDriverFactory implements WebDriverFactory {
 
                 final DesiredCapabilities chromeCapabilities = DesiredCapabilities.chrome();
                 setNetworkCapabilities(chromeCapabilities);
+
+                setLoggingPreferences(chromeCapabilities);
+
                 webDriver = new ChromeDriver(chromeCapabilities);
                 break;
 
@@ -98,7 +108,8 @@ public class DefaultWebDriverFactory implements WebDriverFactory {
                 // apparently this is required to get around some IE security
                 // restriction.
                 final DesiredCapabilities ieCapabilities = DesiredCapabilities.internetExplorer();
-                ieCapabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
+                ieCapabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS,
+                        true);
 
                 LOG.warn("Using IE Webdriver with IGNORING SECURITY DOMAIN");
 
@@ -111,18 +122,26 @@ public class DefaultWebDriverFactory implements WebDriverFactory {
             }
         }
 
+        webDriver.manage().window().maximize();
+        
         return webDriver;
 
     }
 
-    private void setNetworkCapabilities(DesiredCapabilities capabilities) {
+    private void setLoggingPreferences(final DesiredCapabilities chromeCapabilities) {
+        // TODO switch on based on properties
+        final LoggingPreferences logPrefs = new LoggingPreferences();
+        logPrefs.enable(LogType.BROWSER, Level.ALL);
+        chromeCapabilities.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
+    }
+
+    private void setNetworkCapabilities(final DesiredCapabilities capabilities) {
         final String proxyHost = configuration.getNetworkProxyHost();
         if (StringUtils.isNotEmpty(proxyHost)) {
             final int proxyPort = configuration.getNetworkProxyPort();
             final String proxyHostAndPort = proxyHost + ":" + proxyPort;
-            org.openqa.selenium.Proxy proxy = new org.openqa.selenium.Proxy();
-            proxy.setHttpProxy(proxyHostAndPort).setFtpProxy(proxyHostAndPort)
-                    .setSslProxy(proxyHostAndPort);
+            final org.openqa.selenium.Proxy proxy = new org.openqa.selenium.Proxy();
+            proxy.setHttpProxy(proxyHostAndPort).setFtpProxy(proxyHostAndPort).setSslProxy(proxyHostAndPort);
             capabilities.setCapability(CapabilityType.PROXY, proxy);
             LOG.info("Proxy set to {}", proxyHostAndPort);
         }

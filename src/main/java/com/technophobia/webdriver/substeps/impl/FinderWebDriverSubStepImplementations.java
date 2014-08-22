@@ -19,7 +19,6 @@
 package com.technophobia.webdriver.substeps.impl;
 
 import static com.technophobia.webdriver.substeps.runner.DefaultExecutionSetupTearDown.getThreadLocalWebDriver;
-import static org.hamcrest.Matchers.greaterThan;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +28,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.pagefactory.ByChained;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +40,8 @@ import com.technophobia.substeps.model.parameter.IntegerConverter;
 import com.technophobia.webdriver.substeps.runner.DefaultExecutionSetupTearDown;
 import com.technophobia.webdriver.util.WebDriverContext;
 import com.technophobia.webdriver.util.WebDriverSubstepsBy;
-import com.technophobia.webdriver.util.WebElementPredicate;
+
+
 
 @StepImplementations(requiredInitialisationClasses = DefaultExecutionSetupTearDown.class)
 public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubStepImplementations {
@@ -147,34 +148,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
     }
 
 
-    /**
-     * Find element by predicate.
-     * 
-     * @example
-     * @param predicate
-     *            the predicate
-     * @return the web element
-     */
-    public WebElement findElementByPredicate(final WebElementPredicate predicate) {
-        logger.debug("About to find element by predicate " + predicate);
-        WebElement rtn = null;
-
-        final List<WebElement> elems = webDriver().findElements(By.tagName(predicate.getTagname()));
-
-        for (final WebElement e : elems) {
-
-            if (predicate.apply(e)) {
-                rtn = e;
-                break;
-            }
-        }
-        if (rtn == null) {
-            throw new IllegalStateException("Failed to find element by predicate: " + predicate.getDescription());
-        }
-
-        return rtn;
-    }
-
+    
 
     /**
      * Finds an element on the page with the specified tag and text
@@ -397,7 +371,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
             }
         }
 
-        elem = checkForOneMatchingElement("expecting an input of type " + inputType + " inside tag [" + tag
+        elem = MatchingElementResultHandler.checkForOneMatchingElement("expecting an input of type " + inputType + " inside tag [" + tag
                 + "] with label [" + label + "]", matchingElems);
 
         webDriverContext().setCurrentElement(elem);
@@ -571,6 +545,30 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
      */
     private WebElement findParentByWithChildBy(final By by, final By childBy, final String assertionMessage,
             final String findParentAssertionMessage, final String multipleChildrenMessage) {
+        
+        boolean repeat = true;
+        WebElement rtn = null;
+        while (repeat){
+            
+            repeat = false;
+            try {
+                rtn = findParentWithChildByInternal(by, childBy, assertionMessage, findParentAssertionMessage,
+                    multipleChildrenMessage);
+            }
+            catch (StaleElementReferenceException e){
+                
+                logger.debug("stale element exception caught, retrying..");
+                repeat = true;
+            }
+        }
+        Assert.assertNotNull(assertionMessage, rtn);
+        webDriverContext().setCurrentElement(rtn);
+        return rtn;
+    }
+
+
+    private WebElement findParentWithChildByInternal(final By by, final By childBy, final String assertionMessage,
+            final String findParentAssertionMessage, final String multipleChildrenMessage) {
         WebElement rtn;
         List<WebElement> matchingElements = null;
 
@@ -596,9 +594,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
                 }
             }
         }
-        rtn = checkForOneMatchingElement(assertionMessage, matchingElements);
-
-        webDriverContext().setCurrentElement(rtn);
+        rtn = MatchingElementResultHandler.checkForOneMatchingElement(assertionMessage, matchingElements);
         return rtn;
     }
 
@@ -649,145 +645,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
         return rtn;
     }
 
-    /**
-     * Enum encapsulating logic around how to process multiple results found as
-     * result of a By. Enum instances should specialise the checking of multiple
-     * results
-     * 
-     * @author imoore
-     * 
-     */
-    private static abstract class MatchingElementResultHandler {
 
-        // this class started off as an Enum before the NthElement handler, left
-        // a bit of sugar in to maintain the existing code
-        static final AtLeastOneElementImpl AtLeastOneElement = new AtLeastOneElementImpl();
-        static final ExactlyOneElementImpl ExactlyOneElement = new ExactlyOneElementImpl();
-
-        /**
-         * This class will check that only one matching element is found.
-         * finding multiple elements will result in failure
-         * 
-         */
-        private static class ExactlyOneElementImpl extends MatchingElementResultHandler {
-
-            @Override
-            WebElement checkMatchingElements(final List<WebElement> matchingElems, final String msg) {
-
-                return checkForOneMatchingElement(msg, matchingElems);
-            }
-        }
-
-        /**
-         * This class will look for one matching element and disregard others.
-         * If no elements are found a failure will be reported. The first
-         * element out of multiple will be returned.
-         */
-        private static class AtLeastOneElementImpl extends MatchingElementResultHandler {
-
-            @Override
-            WebElement checkMatchingElements(final List<WebElement> matchingElems, final String msg) {
-
-                WebElement rtn = null;
-
-                if (matchingElems != null && !matchingElems.isEmpty()) {
-                    rtn = matchingElems.get(0);
-                }
-
-                Assert.assertNotNull(msg, rtn);
-                return rtn;
-            }
-        }
-
-        /**
-         * This class will look for at least n matching elements and return the
-         * nth
-         * 
-         */
-        private static class NthElement extends MatchingElementResultHandler {
-
-            int idx;
-
-
-            NthElement(final int n) {
-                Assert.assertThat(n, greaterThan(0));
-                this.idx = n - 1;
-            }
-
-
-            @Override
-            WebElement checkMatchingElements(final List<WebElement> matchingElems, final String msg) {
-                WebElement rtn = null;
-
-                if (matchingElems != null && !matchingElems.isEmpty() && matchingElems.size() > this.idx) {
-                    rtn = matchingElems.get(this.idx);
-                }
-
-                Assert.assertNotNull(msg, rtn);
-                return rtn;
-            }
-        }
-
-
-        abstract WebElement checkMatchingElements(List<WebElement> matchingElems, final String msg);
-
-
-        WebElement processResults(final WebDriverContext ctx, final By by, final String msg) {
-            WebElement rtn = null;
-
-            List<WebElement> matchingElems = ctx.getWebDriver().findElements(by);
-            
-            List<WebElement> results = new ArrayList<WebElement>();
-
-            if (matchingElems == null || matchingElems.isEmpty()) {
-
-                // wait for at least one - if we need to wait, we will only find
-                // one
-                final WebElement elementWaitedFor = ctx.waitForElement(by);
-             
-                results.add(elementWaitedFor);
-            }
-            else
-            {
-            	results.addAll(matchingElems);
-            }
-
-            rtn = checkMatchingElements(results, msg);
-
-            return rtn;
-        }
-
-        //
-        // MatchingElementResultHandler(final int n) {
-        // this.idx = n - 1;
-        // }
-
-    }
-
-
-    /**
-     * Checks that a list of WebElements only contains one (not empty and not
-     * too many).
-     * 
-     * @param msg
-     * @param matchingElems
-     * @return
-     */
-    public static WebElement checkForOneMatchingElement(final String msg, final List<WebElement> matchingElems) {
-        WebElement rtn = null;
-        if (matchingElems != null && matchingElems.size() > 1) {
-            // ambiguous
-            Assert.fail("Found too many elements that meet this criteria");
-            // TODO - need some more debug here
-        }
-
-        else if (matchingElems != null) {
-            rtn = matchingElems.get(0);
-        }
-
-        Assert.assertNotNull(msg, rtn);
-        return rtn;
-    }
 
 
     /**

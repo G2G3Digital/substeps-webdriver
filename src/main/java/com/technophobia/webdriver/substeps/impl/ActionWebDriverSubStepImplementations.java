@@ -53,8 +53,6 @@ public class ActionWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
     private final FinderWebDriverSubStepImplementations locator;
 
-    //TODO: Would be a good idea to more this variable to a config file
-    private final int webDriverWaitTimout = 5; //in seconds
 
     public ActionWebDriverSubStepImplementations() {
         this.locator = new FinderWebDriverSubStepImplementations();
@@ -119,22 +117,36 @@ public class ActionWebDriverSubStepImplementations extends AbstractWebDriverSubS
     public void click() {
         logger.debug("About to click on current element");
         WebElement element = webDriverContext().getCurrentElement();
-        String id = element.getAttribute("id");
-        
-        try{
-        	element.click();
-        }
-        catch(WebDriverException e){
-        	WebDriverWait wait = new WebDriverWait(webDriver(), this.webDriverWaitTimout);
-        	WebElement elem = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(id)));
-        	if(elem != null){
-	        	logger.debug("About to click on current element");
-	        	elem.click();
-        	}
-        	//Don't need an else statement because error will be thrown if element is not clickable or visible.
-        }
+        clickElementWhenAvailable(element);
     }
 
+    
+    private void clickElementWhenAvailable(final WebElement elem) {
+
+        final long timeout = System.currentTimeMillis() + (1000 * WebdriverSubstepsPropertiesConfiguration.INSTANCE.defaultTimeout());
+
+        boolean success = false;
+
+        while (!success && System.currentTimeMillis() < timeout) {
+
+            try {
+                elem.click();
+                success = true;
+            } catch (final WebDriverException e) {
+                if (! (e.getMessage().contains("Element is not clickable") || e.getMessage().contains("Element is not currently visible")) ) {
+                    throw e;
+                }
+                try {
+                    Thread.sleep(500);
+                } catch (final InterruptedException e1) {
+                    // bothered
+                    logger.debug("not clickable this time");
+                }
+            } 
+        }
+        Assert.assertTrue("Failed to click on element within timeout", success);
+
+    }    
 
     /**
      * Click the link "(....)" as it appears on the page

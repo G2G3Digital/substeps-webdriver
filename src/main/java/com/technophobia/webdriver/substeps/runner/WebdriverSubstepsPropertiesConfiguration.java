@@ -47,7 +47,7 @@ public enum WebdriverSubstepsPropertiesConfiguration implements WebdriverSubstep
     private final String networkProxyHost;
     private final int networkProxyPort;
 
-    private long defaultWebDriverTimeoutSecs = 10; //TODO: why's this one special?
+    private long defaultWebDriverTimeoutSecs;
 
     private WebdriverSubstepsPropertiesConfiguration() {
 

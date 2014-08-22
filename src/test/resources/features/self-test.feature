@@ -55,7 +55,3 @@ Scenario: a scenario
     
     # Do not add more steps here
 
-Scenario: Is item clickable
-	Given I go to the self test page
-	Then I click a button which makes the div I'm going to click visible in 2 seconds time
-    Check to see if I wait until the div I've just made visbile in 2 secs is clickable

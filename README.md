@@ -14,6 +14,11 @@ Release Notes
 -----
 * addition of ExecutionListener config in the pom, set to default step logger implemenation.
 * Add in proxy capabilities for other browsers [Peter Phillips]
+* Enabled full screen mode for visual browsers
+* Refactored MatchingElementResultHandler into it's own class
+* Browser js logs now printed via enabling trace on WebDriverBrowserLogs
+* Clicks now wait until an item is clickable
+
 
 1.1.2
 -----
