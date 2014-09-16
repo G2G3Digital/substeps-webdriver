@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
@@ -342,4 +343,137 @@ public abstract class WebDriverSubstepsBy {
         return new StringBuilder().append("translate(").append(str1)
                 .append(", 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')=").append(str2).toString();
     }
+    
+    
+    public static ByTagAndAttributesWithValue ByTagAndAttributesWithValue(final String tagName,
+            final String attributeString, final String value) {
+
+        final Map<String, String> expectedAttributes = StepImplementationUtils.convertToMap(attributeString);
+
+        return new ByTagAndAttributesWithValue(tagName, expectedAttributes, value);
+    }
+
+    public static ByTagAndAttributesWithText ByTagAndAttributesWithText(final String tagName,
+            final String attributeString, final String text) {
+
+        final Map<String, String> expectedAttributes = StepImplementationUtils.convertToMap(attributeString);
+
+        return new ByTagAndAttributesWithText(tagName, expectedAttributes, text);
+    }
+
+    static class ByTagAndAttributesWithText extends XPathBy {
+
+        private static final Logger logger = LoggerFactory.getLogger(ByTagAndAttributesWithText.class);
+
+        private final String tagName;
+        private final Map<String, String> requiredAttributes;
+        private final String text;
+        private final int minimumExpected;
+
+        ByTagAndAttributesWithText(final String tagName, final Map<String, String> requiredAttributes, final String text) {
+            this(tagName, requiredAttributes, text, 1);
+        }
+
+        ByTagAndAttributesWithText(final String tagName, final Map<String, String> requiredAttributes,
+                final String text, final int nth) {
+            this.tagName = tagName;
+            this.requiredAttributes = requiredAttributes;
+            this.text = text;
+            this.minimumExpected = nth;
+        }
+
+        @Override
+        protected void buildXPath(final StringBuilder xpathBuilder) {
+            xpathBuilder.append(".//").append(tagName);
+
+            final boolean hasAttributes = !requiredAttributes.isEmpty();
+            final boolean hasText = StringUtils.isNotEmpty(text);
+
+            if (hasAttributes || hasText) {
+                xpathBuilder.append("[");
+
+                boolean firstOne = true;
+
+                for (final Map.Entry<String, String> requiredAttribute : requiredAttributes.entrySet()) {
+
+                    if (!firstOne) {
+                        xpathBuilder.append(" and ");
+                    }
+
+                    xpathBuilder.append("@").append(requiredAttribute.getKey()).append(" = '")
+                            .append(requiredAttribute.getValue()).append("'");
+
+                    firstOne = false;
+                }
+
+                if (hasText) {
+                    if (!firstOne) {
+                        xpathBuilder.append(" and ");
+                    }
+                    xpathBuilder.append("text()='").append(text).append("'");
+                }
+
+                xpathBuilder.append("]");
+            }
+
+            logger.debug("returning by xpath string: " + xpathBuilder.toString());
+        }
+
+        @Override
+        public List<WebElement> findElementsBy(final SearchContext searchContext) {
+            final List<WebElement> matchingElems = super.findElementsBy(searchContext);
+
+            if (matchingElems != null && matchingElems.size() < this.minimumExpected) {
+                logger.info("expecting at least " + this.minimumExpected + " matching elems, found only "
+                        + matchingElems.size() + " this time around");
+                // we haven't found enough, clear out
+                return null;
+            }
+
+            return matchingElems;
+        }
+    }
+
+    static class ByTagAndAttributesWithValue extends ByTagAndAttributes {
+
+        private final String value;
+
+        ByTagAndAttributesWithValue(final String tagName, final Map<String, String> requiredAttributes,
+                final String value) {
+            super(tagName, requiredAttributes);
+            this.value = value;
+
+            // , value, 1);
+        }
+
+        ByTagAndAttributesWithValue(final String tagName, final Map<String, String> requiredAttributes,
+                final String value, final int nth) {
+            super(tagName, requiredAttributes, nth);
+
+            this.value = value;
+        }
+
+        @Override
+        public List<WebElement> findElementsBy(final SearchContext searchContext) {
+
+            final List<WebElement> initialMatchingElems = super.findElementsBy(searchContext);
+
+            List<WebElement> matchingElems = null;
+            if (initialMatchingElems != null) {
+                for (final WebElement e : initialMatchingElems) {
+                    final String val = e.getAttribute("value");
+                    if (val != null && val.compareTo(this.value) == 0) {
+
+                        if (matchingElems == null) {
+                            matchingElems = new ArrayList<WebElement>();
+                        }
+                        matchingElems.add(e);
+                    }
+                }
+            }
+
+            return matchingElems;
+        }
+    }    
+    
 }

@@ -243,6 +243,52 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
         return elem;
     }
 
+    
+    /**
+     * Finds an element that is a child of the current element using the tag
+     * name, specified attributes and text, another Find method should be used first
+     * 
+     * @example FindChild ByTagAndAttributes tag="input"
+     *          attributes=[type="submit",value="Search"] with text="bob"
+     * @section Location
+     * 
+     * @param tag
+     *            the tag
+     * @param attributeString
+     *            the attribute string
+     * @param text
+     *            the text to look for
+     * @return the web element
+     */
+    @Step("FindChild ByTagAndAttributes tag=\"?([^\"]*)\"? attributes=\\[(.*)\\] with text=\"([^\"]*)\"")
+    public WebElement findChildByTagAndAttributesWithText(final String tag, final String attributeString, final String text) {
+        logger.debug("Looking for child with tag " + tag + " and attributes " + attributeString);
+
+        return findChildByTagAndAttributes(tag, attributeString, text, MatchingElementResultHandler.ExactlyOneElement);
+    }
+
+
+    private WebElement findChildByTagAndAttributes(final String tag, final String attributeString, final String text,
+            final MatchingElementResultHandler resultHandler) {
+
+        Assert.assertNotNull("expecting a current element", webDriverContext().getCurrentElement());
+
+        final WebElement currentElement = webDriverContext().getCurrentElement();
+
+        final By byTagAndAttributesWithText = WebDriverSubstepsBy.ByTagAndAttributesWithText(tag, attributeString, text);
+
+        final By byCurrentElement = WebDriverSubstepsBy.ByCurrentWebElement(currentElement);
+
+        final By chained = new ByChained(byCurrentElement, byTagAndAttributesWithText);
+
+        final String msg = "failed to locate a child element with tag: " + tag + ", attributes: " + attributeString + " and text: " + text;
+
+        final WebElement elem = resultHandler.processResults(webDriverContext(), chained, msg);
+
+        webDriverContext().setCurrentElement(elem);
+
+        return elem;
+    }    
 
     /**
      * Finds the first child element of the 'current' element using the tag name
@@ -759,4 +805,42 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
         webDriverContext().setCurrentElement(elem);
 
     }
+    
+    /**
+     * Find an element by tag name and a set of attributes and corresponding
+     * values
+     * 
+     * @param tag
+     *            the tag
+     * @param attributeString
+     *            the attribute string
+     * @return the web element
+     * @example FindByTagAndAttributesWithText tag="input"
+     *          attributes=[type="submit",value="Search"]
+     * @section Location
+     */
+    @Step("FindByTagAndAttributesWithText tag=\"?([^\"]*)\"? attributes=\\[(.*)\\] with text=\"([^\"]*)\"")
+    public WebElement findByTagAndAttributesWithText(final String tag, final String attributeString, final String text) {
+        return findByTagAndAttributesWithText(tag, attributeString, text,
+                MatchingElementResultHandler.ExactlyOneElement);
+    }
+
+    private WebElement findByTagAndAttributesWithText(final String tag, final String attributeString,
+            final String text, final MatchingElementResultHandler handler) {
+
+        webDriverContext().setCurrentElement(null);
+
+        WebElement rtn = null;
+
+        final By by = WebDriverSubstepsBy.ByTagAndAttributesWithText(tag, attributeString, text);
+
+        final String msg = "failed to locate an element with tag: " + tag + ", attributes: " + attributeString
+                + ", and text: " + text;
+
+        rtn = handler.processResults(webDriverContext(), by, msg);
+
+        webDriverContext().setCurrentElement(rtn);
+
+        return rtn;
+    }    
 }
