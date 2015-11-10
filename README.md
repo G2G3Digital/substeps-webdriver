@@ -1,4 +1,4 @@
-substeps-webdriver
+substeps-webdriver [![Build Status](https://travis-ci.org/G2G3Digital/substeps-webdriver.svg)](https://travis-ci.org/G2G3Digital/substeps-webdriver)
 ==================
 
 Webdriver based step implementations. 

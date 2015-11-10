@@ -85,7 +85,16 @@
             <role>developer</role>
           </roles>
        </developer>
-
+       
+       <developer>
+          <id>beercan1989</id>
+          <name>James Bacon</name>
+          <organization>G2G3 Digital</organization>
+          <url>https://github.com/beercan1989</url>
+          <roles>
+            <role>developer</role>
+          </roles>
+        </developer>
  
     </developers>
 
@@ -129,6 +138,17 @@
 		-->
 
 	</properties>
+	
+	<pluginRepositories>
+		<pluginRepository>
+			<id>sonatype-nexus-snapshots</id>
+			<name>Sonatype Nexus Snapshots</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+			<snapshots>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 
 	<dependencies>
 		<dependency>
