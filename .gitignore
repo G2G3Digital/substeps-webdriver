@@ -12,3 +12,5 @@ classes/
 *~
 itmoore.properties
 docs/_build/
+.idea
+*.iml

@@ -18,6 +18,7 @@ Release Notes
 * Refactored MatchingElementResultHandler into it's own class
 * Browser js logs now printed via enabling trace on WebDriverBrowserLogs
 * Clicks now wait until an item is clickable
+* Travis-CI integration
 
 
 1.1.2
