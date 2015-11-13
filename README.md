@@ -14,6 +14,7 @@ Release Notes
 -----
 * addition of ExecutionListener config in the pom, set to default step logger implemenation.
 * Add in proxy capabilities for other browsers [Peter Phillips]
+* Travis-CI integration
 
 1.1.2
 -----
