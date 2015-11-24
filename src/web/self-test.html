@@ -68,6 +68,68 @@ function performDoubleClick()
     
 }
 
+function createElement(element, type, id, value)
+{
+	//clickable button - no waiting
+	var btn=document.createElement(element);
+	btn.setAttribute('type',type);
+	btn.setAttribute('id',id);
+	btn.setAttribute('value',value);
+	document.body.appendChild(btn);
+}
+
+function removecreateElementsForWebDriverException(id)
+{
+	var element = document.getElementById(id);
+	while(element.firstChild)
+	{
+		element.removeChild(element.firstChild)
+	}
+	document.getElementById(id).remove();
+	
+	createElementsForWebDriverException();
+}
+
+function createElementsForWebDriverException()
+{	
+	//parent div
+	var parentDiv = document.createElement('div');
+	parentDiv.setAttribute('id','parentDiv');
+	
+	//container div
+	var container = document.createElement('div');
+	container.setAttribute('id','container');
+	
+	//failsOPasses div - If height and and width of div <= 0, test will fail
+	var failsOPasses = document.createElement('div');
+	failsOPasses.setAttribute('id','failsOPasses');
+	failsOPasses.setAttribute("style","width:500px");
+	failsOPasses.setAttribute("style","height:500px");
+	
+	//testButton button
+	var testButton = document.createElement('button');
+	testButton.setAttribute('id','testButton');
+	testButton.innerHTML = "testButton";
+	
+	//add to document
+	document.body.appendChild(parentDiv);
+	parentDiv.appendChild(container);
+	container.appendChild(failsOPasses);
+	container.appendChild(testButton);
+}
+
+function onClick(timeout)
+{
+	//clickable button - no waiting
+	//createElement('input','button','attemptToClick_noWaiting','attemptToClick_noWaiting');
+	
+	//clickable button - wait for 10 seconds
+	//setTimeout(function(){createElement('input','button','attemptToClick_waiting','attemptToClick_waiting');},timeout)
+
+	//alert(timeout);
+	//timout in milliseconds
+	setTimeout(function(){removecreateElementsForWebDriverException("parentDiv");},timeout);
+}
 </script>	
 	
 </head>
@@ -325,6 +387,20 @@ function performDoubleClick()
     </thead>
       
 </table>
+
+<div id="parentOfClickableButton" style="background-color: red;">
+	<button id="clickableButton" type="button">clickableButton</button>
+</div>
+
+<button id="makeFailOrPassVisible" onclick="onClick(2000)">Make FailOrPasses Visible</button>
+
+<div id="parentDiv" style="position: absolute; z-index: -1">
+	<div id="container" style="position: absolute; z-index: -2">
+		<div id="failsOPasses"></div>
+		<button id="testButton" type="button">testButton</button>
+	</div>
+</div>
+
 
 </body>
 </html>

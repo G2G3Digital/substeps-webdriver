@@ -26,13 +26,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.technophobia.webdriver.substeps.runner.*;
+
 import org.junit.Assert;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.TargetLocator;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,9 +116,37 @@ public class ActionWebDriverSubStepImplementations extends AbstractWebDriverSubS
     @Step("Click")
     public void click() {
         logger.debug("About to click on current element");
-        webDriverContext().getCurrentElement().click();
+        WebElement element = webDriverContext().getCurrentElement();
+        clickElementWhenAvailable(element);
     }
 
+    
+    private void clickElementWhenAvailable(final WebElement elem) {
+
+        final long timeout = System.currentTimeMillis() + (1000 * WebdriverSubstepsPropertiesConfiguration.INSTANCE.defaultTimeout());
+
+        boolean success = false;
+
+        while (!success && System.currentTimeMillis() < timeout) {
+
+            try {
+                elem.click();
+                success = true;
+            } catch (final WebDriverException e) {
+                if (! (e.getMessage().contains("Element is not clickable") || e.getMessage().contains("Element is not currently visible")) ) {
+                    throw e;
+                }
+                try {
+                    Thread.sleep(500);
+                } catch (final InterruptedException e1) {
+                    // bothered
+                    logger.debug("not clickable this time");
+                }
+            } 
+        }
+        Assert.assertTrue("Failed to click on element within timeout", success);
+
+    }    
 
     /**
      * Click the link "(....)" as it appears on the page

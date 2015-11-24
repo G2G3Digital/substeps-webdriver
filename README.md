@@ -1,4 +1,4 @@
-substeps-webdriver
+substeps-webdriver [![Build Status](https://travis-ci.org/G2G3Digital/substeps-webdriver.svg)](https://travis-ci.org/G2G3Digital/substeps-webdriver)
 ==================
 
 Webdriver based step implementations. 
@@ -14,6 +14,12 @@ Release Notes
 -----
 * addition of ExecutionListener config in the pom, set to default step logger implemenation.
 * Add in proxy capabilities for other browsers [Peter Phillips]
+* Enabled full screen mode for visual browsers
+* Refactored MatchingElementResultHandler into it's own class
+* Browser js logs now printed via enabling trace on WebDriverBrowserLogs
+* Clicks now wait until an item is clickable
+* Travis-CI integration
+
 
 1.1.2
 -----
