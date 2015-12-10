@@ -45,6 +45,9 @@ public class ElementLocators {
     /**
      * Waits for a WebElement that can be found using the specified By to exist, or for a timeout to occur.
      *
+     * @param by             the by
+     * @param timeOutSeconds the time out seconds
+     * @param webDriver      the web driver
      * @return the discovered WebElement, or null if it does not exist within the timeout period.
      */
     public static WebElement waitForElement(final By by, final long timeOutSeconds, WebDriver webDriver) {

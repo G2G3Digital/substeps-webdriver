@@ -73,14 +73,16 @@ public class TableSubStepImplementations extends AbstractWebDriverSubStepImpleme
     /**
      * Locates the table body row, assuming that the table has already been
      * located Row 1 is the first
-     * <tr>
-     * beneath a <tbody>
+     * &lt;tr&gt;
+     * beneath a &lt;tbody&gt;
      * 
      * @example FindTableBodyRow row 3
      * @section Table
-     * 
+     *
      * @param row
      *            1 based row index
+     * @return
+     *  the web element
      */
     @Step("FindTableBodyRow row ([^\"]*)")
     public WebElement findTableBodyRow(@StepParameter(converter = IntegerConverter.class) final Integer row) {
@@ -138,8 +140,8 @@ public class TableSubStepImplementations extends AbstractWebDriverSubStepImpleme
     /**
      * Check that a table cell contains the specified text using a 1 based
      * index. Row 1 is the first
-     * <tr>
-     * beneath a <tbody>
+     * &lt;tr&gt;
+     * beneath a &lt;tbody&gt;
      * 
      * @example AssertTableValue column 2, row 3 contains text "Hello Bob"
      * @section Table

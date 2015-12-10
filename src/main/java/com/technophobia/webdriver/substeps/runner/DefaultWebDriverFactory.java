@@ -69,7 +69,7 @@ public class DefaultWebDriverFactory implements WebDriverFactory {
 
             }
             case HTMLUNIT: {
-                final HtmlUnitDriver htmlUnitDriver = new HtmlUnitDriver(BrowserVersion.FIREFOX_3_6);
+                final HtmlUnitDriver htmlUnitDriver = new HtmlUnitDriver(BrowserVersion.FIREFOX_38);
                 htmlUnitDriver.setJavascriptEnabled(!configuration.isJavascriptDisabledWithHTMLUnit());
 
                 // Run via a proxy - firstly try deprecated HTML unit only

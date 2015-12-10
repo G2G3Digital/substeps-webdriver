@@ -161,9 +161,9 @@ public abstract class MatchingElementResultHandler {
      * Checks that a list of WebElements only contains one (not empty and not
      * too many).
      * 
-     * @param msg
-     * @param matchingElems
-     * @return
+     * @param msg the assertion message
+     * @param matchingElems the initial matching elements
+     * @return the matching web element
      */
     public static WebElement checkForOneMatchingElement(final String msg, final List<WebElement> matchingElems) {
         WebElement rtn = null;

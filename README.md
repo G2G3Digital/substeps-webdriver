@@ -10,6 +10,12 @@ There is also a [Substeps Google group](http://groups.google.com/group/substeps?
 Release Notes
 =============
 
+1.1.4
+-----
+* Move to v2.0 of core, library update across the board
+* tidied up some javadocs
+
+
 1.1.3
 -----
 * addition of ExecutionListener config in the pom, set to default step logger implemenation.
