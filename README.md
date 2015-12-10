@@ -1,4 +1,4 @@
-substeps-webdriver [![Build Status](https://travis-ci.org/G2G3Digital/substeps-webdriver.svg)](https://travis-ci.org/G2G3Digital/substeps-webdriver)
+substeps-webdriver [![Build Status](https://travis-ci.org/G2G3Digital/substeps-webdriver.svg)](https://travis-ci.org/G2G3Digital/substeps-webdriver) [![Maven Central](https://img.shields.io/maven-central/v/com.technophobia.substeps/webdriver-substeps.png?label=webdriver-substeps)](https://maven-badges.herokuapp.com/maven-central/com.technophobia.substeps/webdriver-substeps) 
 ==================
 
 Webdriver based step implementations. 
@@ -9,6 +9,13 @@ There is also a [Substeps Google group](http://groups.google.com/group/substeps?
 
 Release Notes
 =============
+
+1.1.4
+-----
+* Move to v2.0 of core, library update across the board
+* tidied up some javadocs
+* Requires JDK 8
+
 
 1.1.3
 -----

@@ -278,9 +278,10 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
     /**
      * Utility method to check that an element is of a particular tag and type
      * 
-     * @param elem
-     * @param tag
-     * @param type
+     * @param elem the element
+     *
+     * @param tag the expected tag
+     * @param type the expected type attribute
      */
     public static void assertElementIs(final WebElement elem, final String tag, final String type) {
 
@@ -298,9 +299,8 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
     /**
      * Utility method to check that an element is of a particular tag
      * 
-     * @param elem
-     * @param tag
-     * @param type
+     * @param elem the element to check
+     * @param tag the expected tag
      */
     public static void assertElementIs(final WebElement elem, final String tag) {
         assertElementIs(elem, tag, null);
@@ -336,7 +336,7 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
      * 
      * @param elementId
      *            The ID of the HTML element
-     * @param nameToSaveAs
+     * @param rememberedValueName
      *            The variable name to save the text as for later retrieval
      */
     @Step("AssertDifferent rememberedValue \"([^\"]*)\" compareToElement \"([^\"]*)\"")
@@ -367,7 +367,7 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
      * 
      * @param elementId
      *            The ID of the HTML element
-     * @param nameToSaveAs
+     * @param rememberedValueName
      *            The variable name to save the text as for later retrieval
      */
     @Step("AssertSame rememberedValue \"([^\"]*)\" compareToElement \"([^\"]*)\"")
@@ -427,7 +427,7 @@ public class AssertionWebDriverSubStepImplementations extends AbstractWebDriverS
      * 
      * @example AssertNotPresent text="undesirable text"
      * @section Assertions
-     * @param text
+     * @param text the text that shouldn't be present
      */
     @Step("AssertNotPresent text=\"([^\"]*)\"")
     public void assertNotPresent(final String text) {

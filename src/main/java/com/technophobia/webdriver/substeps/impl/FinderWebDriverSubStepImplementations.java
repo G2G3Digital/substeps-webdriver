@@ -352,14 +352,14 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
     /**
      * Finds a checkbox that is a child of the specified tag, that contains the
      * specified text; eg.
+     *
+     &lt;pre&gt;
+     &lt;label&gt;
+     &lt;input type=&quot;checkbox&quot; name=&quot;checkbox_name&quot; value=&quot;yeah&quot;/&gt;a checkbox &lt;span&gt;label&lt;/span&gt;
+     &lt;/label&gt;
+     &lt;/pre&gt;
      * 
-     * <pre>
-     * <label>
-     *  <input type="checkbox" name="checkbox_name" value="yeah"/>a checkbox <span>label</span>
-     * </label>
-     * </pre>
-     * 
-     * @example FindCheckbox inside tag="label" with label="a checkbox label>"
+     * @example FindCheckbox inside tag="label" with label="a checkbox label"
      * 
      * @section Location
      * 
@@ -382,14 +382,14 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
     /**
      * Finds a radiobutton that is a child of the specified tag, that contains
      * the specified text; eg.
-     * 
-     * <pre>
-     * <label>
-     *  <input type="radio" name="radio_name" value="yeah"/>a radio <span>label</span>
-     * </label>
-     * </pre>
-     * 
-     * @example FindRadioButton inside tag="label" with label="a radio label>"
+     *
+     &lt;pre&gt;
+     &lt;label&gt;
+     &lt;input type=&quot;radio&quot; name=&quot;radio_name&quot; value=&quot;yeah&quot;/&gt;a radio &lt;span&gt;label&lt;/span&gt;
+     &lt;/label&gt;
+     &lt;/pre&gt;
+     *
+     * @example FindRadioButton inside tag="label" with label="a radio label"
      * 
      * @section Location
      * 
@@ -407,10 +407,10 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
 
     /**
-     * @param label
-     * @param tag
-     * @param inputType
-     * @return
+     * @param label the label of the input
+     * @param tag the tag
+     * @param inputType the input type
+     * @return the web element
      */
     public WebElement findInputInsideTag(final String label, final String tag, final String inputType) {
         WebElement elem = null;
@@ -461,8 +461,8 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
 
 
     /**
-     * @param tag
-     * @param tagElems
+     * @param msg the assertion message
+     * @param tagElems the element list to be checked for empty or null
      */
     public void checkElements(final String msg, final List<WebElement> tagElems) {
         Assert.assertNotNull(msg, tagElems);
@@ -535,7 +535,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
      * Finds the n th element by tag name and a set of attributes and
      * corresponding values
      * 
-     * @param n
+     * @param nth
      *            the nth matching element we wish to find
      * @param tag
      *            the tag
@@ -849,6 +849,7 @@ public class FinderWebDriverSubStepImplementations extends AbstractWebDriverSubS
      *            the tag
      * @param attributeString
      *            the attribute string
+     *            @param text the expected text
      * @return the web element
      * @example FindByTagAndAttributesWithText tag="input"
      *          attributes=[type="submit",value="Search"]
